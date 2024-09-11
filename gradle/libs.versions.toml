@@ -1,0 +1,7 @@
+[versions]
+velocity-api = "3.3.0-SNAPSHOT"
+commandapi-velocity = "9.5.0-SNAPSHOT"
+
+[libraries]
+velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
+commandapi-velocity = { module = "dev.jorel:commandapi-velocity-core", version.ref = "commandapi-velocity" }
