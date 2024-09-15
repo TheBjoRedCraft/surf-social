@@ -14,6 +14,11 @@ repositories {
     maven("https://repo.slne.dev/repository/maven-proxy/") { name = "maven-proxy" }
 }
 
+dependencies {
+    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
+    annotationProcessor("com.google.auto.service:auto-service:1.1.1")
+}
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
