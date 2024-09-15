@@ -16,18 +16,10 @@ public class FriendAddCommand extends CommandAPICommand {
         executesPlayer((player, info)-> {
             String target = info.getUnchecked("player");
 
-            if(target == null){
-                player.sendMessage("//TODO: Fail Message");
-
-                return;
-            }
-
             UUID playerUUID = player.getUniqueId();
             UUID targetUUID = Bukkit.getOfflinePlayer(target).getUniqueId();
 
             FriendsPaperPlugin.instance().api().addFriend(playerUUID, targetUUID);
-
-            player.sendMessage("//TODO: Message");
         });
     }
 }

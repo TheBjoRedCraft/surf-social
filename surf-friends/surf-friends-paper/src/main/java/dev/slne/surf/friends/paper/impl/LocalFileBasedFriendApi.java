@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import jdk.jfr.Event;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -89,6 +90,13 @@ public class LocalFileBasedFriendApi extends FriendApi {
     public CompletableFuture<Boolean> sendFriendRequest(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
             ObjectList<UUID> beforeAction = new ObjectArrayList<>(friendRequests.get(player));
+            FriendRequestSendEvent event = new FriendRequestSendEvent(player, target, false);
+
+            Bukkit.getPluginManager().callEvent(event);
+
+            if(event.isCancelled()){
+                return false;
+            }
 
 
             if(!beforeAction.contains(target)){
@@ -103,8 +111,6 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
 
             this.friendRequests.put(player, beforeAction);
-
-            Bukkit.getPluginManager().callEvent(new FriendRequestSendEvent(player, target));
             return true;
         });
     }
@@ -213,6 +219,29 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
             for(UUID uuid : friendRequestSettings.keySet()){
                 config.set("storage." + uuid + "setting", friendRequestSettings.get(uuid));
+            }
+
+            return true;
+        });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> toggle(UUID player) {
+        return CompletableFuture.supplyAsync(() -> {
+            if(friendRequestSettings.containsKey(player)){
+                if(friendRequestSettings.get(player)){
+                    friendRequestSettings.put(player, false);
+
+                    Bukkit.getPluginManager().callEvent(new FriendToggleEvent(player, true, false));
+                }else{
+                    friendRequestSettings.put(player, true);
+
+                    Bukkit.getPluginManager().callEvent(new FriendToggleEvent(player, false, true));
+                }
+            }else{
+                friendRequestSettings.put(player, false);
+
+                Bukkit.getPluginManager().callEvent(new FriendToggleEvent(player, true, false));
             }
 
             return true;

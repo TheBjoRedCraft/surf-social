@@ -98,4 +98,14 @@ public abstract class FriendApi {
    * @return A boolean indicating the success or failure of the operation.
    */
   public abstract CompletableFuture<Boolean> exit();
+
+  /**
+   * Toggle friend requests.
+   *
+   * @return A boolean indicating the success or failure of the operation.
+   */
+  public abstract CompletableFuture<Boolean> toggle(UUID player);
+
+
+
 }

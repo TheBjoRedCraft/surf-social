@@ -5,5 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 public class FriendListCommand extends CommandAPICommand {
     public FriendListCommand(String name) {
         super(name);
+
+        //TODO
     }
 }
