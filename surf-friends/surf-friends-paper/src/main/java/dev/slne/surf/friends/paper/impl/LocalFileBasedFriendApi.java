@@ -221,6 +221,8 @@ public class LocalFileBasedFriendApi extends FriendApi {
                 config.set("storage." + uuid + "setting", friendRequestSettings.get(uuid));
             }
 
+            FriendsPaperPlugin.instance().saveConfig();
+
             return true;
         });
     }
