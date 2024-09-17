@@ -7,13 +7,14 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import jdk.jfr.Event;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import org.bukkit.entity.Player;
 
 public class LocalFileBasedFriendApi extends FriendApi {
 
@@ -26,6 +27,11 @@ public class LocalFileBasedFriendApi extends FriendApi {
     @Override
     public CompletableFuture<Boolean> addFriend(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
+            if(friends.get(player) == null){
+                friends.put(player, new ObjectArrayList<>());
+            }
+
+
             ObjectList<UUID> beforeAction = new ObjectArrayList<>(friends.get(player));
 
             if(beforeAction.contains(target)){
@@ -37,11 +43,13 @@ public class LocalFileBasedFriendApi extends FriendApi {
             }
 
             beforeAction.add(target);
-
-
-            this.friends.put(player, beforeAction);
+            friends.put(player, beforeAction);
 
             Bukkit.getPluginManager().callEvent(new FriendAddEvent(player, target));
+
+
+            this.sendIfOnline(player, String.format("Du bist nun mit %s befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(target, String.format("Du bist nun mit %s befreundet.", Bukkit.getOfflinePlayer(player).getName()));
             return true;
         });
     }
@@ -66,6 +74,9 @@ public class LocalFileBasedFriendApi extends FriendApi {
             this.friends.put(player, beforeAction);
 
             Bukkit.getPluginManager().callEvent(new FriendRemoveEvent(player, target));
+
+            this.sendIfOnline(player, String.format("Du bist nun nicht mehr mit %s befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(target, String.format("Du bist nun nicht mehr mit %s befreundet.", Bukkit.getOfflinePlayer(player).getName()));
             return true;
         });
     }
@@ -111,6 +122,9 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
 
             this.friendRequests.put(player, beforeAction);
+
+            this.sendIfOnline(player, String.format("Du hast eine Freundschaftsanfrage an %s gesendet.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(target, String.format("Du hast eine Freundschaftsanfrage von %s erhalten.", Bukkit.getOfflinePlayer(player).getName()));
             return true;
         });
     }
@@ -166,6 +180,9 @@ public class LocalFileBasedFriendApi extends FriendApi {
             this.friendRequests.put(player, beforeAction);
 
             Bukkit.getPluginManager().callEvent(new FriendRequestDenyEvent(player, target));
+
+            this.sendIfOnline(player, String.format("Du hast die Freundschaftsanfrage von %s abgelehnt.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(target, String.format("%s hat deine Freundschaftsanfrage abgelehnt.", Bukkit.getOfflinePlayer(player).getName()));
             return true;
         });
     }
@@ -211,14 +228,14 @@ public class LocalFileBasedFriendApi extends FriendApi {
     public CompletableFuture<Boolean> exit(){
         return CompletableFuture.supplyAsync(() -> {
             for(UUID uuid : friends.keySet()){
-                config.set("storage." + uuid + "friends", friends.get(uuid));
+                config.set("storage." + uuid + ".friends", friends.get(uuid));
             }
             for(UUID uuid : friendRequests.keySet()){
-                config.set("storage." + uuid + "requests", friendRequests.get(uuid));
+                config.set("storage." + uuid + ".requests", friendRequests.get(uuid));
             }
 
             for(UUID uuid : friendRequestSettings.keySet()){
-                config.set("storage." + uuid + "setting", friendRequestSettings.get(uuid));
+                config.set("storage." + uuid + ".setting", friendRequestSettings.get(uuid));
             }
 
             FriendsPaperPlugin.instance().saveConfig();
@@ -248,5 +265,16 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
             return true;
         });
+    }
+
+
+    private void sendIfOnline(UUID player, String message){
+        Player p = Bukkit.getPlayer(player);
+
+        if(p == null){
+            return;
+        }
+
+        p.sendMessage(FriendsPaperPlugin.prefix().append(Component.text(message)));
     }
 }

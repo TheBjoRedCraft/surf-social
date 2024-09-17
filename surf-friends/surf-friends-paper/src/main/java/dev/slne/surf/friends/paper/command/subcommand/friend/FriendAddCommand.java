@@ -19,7 +19,7 @@ public class FriendAddCommand extends CommandAPICommand {
             UUID playerUUID = player.getUniqueId();
             UUID targetUUID = Bukkit.getOfflinePlayer(target).getUniqueId();
 
-            FriendsPaperPlugin.instance().api().addFriend(playerUUID, targetUUID);
+            FriendsPaperPlugin.instance().api().sendFriendRequest(playerUUID, targetUUID);
         });
     }
 }
