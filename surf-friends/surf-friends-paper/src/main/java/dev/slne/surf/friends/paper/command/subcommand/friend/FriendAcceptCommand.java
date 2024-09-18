@@ -17,6 +17,7 @@ public class FriendAcceptCommand extends CommandAPICommand {
         Bukkit.getOnlinePlayers().forEach(online -> players.add(online.getName()));
 
         withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(players)));
+
         executesPlayer((player, info)-> {
             UUID target = Bukkit.getOfflinePlayer((String) info.getUnchecked("player")).getUniqueId();
 

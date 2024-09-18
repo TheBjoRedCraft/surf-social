@@ -2,25 +2,29 @@ package dev.slne.surf.friends.paper.impl;
 
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.api.event.*;
+import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.paper.FriendsPaperPlugin;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import net.kyori.adventure.text.Component;
+
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.bukkit.entity.Player;
 
 public class LocalFileBasedFriendApi extends FriendApi {
 
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friends = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friendRequests = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, Boolean> friendRequestSettings = new Object2ObjectOpenHashMap<>();
+
+    private final FriendLogger logger = FriendsPaperPlugin.logger();
 
     private final FileConfiguration config = FriendsPaperPlugin.instance().getConfig();
 
@@ -48,8 +52,9 @@ public class LocalFileBasedFriendApi extends FriendApi {
             Bukkit.getPluginManager().callEvent(new FriendAddEvent(player, target));
 
 
-            this.sendIfOnline(player, String.format("Du bist nun mit %s befreundet.", Bukkit.getOfflinePlayer(target).getName()));
-            this.sendIfOnline(target, String.format("Du bist nun mit %s befreundet.", Bukkit.getOfflinePlayer(player).getName()));
+
+            this.sendIfOnline(player, String.format("Du bist nun mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(target, String.format("Du bist nun mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(player).getName()));
             return true;
         });
     }
@@ -75,8 +80,8 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
             Bukkit.getPluginManager().callEvent(new FriendRemoveEvent(player, target));
 
-            this.sendIfOnline(player, String.format("Du bist nun nicht mehr mit %s befreundet.", Bukkit.getOfflinePlayer(target).getName()));
-            this.sendIfOnline(target, String.format("Du bist nun nicht mehr mit %s befreundet.", Bukkit.getOfflinePlayer(player).getName()));
+            this.sendIfOnline(player, String.format("Du bist nun nicht mehr mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(target, String.format("Du bist nun nicht mehr mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(player).getName()));
             return true;
         });
     }
@@ -100,17 +105,22 @@ public class LocalFileBasedFriendApi extends FriendApi {
     @Override
     public CompletableFuture<Boolean> sendFriendRequest(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
-            ObjectList<UUID> beforeAction = new ObjectArrayList<>(friendRequests.get(player));
-            FriendRequestSendEvent event = new FriendRequestSendEvent(player, target, false);
-
-            Bukkit.getPluginManager().callEvent(event);
-
-            if(event.isCancelled()){
-                return false;
+            if(!friendRequests.containsKey(player)){
+                friendRequests.put(player, new ObjectArrayList<>());
             }
 
+            ObjectList<UUID> beforeAction = new ObjectArrayList<>(friendRequests.get(target));
+//            FriendRequestSendEvent event = new FriendRequestSendEvent(player, target, false);
+//
+//            Bukkit.getPluginManager().callEvent(event);
+//
+//
+//            if(event.isCancelled()){
+//                return false;
+//            }
 
-            if(!beforeAction.contains(target)){
+            if(beforeAction.contains(player)){
+                this.sendIfOnline(player, String.format("Du hast bereits eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", Bukkit.getOfflinePlayer(target).getName()));
                 return false;
             }
 
@@ -118,13 +128,12 @@ public class LocalFileBasedFriendApi extends FriendApi {
                 return false;
             }
 
-            beforeAction.add(target);
 
+            beforeAction.add(player);
+            this.friendRequests.put(target, beforeAction);
 
-            this.friendRequests.put(player, beforeAction);
-
-            this.sendIfOnline(player, String.format("Du hast eine Freundschaftsanfrage an %s gesendet.", Bukkit.getOfflinePlayer(target).getName()));
-            this.sendIfOnline(target, String.format("Du hast eine Freundschaftsanfrage von %s erhalten.", Bukkit.getOfflinePlayer(player).getName()));
+            this.sendIfOnline(player, String.format("Du hast eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(target, String.format("Du hast eine Freundschaftsanfrage von <gold>%s</gold> erhalten.", Bukkit.getOfflinePlayer(player).getName()));
             return true;
         });
     }
@@ -137,6 +146,10 @@ public class LocalFileBasedFriendApi extends FriendApi {
     @Override
     public CompletableFuture<Boolean> acceptFriendRequest(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
+            if(!friendRequests.containsKey(player)){
+                friendRequests.put(player, new ObjectArrayList<>());
+            }
+
             ObjectList<UUID> beforeAction = new ObjectArrayList<>(friendRequests.get(player));
 
 
@@ -181,8 +194,8 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
             Bukkit.getPluginManager().callEvent(new FriendRequestDenyEvent(player, target));
 
-            this.sendIfOnline(player, String.format("Du hast die Freundschaftsanfrage von %s abgelehnt.", Bukkit.getOfflinePlayer(target).getName()));
-            this.sendIfOnline(target, String.format("%s hat deine Freundschaftsanfrage abgelehnt.", Bukkit.getOfflinePlayer(player).getName()));
+            this.sendIfOnline(player, String.format("Du hast die Freundschaftsanfrage von <gold>%s</gold> abgelehnt.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(target, String.format("<gold>%s</gold> hat deine Freundschaftsanfrage abgelehnt.", Bukkit.getOfflinePlayer(player).getName()));
             return true;
         });
     }
@@ -195,7 +208,6 @@ public class LocalFileBasedFriendApi extends FriendApi {
     @Override
     public CompletableFuture<Boolean> init(){
         return CompletableFuture.supplyAsync(() -> {
-
             if(config.getConfigurationSection("storage") == null){
                 return false;
             }
@@ -228,18 +240,17 @@ public class LocalFileBasedFriendApi extends FriendApi {
     public CompletableFuture<Boolean> exit(){
         return CompletableFuture.supplyAsync(() -> {
             for(UUID uuid : friends.keySet()){
-                config.set("storage." + uuid + ".friends", friends.get(uuid));
+                config.set("storage." + uuid + ".friends", friends.get(uuid).toString());
             }
             for(UUID uuid : friendRequests.keySet()){
-                config.set("storage." + uuid + ".requests", friendRequests.get(uuid));
+                config.set("storage." + uuid + ".requests", friendRequests.get(uuid).toString());
             }
 
             for(UUID uuid : friendRequestSettings.keySet()){
-                config.set("storage." + uuid + ".setting", friendRequestSettings.get(uuid));
+                config.set("storage." + uuid + ".setting", friendRequestSettings.get(uuid).toString());
             }
 
             FriendsPaperPlugin.instance().saveConfig();
-
             return true;
         });
     }
@@ -269,12 +280,12 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
 
     private void sendIfOnline(UUID player, String message){
-        Player p = Bukkit.getPlayer(player);
+        OfflinePlayer p = Bukkit.getOfflinePlayer(player);
 
-        if(p == null){
+        if(!p.isOnline()){
             return;
         }
 
-        p.sendMessage(FriendsPaperPlugin.prefix().append(Component.text(message)));
+        p.getPlayer().sendMessage(FriendsPaperPlugin.prefix().append(MiniMessage.miniMessage().deserialize(message)));
     }
 }

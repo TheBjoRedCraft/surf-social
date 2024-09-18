@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Getter
 @Accessors(fluent = true)
 public class FriendsPaperPlugin extends JavaPlugin {
-    private final FriendApi api = new LocalFileBasedFriendApi();
+    private final LocalFileBasedFriendApi api = new LocalFileBasedFriendApi();
 
     @Getter
     private static final Component prefix = Component.text(">> ").color(NamedTextColor.GRAY)
