@@ -15,5 +15,6 @@ public class FriendCommand extends CommandAPICommand {
         withSubcommand(new FriendListCommand("list"));
         withSubcommand(new FriendRemoveCommand("remove"));
         withSubcommand(new FriendToggleCommand("toggle"));
+        withSubcommand(new FriendSaveCommand("save"));
     }
 }
