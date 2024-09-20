@@ -1,7 +1,7 @@
 package dev.slne.surf.friends.paper.command.subcommand.friend;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.slne.surf.friends.paper.FriendsPaperPlugin;
+import dev.slne.surf.friends.paper.FriendPlugin;
 import dev.slne.surf.friends.paper.impl.LocalFileBasedFriendApi;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 public class FriendListCommand extends CommandAPICommand {
-    private final LocalFileBasedFriendApi api = FriendsPaperPlugin.instance().api();
+    private final LocalFileBasedFriendApi api = FriendPlugin.instance().api();
 
 
     public FriendListCommand(String name) {
@@ -37,10 +37,10 @@ public class FriendListCommand extends CommandAPICommand {
                     }
                 }
 
-                player.sendMessage(FriendsPaperPlugin.prefix().append(MiniMessage.miniMessage().deserialize(message.toString())));
+                player.sendMessage(FriendPlugin.prefix().append(MiniMessage.miniMessage().deserialize(message.toString())));
 
             }catch (InterruptedException | ExecutionException  e){
-                FriendsPaperPlugin.logger().error(e.getMessage());
+                FriendPlugin.logger().error(e.getMessage());
             }
         });
     }

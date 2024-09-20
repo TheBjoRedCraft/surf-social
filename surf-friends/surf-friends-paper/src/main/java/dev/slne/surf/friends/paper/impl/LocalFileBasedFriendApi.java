@@ -1,15 +1,13 @@
 package dev.slne.surf.friends.paper.impl;
 
 import dev.slne.surf.friends.api.FriendApi;
-import dev.slne.surf.friends.core.util.FriendLogger;
-import dev.slne.surf.friends.paper.FriendsPaperPlugin;
+import dev.slne.surf.friends.paper.FriendPlugin;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,7 +15,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.bukkit.entity.Player;
 
 public class LocalFileBasedFriendApi extends FriendApi {
 
@@ -25,7 +22,7 @@ public class LocalFileBasedFriendApi extends FriendApi {
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friendRequests = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, Boolean> friendRequestSettings = new Object2ObjectOpenHashMap<>();
 
-    private final FileConfiguration config = FriendsPaperPlugin.instance().getConfig();
+    private final FileConfiguration config = FriendPlugin.instance().getConfig();
 
     @Override
     public CompletableFuture<Boolean> addFriend(UUID player, UUID target) {
@@ -207,15 +204,7 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
     @Override
     public CompletableFuture<String> getServerFromPlayer(UUID player) {
-        return CompletableFuture.supplyAsync(() -> {
-            Player target = Bukkit.getPlayer(player);
-
-            if(target == null){
-                return "Offline";
-            }else {
-                return "Nicht angegeben";
-            }
-        });
+        return CompletableFuture.supplyAsync(() -> "Nicht angegeben");
     }
 
     @Override
@@ -269,7 +258,7 @@ public class LocalFileBasedFriendApi extends FriendApi {
                 config.set("storage." + uuid + ".setting", friendRequestSettings.get(uuid));
             }
 
-            FriendsPaperPlugin.instance().saveConfig();
+            FriendPlugin.instance().saveConfig();
             return true;
         });
     }
@@ -300,6 +289,6 @@ public class LocalFileBasedFriendApi extends FriendApi {
             return;
         }
 
-        p.getPlayer().sendMessage(FriendsPaperPlugin.prefix().append(MiniMessage.miniMessage().deserialize(message)));
+        p.getPlayer().sendMessage(FriendPlugin.prefix().append(MiniMessage.miniMessage().deserialize(message)));
     }
 }

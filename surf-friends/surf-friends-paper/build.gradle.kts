@@ -12,6 +12,8 @@ dependencies {
 
     compileOnlyApi(libs.paper.api)
     compileOnlyApi(libs.commandapi.bukkit)
+
+    implementation(libs.inventory.framework)
 }
 
 paper {
@@ -29,5 +31,13 @@ paper {
 }
 
 tasks.shadowJar{
+    relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.paper.inventoryframework")
+
     archiveClassifier.set("")
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }

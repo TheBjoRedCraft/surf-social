@@ -3,7 +3,7 @@ package dev.slne.surf.friends.paper.command.subcommand.friend;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
-import dev.slne.surf.friends.paper.FriendsPaperPlugin;
+import dev.slne.surf.friends.paper.FriendPlugin;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
@@ -21,8 +21,8 @@ public class FriendRemoveCommand extends CommandAPICommand {
         executesPlayer((player, info)-> {
             UUID target = Bukkit.getOfflinePlayer((String) info.getUnchecked("player")).getUniqueId();
 
-            FriendsPaperPlugin.instance().api().removeFriend(player.getUniqueId(), target);
-            FriendsPaperPlugin.instance().api().removeFriend(target, player.getUniqueId());
+            FriendPlugin.instance().api().removeFriend(player.getUniqueId(), target);
+            FriendPlugin.instance().api().removeFriend(target, player.getUniqueId());
         });
     }
 }

@@ -1,6 +1,5 @@
 package dev.slne.surf.friends.paper;
 
-import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.paper.command.FriendCommand;
 import dev.slne.surf.friends.paper.impl.LocalFileBasedFriendApi;
@@ -13,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
 @Accessors(fluent = true)
-public class FriendsPaperPlugin extends JavaPlugin {
+public class FriendPlugin extends JavaPlugin {
     private final LocalFileBasedFriendApi api = new LocalFileBasedFriendApi();
 
     @Getter
@@ -49,9 +48,10 @@ public class FriendsPaperPlugin extends JavaPlugin {
 
     private void registerCommands(){
         new FriendCommand("friend").register();
+        new FriendCommand("friends").register();
     }
 
-    public static FriendsPaperPlugin instance(){
-        return getPlugin(FriendsPaperPlugin.class);
+    public static FriendPlugin instance(){
+        return getPlugin(FriendPlugin.class);
     }
 }

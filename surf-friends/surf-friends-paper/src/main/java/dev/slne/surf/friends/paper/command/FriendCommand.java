@@ -2,6 +2,7 @@ package dev.slne.surf.friends.paper.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.slne.surf.friends.paper.command.subcommand.friend.*;
+import dev.slne.surf.friends.paper.gui.FriendMainGui;
 
 public class FriendCommand extends CommandAPICommand {
     public FriendCommand(String name) {
@@ -16,5 +17,9 @@ public class FriendCommand extends CommandAPICommand {
         withSubcommand(new FriendRemoveCommand("remove"));
         withSubcommand(new FriendToggleCommand("toggle"));
         withSubcommand(new FriendSaveCommand("save"));
+
+        executesPlayer((player, info) -> {
+            new FriendMainGui().show(player);
+        });
     }
 }
