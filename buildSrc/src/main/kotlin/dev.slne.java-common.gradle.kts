@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 
     id("net.linguica.maven-settings")
-    id("dev.slne.gradle-properties")
+    id("io.freefair.lombok")
 }
 
 group = "dev.slne"

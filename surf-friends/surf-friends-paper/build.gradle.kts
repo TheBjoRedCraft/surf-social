@@ -4,7 +4,6 @@ plugins {
     id("dev.slne.java-common")
     id("dev.slne.java-shadow")
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
-    id("io.freefair.lombok") version "8.10"
 }
 
 dependencies {
@@ -18,7 +17,7 @@ dependencies {
 
 paper {
     main = "dev.slne.surf.friends.paper.FriendsPaperPlugin"
-    apiVersion = "1.20"
+    apiVersion = "1.21"
     authors = listOf("TheBjoRedCraft", "SLNE Development")
     prefix = "SurfSocial/SurfFriends"
 
@@ -34,10 +33,4 @@ tasks.shadowJar{
     relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.paper.inventoryframework")
 
     archiveClassifier.set("")
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
 }
