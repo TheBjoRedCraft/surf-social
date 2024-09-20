@@ -1,23 +1,16 @@
 package dev.slne.surf.friends.paper.gui;
 
-import com.github.stefvanschie.inventoryframework.font.util.Font;
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
-import com.github.stefvanschie.inventoryframework.pane.component.Label;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
-import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class FriendMainGui extends ChestGui {
+public class FriendMainMenu extends FriendMenu {
 
-  public FriendMainGui() {
+  public FriendMainMenu() {
     super(5, "Freunde");
 
     OutlinePane header = new OutlinePane(0, 0, 9, 1, Priority.LOW);
@@ -59,19 +52,5 @@ public class FriendMainGui extends ChestGui {
 
     setOnGlobalClick(event -> event.setCancelled(true));
     setOnGlobalDrag(event -> event.setCancelled(true));
-  }
-
-
-
-  private GuiItem build(ItemBuilder builder, Consumer<InventoryClickEvent> action){
-    return new GuiItem(builder.build(), action);
-  }
-
-  private GuiItem build(ItemStack stack, Consumer<InventoryClickEvent> action){
-    return new GuiItem(stack, action);
-  }
-
-  private GuiItem build(ItemBuilder builder){
-    return new GuiItem(builder.build());
   }
 }

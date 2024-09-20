@@ -2,7 +2,7 @@ package dev.slne.surf.friends.paper.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.slne.surf.friends.paper.command.subcommand.friend.*;
-import dev.slne.surf.friends.paper.gui.FriendMainGui;
+import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 
 public class FriendCommand extends CommandAPICommand {
     public FriendCommand(String name) {
@@ -19,7 +19,7 @@ public class FriendCommand extends CommandAPICommand {
         withSubcommand(new FriendSaveCommand("save"));
 
         executesPlayer((player, info) -> {
-            new FriendMainGui().show(player);
+            new FriendMainMenu().show(player);
         });
     }
 }
