@@ -16,7 +16,7 @@ dependencies {
 }
 
 paper {
-    main = "dev.slne.surf.friends.paper.FriendsPaperPlugin"
+    main = "dev.slne.surf.friends.paper.FriendPlugin"
     apiVersion = "1.21"
     authors = listOf("TheBjoRedCraft", "SLNE Development")
     prefix = "SurfSocial/SurfFriends"
