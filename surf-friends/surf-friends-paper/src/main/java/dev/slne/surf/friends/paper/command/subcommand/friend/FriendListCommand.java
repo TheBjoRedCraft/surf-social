@@ -2,7 +2,7 @@ package dev.slne.surf.friends.paper.command.subcommand.friend;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.slne.surf.friends.paper.FriendPlugin;
-import dev.slne.surf.friends.paper.impl.LocalFileBasedFriendApi;
+import dev.slne.surf.friends.paper.impl.FileFriendApi;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 public class FriendListCommand extends CommandAPICommand {
-    private final LocalFileBasedFriendApi api = FriendPlugin.instance().api();
+    private final FileFriendApi api = FriendPlugin.instance().api();
 
 
     public FriendListCommand(String name) {

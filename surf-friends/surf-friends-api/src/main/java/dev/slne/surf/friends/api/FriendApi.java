@@ -3,6 +3,7 @@ package dev.slne.surf.friends.api;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import org.bukkit.entity.Player;
 
 public abstract class FriendApi {
 
@@ -107,5 +108,10 @@ public abstract class FriendApi {
   public abstract CompletableFuture<Boolean> toggle(UUID player);
 
 
-
+  /**
+   * Send a player to a server
+   *
+   * @return A boolean indicating the success or failure of the operation.
+   */
+  public abstract CompletableFuture<Boolean> send(Player player, String target);
 }

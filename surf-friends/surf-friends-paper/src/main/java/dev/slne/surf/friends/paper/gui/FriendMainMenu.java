@@ -4,6 +4,8 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
+import dev.slne.surf.friends.paper.gui.sub.friend.FriendFriendsMenu;
+import dev.slne.surf.friends.paper.gui.sub.request.FriendRequestsMenu;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -35,11 +37,11 @@ public class FriendMainMenu extends FriendMenu {
     }));
 
     flPane.addItem(build(friendList, event -> {
-
+      new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     }));
 
     frPane.addItem(build(friendRequests, event -> {
-
+      new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     }));
 
 

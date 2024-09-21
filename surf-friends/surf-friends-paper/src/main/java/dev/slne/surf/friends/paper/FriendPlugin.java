@@ -2,7 +2,7 @@ package dev.slne.surf.friends.paper;
 
 import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.paper.command.FriendCommand;
-import dev.slne.surf.friends.paper.impl.LocalFileBasedFriendApi;
+import dev.slne.surf.friends.paper.impl.FileFriendApi;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Getter
 @Accessors(fluent = true)
 public class FriendPlugin extends JavaPlugin {
-    private final LocalFileBasedFriendApi api = new LocalFileBasedFriendApi();
+    private final FileFriendApi api = new FileFriendApi();
 
     @Getter
     private static final Component prefix = Component.text(">> ").color(NamedTextColor.GRAY)

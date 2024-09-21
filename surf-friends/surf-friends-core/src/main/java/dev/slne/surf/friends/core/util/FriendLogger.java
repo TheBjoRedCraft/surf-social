@@ -15,6 +15,10 @@ public class FriendLogger {
     sender.sendMessage(prefix.append(Component.text(message).color(NamedTextColor.RED)));
   }
 
+  public void error(Exception e){
+    sender.sendMessage(prefix.append(Component.text(e.getMessage()).color(NamedTextColor.RED)));
+  }
+
   public void info(String message){
     sender.sendMessage(prefix.append(Component.text(message).color(NamedTextColor.GREEN)));
   }

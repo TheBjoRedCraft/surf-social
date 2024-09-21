@@ -15,8 +15,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import org.bukkit.entity.Player;
 
-public class LocalFileBasedFriendApi extends FriendApi {
+public class FileFriendApi extends FriendApi {
 
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friends = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friendRequests = new Object2ObjectOpenHashMap<>();
@@ -122,6 +123,15 @@ public class LocalFileBasedFriendApi extends FriendApi {
 
             if(player.equals(target)){
                 this.sendIfOnline(player, "Du kannst nicht mit dir selbst befreundet sein.");
+                return false;
+            }
+
+            if(!friends.containsKey(player)){
+                friends.put(player, new ObjectArrayList<>());
+            }
+
+            if(friends.get(player).contains(target)){
+                this.sendIfOnline(player, String.format("Du bist bereits mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
                 return false;
             }
 
@@ -277,6 +287,20 @@ public class LocalFileBasedFriendApi extends FriendApi {
                 friendRequestSettings.put(player, false);
             }
 
+            return true;
+        });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> send(Player player, String target) {
+        return CompletableFuture.supplyAsync(() -> {
+            Player tPlayer = Bukkit.getPlayer(target);
+
+            if(tPlayer == null){
+                return false;
+            }
+
+            player.teleport(tPlayer);
             return true;
         });
     }

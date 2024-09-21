@@ -9,6 +9,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -215,6 +216,20 @@ public class ItemBuilder {
   public ItemBuilder setSkullOwner(String owner) {
     itemStack.editMeta(SkullMeta.class, meta -> {
       meta.setOwner(owner);
+    });
+
+    return this;
+  }
+
+  /**
+   * Set the skull owner for the item. Works on skulls only.
+   *
+   * @param owner The name of the skull's owner.
+   * @return the skull owner
+   */
+  public ItemBuilder setSkullOwner(OfflinePlayer owner) {
+    itemStack.editMeta(SkullMeta.class, meta -> {
+      meta.setOwningPlayer(owner);
     });
 
     return this;
