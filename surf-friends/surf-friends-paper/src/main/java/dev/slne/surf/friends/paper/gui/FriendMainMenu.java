@@ -6,6 +6,10 @@ import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.gui.sub.friend.FriendFriendsMenu;
 import dev.slne.surf.friends.paper.gui.sub.request.FriendRequestsMenu;
+import dev.slne.surf.friends.paper.gui.sub.settings.FriendSettingsMenu;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.Sound.Source;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +30,8 @@ public class FriendMainMenu extends FriendMenu {
     ItemStack friendList = new ItemBuilder(Material.ENDER_PEARL).setName(Component.text("Freunde").color(PluginColor.LIGHT_BLUE)).build();
     ItemStack friendRequests = new ItemBuilder(Material.PAPER).setName(Component.text("Freundschaftsanfragen").color(PluginColor.LIGHT_BLUE)).build();
 
+    Sound sound = Sound.sound(Key.key("minecraft:block.note_block.bit"), Source.MASTER, 1, 0);
+
     header.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
     header.setRepeat(true);
 
@@ -33,15 +39,17 @@ public class FriendMainMenu extends FriendMenu {
     footer.setRepeat(true);
 
     settingPane.addItem(build(settings, event -> {
-
+      new FriendSettingsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     }));
 
     flPane.addItem(build(friendList, event -> {
       new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
+      event.getWhoClicked().playSound(sound);
     }));
 
     frPane.addItem(build(friendRequests, event -> {
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
+      event.getWhoClicked().playSound(sound);
     }));
 
 

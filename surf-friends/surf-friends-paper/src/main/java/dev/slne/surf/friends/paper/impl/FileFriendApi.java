@@ -280,11 +280,17 @@ public class FileFriendApi extends FriendApi {
             if(friendRequestSettings.containsKey(player)){
                 if(friendRequestSettings.get(player)){
                     friendRequestSettings.put(player, false);
+
+                    this.sendIfOnline(player, "Du hast nun Freundschaftsanfragen deaktiviert.");
                 }else{
                     friendRequestSettings.put(player, true);
+
+                    this.sendIfOnline(player, "Du hast nun Freundschaftsanfragen aktiviert.");
                 }
             }else{
                 friendRequestSettings.put(player, false);
+
+                this.sendIfOnline(player, "Du hast nun Freundschaftsanfragen deaktiviert.");
             }
 
             return true;
