@@ -30,8 +30,6 @@ public class FriendMainMenu extends FriendMenu {
     ItemStack friendList = new ItemBuilder(Material.ENDER_PEARL).setName(Component.text("Freunde").color(PluginColor.LIGHT_BLUE)).build();
     ItemStack friendRequests = new ItemBuilder(Material.PAPER).setName(Component.text("Freundschaftsanfragen").color(PluginColor.LIGHT_BLUE)).build();
 
-    Sound sound = Sound.sound(Key.key("minecraft:block.note_block.bit"), Source.MASTER, 1, 0);
-
     header.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
     header.setRepeat(true);
 
@@ -44,12 +42,10 @@ public class FriendMainMenu extends FriendMenu {
 
     flPane.addItem(build(friendList, event -> {
       new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
-      event.getWhoClicked().playSound(sound);
     }));
 
     frPane.addItem(build(friendRequests, event -> {
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
-      event.getWhoClicked().playSound(sound);
     }));
 
 

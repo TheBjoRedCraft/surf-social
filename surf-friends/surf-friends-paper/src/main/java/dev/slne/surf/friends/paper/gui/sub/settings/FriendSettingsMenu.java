@@ -12,6 +12,9 @@ import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
 import java.util.UUID;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.Sound.Source;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
@@ -25,6 +28,8 @@ public class FriendSettingsMenu extends FriendMenu {
     OutlinePane footer = new OutlinePane(0, 4, 9, 1, Priority.LOW);
     StaticPane navigation = new StaticPane(0, 4, 9, 1, Priority.HIGH);
     ToggleButton mid = new ToggleButton(4, 2, 1, 1);
+
+    Sound sound = Sound.sound(Key.key("minecraft:block.note_block.bit"), Source.MASTER, 1, 0);
 
     header.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
     header.setRepeat(true);
@@ -44,6 +49,10 @@ public class FriendSettingsMenu extends FriendMenu {
         .setName(Component.text("Zurück")
             .color(PluginColor.RED)), event ->
         new FriendMainMenu().show(event.getWhoClicked())), 4, 0);
+
+    mid.setOnClick(event -> {
+      event.getWhoClicked().playSound(sound);
+    });
 
     addPane(header);
     addPane(footer);
