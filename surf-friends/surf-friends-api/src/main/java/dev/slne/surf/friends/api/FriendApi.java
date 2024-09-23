@@ -3,9 +3,8 @@ package dev.slne.surf.friends.api;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.bukkit.entity.Player;
 
-public abstract class FriendApi {
+public interface FriendApi {
 
   /**
    * Add a friend for a player.
@@ -14,7 +13,7 @@ public abstract class FriendApi {
    * @param target The UUID of the player to be added as a friend.
    * @return A boolean indicating the success or failure of the operation.
    **/
-  public abstract CompletableFuture<Boolean> addFriend(UUID player, UUID target);
+  CompletableFuture<Boolean> addFriend(UUID player, UUID target);
 
   /**
    * Remove a friend for a player.
@@ -23,7 +22,7 @@ public abstract class FriendApi {
    * @param target The UUID of the friend to be removed.
    * @return A boolean indicating the success or failure of the operation.
    */
-  public abstract CompletableFuture<Boolean> removeFriend(UUID player, UUID target);
+  CompletableFuture<Boolean> removeFriend(UUID player, UUID target);
 
   /**
    * Get a list of friends for a player.
@@ -31,7 +30,7 @@ public abstract class FriendApi {
    * @param player The UUID of the player.
    * @return A List containing the list of friend UUIDs.
    */
-  public abstract CompletableFuture<List<UUID>> getFriends(UUID player);
+  CompletableFuture<List<UUID>> getFriends(UUID player);
 
   /**
    * Check if two players are friends.
@@ -40,7 +39,7 @@ public abstract class FriendApi {
    * @param target The UUID of the second player.
    * @return A boolean indicating if they are friends.
    */
-  public abstract CompletableFuture<Boolean> areFriends(UUID player, UUID target);
+  CompletableFuture<Boolean> areFriends(UUID player, UUID target);
 
   /**
    * Send a friend request to a player.
@@ -49,7 +48,7 @@ public abstract class FriendApi {
    * @param target The UUID of the second player.
    * @return A boolean indicating the success or failure of the operation.
    */
-  public abstract CompletableFuture<Boolean> sendFriendRequest(UUID player, UUID target);
+  CompletableFuture<Boolean> sendFriendRequest(UUID player, UUID target);
 
   /**
    * Get a list of friends.
@@ -57,7 +56,7 @@ public abstract class FriendApi {
    * @param player The UUID of the player.
    * @return A List of UUIDs
    */
-  public abstract CompletableFuture<List<UUID>> getFriendRequests(UUID player);
+  CompletableFuture<List<UUID>> getFriendRequests(UUID player);
 
   /**
    * Accept a friend request.
@@ -66,7 +65,7 @@ public abstract class FriendApi {
    * @param target The UUID of the second player.
    * @return A boolean indicating the success or failure of the operation.
    */
-  public abstract CompletableFuture<Boolean> acceptFriendRequest(UUID player, UUID target);
+  CompletableFuture<Boolean> acceptFriendRequest(UUID player, UUID target);
 
   /**
    * Deny a friend request.
@@ -75,8 +74,7 @@ public abstract class FriendApi {
    * @param target The UUID of the second player.
    * @return A boolean indicating if they are friends.
    */
-  public abstract CompletableFuture<Boolean> denyFriendRequest(UUID player, UUID target);
-
+  CompletableFuture<Boolean> denyFriendRequest(UUID player, UUID target);
 
   /**
    * Get server name from player.
@@ -84,34 +82,33 @@ public abstract class FriendApi {
    * @param player The UUID of the player.
    * @return The name of the server from the player
    */
-  public abstract CompletableFuture<String> getServerFromPlayer(UUID player);
+  CompletableFuture<String> getServerFromPlayer(UUID player);
 
   /**
    * Init Tasks for starting.
    *
    * @return A boolean indicating the success or failure of the operation.
    */
-  public abstract CompletableFuture<Boolean> init();
+  CompletableFuture<Boolean> init();
 
   /**
    * Exit Tasks for stopping.
    *
    * @return A boolean indicating the success or failure of the operation.
    */
-  public abstract CompletableFuture<Boolean> exit();
+  CompletableFuture<Boolean> exit();
 
   /**
    * Toggle friend requests.
    *
    * @return A boolean indicating the success or failure of the operation.
    */
-  public abstract CompletableFuture<Boolean> toggle(UUID player);
-
+  CompletableFuture<Boolean> toggle(UUID player);
 
   /**
-   * Send a player to a server
+   * Send a velocity player to a server
    *
    * @return A boolean indicating the success or failure of the operation.
    */
-  public abstract CompletableFuture<Boolean> send(Player player, String target);
+  CompletableFuture<Boolean> send(UUID player, String target);
 }

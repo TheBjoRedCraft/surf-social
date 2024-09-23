@@ -7,12 +7,13 @@ import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
 
+import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
-import dev.slne.surf.friends.paper.FriendPlugin;
-import dev.slne.surf.friends.paper.gui.FriendMainMenu;
+import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
+import dev.slne.surf.friends.velocity.VelocityInstance;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -29,6 +30,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 
 public class FriendSingleMenu extends FriendMenu {
+  private final FriendApi api = VelocityInstance.getInstance().getApi();
+
   public FriendSingleMenu(String name) {
     super(5, name);
 
@@ -67,10 +70,10 @@ public class FriendSingleMenu extends FriendMenu {
       if (offlinePlayer.isOnline()) {
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Nachspringen").color(PluginColor.LIGHT_BLUE))
-            .addLoreLine(Component.text("Server: " + FriendPlugin.instance().api()
+            .addLoreLine(Component.text("Server: " + api
                     .getServerFromPlayer(offlinePlayer.getUniqueId()).get())
                 .decoration(TextDecoration.ITALIC, State.FALSE))
-            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> FriendPlugin.instance().api().send((Player) event.getWhoClicked(), name)));
+            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> api.send(event.getWhoClicked().getUniqueId(), name)));
       }else{
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Der Spieler ist offline.").color(PluginColor.LIGHT_BLUE))
@@ -79,7 +82,7 @@ public class FriendSingleMenu extends FriendMenu {
             .setSkullOwner(Bukkit.getOfflinePlayer(name))));
       }
     } catch (InterruptedException | ExecutionException e){
-      FriendPlugin.logger().error(e);
+      PaperInstance.instance().logger().error(e);
     }
 
     remove.setOnClick(event -> {

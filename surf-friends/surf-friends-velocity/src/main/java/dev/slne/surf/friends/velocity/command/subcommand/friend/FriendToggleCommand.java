@@ -1,15 +1,15 @@
-package dev.slne.surf.friends.paper.command.subcommand.friend;
+package dev.slne.surf.friends.velocity.command.subcommand.friend;
 
 import dev.jorel.commandapi.CommandAPICommand;
 
-import dev.slne.surf.friends.paper.FriendPlugin;
+import dev.slne.surf.friends.velocity.VelocityInstance;
 
 public class FriendToggleCommand extends CommandAPICommand {
     public FriendToggleCommand(String name) {
         super(name);
 
         executesPlayer((player, info)-> {
-            FriendPlugin.instance().api().toggle(player.getUniqueId());
+            VelocityInstance.getInstance().getApi().toggle(player.getUniqueId());
         });
     }
 }

@@ -1,29 +1,36 @@
-package dev.slne.surf.friends.paper.impl;
+package dev.slne.surf.friends.velocity.impl.api;
 
+import com.google.auto.service.AutoService;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.slne.surf.friends.api.FriendApi;
-import dev.slne.surf.friends.paper.FriendPlugin;
+import dev.slne.surf.friends.core.FriendCore;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
-
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.util.Services;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-public class FileFriendApi extends FriendApi {
+@AutoService(FriendApi.class)
+public class FriendApiFallback implements FriendApi, Services.Fallback {
 
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friends = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friendRequests = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, Boolean> friendRequestSettings = new Object2ObjectOpenHashMap<>();
 
-    private final FileConfiguration config = FriendPlugin.instance().getConfig();
+    private FileConfiguration config;
+
+    public void initConfig(){
+        config = null;
+        //TODO: Init config/load config
+    }
 
     @Override
     public CompletableFuture<Boolean> addFriend(UUID player, UUID target) {
@@ -268,7 +275,7 @@ public class FileFriendApi extends FriendApi {
                 config.set("storage." + uuid + ".setting", friendRequestSettings.get(uuid));
             }
 
-            FriendPlugin.instance().saveConfig();
+            //TODO Save
             return true;
         });
     }
@@ -298,15 +305,10 @@ public class FileFriendApi extends FriendApi {
     }
 
     @Override
-    public CompletableFuture<Boolean> send(Player player, String target) {
+    public CompletableFuture<Boolean> send(UUID player, String server) {
         return CompletableFuture.supplyAsync(() -> {
-            Player tPlayer = Bukkit.getPlayer(target);
+            //TODO: get server and implement method
 
-            if(tPlayer == null){
-                return false;
-            }
-
-            player.teleport(tPlayer);
             return true;
         });
     }
@@ -319,6 +321,6 @@ public class FileFriendApi extends FriendApi {
             return;
         }
 
-        p.getPlayer().sendMessage(FriendPlugin.prefix().append(MiniMessage.miniMessage().deserialize(message)));
+        p.getPlayer().sendMessage(FriendCore.prefix().append(MiniMessage.miniMessage().deserialize(message)));
     }
 }

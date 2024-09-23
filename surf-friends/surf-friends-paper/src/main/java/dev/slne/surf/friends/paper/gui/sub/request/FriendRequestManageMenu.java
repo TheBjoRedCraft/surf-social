@@ -6,11 +6,11 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
+import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
-import dev.slne.surf.friends.paper.FriendPlugin;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
-import dev.slne.surf.friends.paper.impl.FileFriendApi;
+import dev.slne.surf.friends.velocity.VelocityInstance;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class FriendRequestManageMenu extends FriendMenu {
-  private final FileFriendApi api = FriendPlugin.instance().api();
+  private final FriendApi api = VelocityInstance.getInstance().getApi();
 
   public FriendRequestManageMenu(String name) {
     super(5, "Anfrage von " + name);
@@ -58,12 +58,12 @@ public class FriendRequestManageMenu extends FriendMenu {
     });
 
     accept.setOnClick(event -> {
-      FriendPlugin.instance().api().acceptFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      api.acceptFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 
     deny.setOnClick(event -> {
-      FriendPlugin.instance().api().denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      api.denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 

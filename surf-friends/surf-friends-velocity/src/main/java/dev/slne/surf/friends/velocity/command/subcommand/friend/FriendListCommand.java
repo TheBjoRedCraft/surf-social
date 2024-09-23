@@ -1,16 +1,22 @@
-package dev.slne.surf.friends.paper.command.subcommand.friend;
+package dev.slne.surf.friends.velocity.command.subcommand.friend;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.slne.surf.friends.paper.FriendPlugin;
-import dev.slne.surf.friends.paper.impl.FileFriendApi;
+
+import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.core.FriendCore;
+import dev.slne.surf.friends.velocity.VelocityInstance;
+
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+
 import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 public class FriendListCommand extends CommandAPICommand {
-    private final FileFriendApi api = FriendPlugin.instance().api();
+    private final FriendApi api = VelocityInstance.getInstance().getApi();
 
 
     public FriendListCommand(String name) {
@@ -37,10 +43,10 @@ public class FriendListCommand extends CommandAPICommand {
                     }
                 }
 
-                player.sendMessage(FriendPlugin.prefix().append(MiniMessage.miniMessage().deserialize(message.toString())));
+                player.sendMessage(FriendCore.prefix().append(MiniMessage.miniMessage().deserialize(message.toString())));
 
             }catch (InterruptedException | ExecutionException  e){
-                FriendPlugin.logger().error(e.getMessage());
+                VelocityInstance.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
             }
         });
     }

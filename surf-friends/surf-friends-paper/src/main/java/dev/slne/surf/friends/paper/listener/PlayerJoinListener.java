@@ -1,26 +1,30 @@
 package dev.slne.surf.friends.paper.listener;
 
 import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.FriendLogger;
-import dev.slne.surf.friends.paper.FriendPlugin;
+import dev.slne.surf.friends.paper.PaperInstance;
+import dev.slne.surf.friends.velocity.VelocityInstance;
+
 import java.util.concurrent.ExecutionException;
 import net.kyori.adventure.text.Component;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoinListener implements Listener {
+
   @EventHandler
   public void onJoin(PlayerJoinEvent event){
     Player player = event.getPlayer();
-    FriendLogger logger = FriendPlugin.logger();
-    FriendApi api = FriendPlugin.instance().api();
+    FriendLogger logger = PaperInstance.instance().logger();
+    FriendApi api = VelocityInstance.getInstance().getApi();
 
     try {
       if(!api.getFriendRequests(player.getUniqueId()).get().isEmpty()){
-        player.sendMessage(FriendPlugin.prefix().append(Component.text(String.format("Du hast noch %s Freundschaftsanfragen offen.",
-            api.getFriendRequests(player.getUniqueId()).get().size()))));
+        player.sendMessage(FriendCore.prefix().append(Component.text(String.format("Du hast noch %s Freundschaftsanfragen offen.", api.getFriendRequests(player.getUniqueId()).get().size()))));
       }
     } catch (InterruptedException | ExecutionException e) {
       logger.error(e.getMessage());

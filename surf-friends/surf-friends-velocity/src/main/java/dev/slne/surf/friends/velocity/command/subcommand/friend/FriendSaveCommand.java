@@ -1,7 +1,10 @@
-package dev.slne.surf.friends.paper.command.subcommand.friend;
+package dev.slne.surf.friends.velocity.command.subcommand.friend;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.slne.surf.friends.paper.FriendPlugin;
+
+import dev.slne.surf.friends.core.FriendCore;
+import dev.slne.surf.friends.velocity.VelocityInstance;
+
 import net.kyori.adventure.text.Component;
 
 public class FriendSaveCommand extends CommandAPICommand {
@@ -11,9 +14,9 @@ public class FriendSaveCommand extends CommandAPICommand {
         withPermission("surf-social.friends.friend.command.save");
 
         executesPlayer((player, info) -> {
-            FriendPlugin.instance().api().exit();
+            VelocityInstance.getInstance().getApi().exit();
 
-            player.sendMessage(FriendPlugin.prefix().append(Component.text("Alle Daten wurden gespeichert. (plugins/surf-friends-paper/config.yml)")));
+            player.sendMessage(FriendCore.prefix().append(Component.text("Alle Daten wurden gespeichert.")));
         });
     }
 }
