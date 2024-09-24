@@ -9,6 +9,7 @@ dependencies {
 
     annotationProcessor(libs.velocity.api.annotation)
     compileOnlyApi(libs.velocity.api)
+
     implementation(libs.commandapi.velocity)
     implementation(libs.fastutil)
 }

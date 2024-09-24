@@ -1,8 +1,10 @@
 package dev.slne.surf.friends.api;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import net.kyori.adventure.util.Services;
 
 public interface FriendApi {
 
@@ -30,7 +32,7 @@ public interface FriendApi {
    * @param player The UUID of the player.
    * @return A List containing the list of friend UUIDs.
    */
-  CompletableFuture<List<UUID>> getFriends(UUID player);
+  CompletableFuture<ObjectList<UUID>> getFriends(UUID player);
 
   /**
    * Check if two players are friends.
@@ -56,7 +58,7 @@ public interface FriendApi {
    * @param player The UUID of the player.
    * @return A List of UUIDs
    */
-  CompletableFuture<List<UUID>> getFriendRequests(UUID player);
+  CompletableFuture<ObjectList<UUID>> getFriendRequests(UUID player);
 
   /**
    * Accept a friend request.
@@ -111,4 +113,12 @@ public interface FriendApi {
    * @return A boolean indicating the success or failure of the operation.
    */
   CompletableFuture<Boolean> send(UUID player, String target);
+
+  static FriendApi get() {
+    return Accessor.INSTANCE;
+  }
+
+  class Accessor {
+    private static final FriendApi INSTANCE = Services.serviceWithFallback(FriendApi.class).orElseThrow(() -> new Error("FriendApi not available"));
+  }
 }

@@ -15,7 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 
 public class FriendRemoveConfirmMenu extends FriendMenu {
-  private final FriendApi api = VelocityInstance.getInstance().getApi();
+  private final FriendApi api = FriendApi.get();
 
   public FriendRemoveConfirmMenu(String name) {
     super(5, "Bitte bestätige.");

@@ -23,11 +23,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-
+@SuppressWarnings("unchecked")
 public class FriendRequestsMenu extends FriendMenu {
 
   private final FriendLogger logger = PaperInstance.instance().logger();
-  private final FriendApi api = VelocityInstance.getInstance().getApi();
+  private final FriendApi api = FriendApi.get();
 
   public FriendRequestsMenu(UUID player) {
     super(5, "Freundschaftsanfragen");

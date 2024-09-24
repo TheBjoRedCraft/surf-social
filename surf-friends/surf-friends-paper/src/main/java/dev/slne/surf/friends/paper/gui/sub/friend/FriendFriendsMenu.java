@@ -26,7 +26,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class FriendFriendsMenu extends FriendMenu {
   private final FriendLogger logger = PaperInstance.instance().logger();
-  private final FriendApi api = VelocityInstance.getInstance().getApi();
+  private final FriendApi api = FriendApi.get();
 
   public FriendFriendsMenu(UUID player) {
     super(5, "Deine Freunde");

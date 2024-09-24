@@ -22,7 +22,7 @@ import net.kyori.adventure.text.format.TextDecoration.State;
 import org.bukkit.Material;
 
 public class FriendSettingsMenu extends FriendMenu {
-  private final FriendApi api = VelocityInstance.getInstance().getApi();
+  private final FriendApi api = FriendApi.get();
 
   public FriendSettingsMenu(UUID player) {
     super(5, "Freundeseinstellungen");

@@ -20,7 +20,7 @@ public class PlayerJoinListener implements Listener {
   public void onJoin(PlayerJoinEvent event){
     Player player = event.getPlayer();
     FriendLogger logger = PaperInstance.instance().logger();
-    FriendApi api = VelocityInstance.getInstance().getApi();
+    FriendApi api = FriendApi.get();
 
     try {
       if(!api.getFriendRequests(player.getUniqueId()).get().isEmpty()){

@@ -17,7 +17,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIVelocityConfig;
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.velocity.command.FriendCommand;
-import java.nio.charset.StandardCharsets;
+import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAddCommand;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
@@ -53,16 +53,22 @@ public class VelocityInstance {
 
     new FriendCommand("friend").register();
     new FriendCommand("friends").register();
+
+    new FriendAddCommand("fa").register();
   }
 
   @Subscribe
   public void onProxyInitialization(ProxyInitializeEvent event) {
     CommandAPI.onEnable();
+
+    api.init();
   }
 
   @Subscribe
   public void onShutdown(ProxyShutdownEvent event){
     CommandAPI.onDisable();
+
+    api.exit();
     //Shutdown
   }
 

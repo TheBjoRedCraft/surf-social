@@ -30,7 +30,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 
 public class FriendSingleMenu extends FriendMenu {
-  private final FriendApi api = VelocityInstance.getInstance().getApi();
+  private final FriendApi api = FriendApi.get();
 
   public FriendSingleMenu(String name) {
     super(5, name);

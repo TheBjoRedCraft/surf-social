@@ -1,36 +1,45 @@
 package dev.slne.surf.friends.velocity.impl.api;
 
 import com.google.auto.service.AutoService;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.google.gson.Gson;
+
+import com.google.gson.reflect.TypeToken;
+import com.velocitypowered.api.proxy.Player;
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
+import dev.slne.surf.friends.velocity.VelocityInstance;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 @AutoService(FriendApi.class)
+@SuppressWarnings("unchecked")
 public class FriendApiFallback implements FriendApi, Services.Fallback {
+
+    private final File jsonFile = new File("plugins/surf-friends-velocity/friends.json");
+    private final Gson gson = new Gson();
 
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friends = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friendRequests = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, Boolean> friendRequestSettings = new Object2ObjectOpenHashMap<>();
 
-    private FileConfiguration config;
-
-    public void initConfig(){
-        config = null;
-        //TODO: Init config/load config
-    }
 
     @Override
     public CompletableFuture<Boolean> addFriend(UUID player, UUID target) {
@@ -43,7 +52,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             ObjectList<UUID> beforeAction = new ObjectArrayList<>(friends.get(player));
 
             if(beforeAction.contains(target)){
-                this.sendIfOnline(player, String.format("Du bist bereits mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+                this.sendIfOnline(player, "Du bist bereits mit <gold>%s</gold> befreundet.", target);
                 return false;
             }
 
@@ -55,9 +64,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             beforeAction.add(target);
             friends.put(player, beforeAction);
 
-
-
-            this.sendIfOnline(player, String.format("Du bist nun mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(player, "Du bist nun mit <gold>%s</gold> befreundet.", target);
             return true;
         });
     }
@@ -73,12 +80,12 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
 
             if(!beforeAction.contains(target)){
-                this.sendIfOnline(player, String.format("Du bist nicht mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+                this.sendIfOnline(player, "Du bist nicht mit <gold>%s</gold> befreundet.", target);
                 return false;
             }
 
             if(player.equals(target)){
-                this.sendIfOnline(player, String.format("Du bist nicht mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+                this.sendIfOnline(player, "Du bist nicht mit <gold>%s</gold> befreundet.", target);
                 return false;
             }
 
@@ -87,13 +94,13 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
             this.friends.put(player, beforeAction);
 
-            this.sendIfOnline(player, String.format("Du bist nun nicht mehr mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+            this.sendIfOnline(player, "Du bist nun nicht mehr mit <gold>%s</gold> befreundet.", target);
             return true;
         });
     }
 
     @Override
-    public CompletableFuture<List<UUID>> getFriends(UUID player) {
+    public CompletableFuture<ObjectList<UUID>> getFriends(UUID player) {
         return CompletableFuture.supplyAsync(() -> {
             if(!friends.containsKey(player)){
                 friends.put(player, new ObjectArrayList<>());
@@ -121,24 +128,28 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 friendRequests.put(target, new ObjectArrayList<>());
             }
 
+
             ObjectList<UUID> beforeAction = new ObjectArrayList<>(friendRequests.get(target));
 
             if(beforeAction.contains(player)){
-                this.sendIfOnline(player, String.format("Du hast bereits eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", Bukkit.getOfflinePlayer(target).getName()));
+
+                this.sendIfOnline(player, "Du hast bereits eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", target);
                 return false;
             }
+
 
             if(player.equals(target)){
                 this.sendIfOnline(player, "Du kannst nicht mit dir selbst befreundet sein.");
                 return false;
             }
 
+
             if(!friends.containsKey(player)){
                 friends.put(player, new ObjectArrayList<>());
             }
 
-            if(friends.get(player).contains(target)){
-                this.sendIfOnline(player, String.format("Du bist bereits mit <gold>%s</gold> befreundet.", Bukkit.getOfflinePlayer(target).getName()));
+            if(friends.get(player).contains(target)) {
+                this.sendIfOnline(player, "Du bist bereits mit <gold>%s</gold> befreundet.", target);
                 return false;
             }
 
@@ -146,15 +157,22 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             beforeAction.add(player);
             this.friendRequests.put(target, beforeAction);
 
-            this.sendIfOnline(player, String.format("Du hast eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", Bukkit.getOfflinePlayer(target).getName()));
-            this.sendIfOnline(target, String.format("Du hast eine Freundschaftsanfrage von <gold>%s</gold> erhalten.", Bukkit.getOfflinePlayer(player).getName()));
+            this.sendIfOnline(player, "Du hast eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", target);
+            this.sendIfOnline(target, "Du hast eine Freundschaftsanfrage von <gold>%s</gold> erhalten.", player);
+
             return true;
         });
     }
 
     @Override
-    public CompletableFuture<List<UUID>> getFriendRequests(UUID player) {
-        return CompletableFuture.supplyAsync(() -> friendRequests.get(player));
+    public CompletableFuture<ObjectList<UUID>> getFriendRequests(UUID player) {
+        return CompletableFuture.supplyAsync(() -> {
+            if(!friendRequests.containsKey(player)){
+                friendRequests.put(player, new ObjectArrayList<>());
+            }
+
+            return friendRequests.get(player);
+        });
     }
 
     @Override
@@ -168,7 +186,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
 
             if(!beforeAction.contains(target)){
-                this.sendIfOnline(player, String.format("Du hast keine offene Freundschaftsanfrage von <gold>%s</gold>.", Bukkit.getOfflinePlayer(target).getName()));
+
+                this.sendIfOnline(player, "Du hast keine offene Freundschaftsanfrage von <gold>%s</gold>.", target);
                 return false;
             }
 
@@ -199,7 +218,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
 
             if(!beforeAction.contains(target)){
-                this.sendIfOnline(player, String.format("Du hast keine offene Freundschaftsanfrage von <gold>%s</gold>.", Bukkit.getOfflinePlayer(target).getName()));
+                this.sendIfOnline(player, "Du hast keine offene Freundschaftsanfrage von <gold>%s</gold>.", target);
                 return false;
             }
 
@@ -213,8 +232,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
             this.friendRequests.put(player, beforeAction);
 
-            this.sendIfOnline(player, String.format("Du hast die Freundschaftsanfrage von <gold>%s</gold> abgelehnt.", Bukkit.getOfflinePlayer(target).getName()));
-            this.sendIfOnline(target, String.format("<gold>%s</gold> hat deine Freundschaftsanfrage abgelehnt.", Bukkit.getOfflinePlayer(player).getName()));
+            this.sendIfOnline(player, "Du hast die Freundschaftsanfrage von <gold>%s</gold> abgelehnt.", target);
+            this.sendIfOnline(target, "<gold>%s</gold> hat deine Freundschaftsanfrage abgelehnt.", player);
             return true;
         });
     }
@@ -227,56 +246,89 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<Boolean> init() {
         return CompletableFuture.supplyAsync(() -> {
-            if (config.getConfigurationSection("storage") == null) {
+            if (!jsonFile.exists()) {
                 return false;
             }
 
-            for (String entry : config.getConfigurationSection("storage").getKeys(false)) {
-                Boolean setting = config.getBoolean("storage." + entry + ".setting");
-                List<String> friends = config.getStringList("storage." + entry + ".friends");
-                List<String> friendRequests = config.getStringList("storage." + entry + ".requests");
+            try (FileReader reader = new FileReader(jsonFile)) {
 
-                ObjectList<UUID> friendUUIDs = new ObjectArrayList<>();
-                ObjectList<UUID> friendRequestUUIDs = new ObjectArrayList<>();
+                Type dataType = new TypeToken<Map<String, Map<String, Object>>>() {}.getType();
+                Object2ObjectMap<String, Object2ObjectMap<String, Object>> data = gson.fromJson(reader, dataType);
 
-                UUID uuid = UUID.fromString(entry);
+                if (data == null) {
+                    return false;
+                }
 
-                friends.forEach(id -> friendUUIDs.add(UUID.fromString(id)));
-                friendRequests.forEach(id -> friendRequestUUIDs.add(UUID.fromString(id)));
+                for (Entry<String, Object2ObjectMap<String, Object>> entry : data.entrySet()) {
+                    UUID uuid = UUID.fromString(entry.getKey());
 
-                this.friends.put(uuid, friendUUIDs);
-                this.friendRequests.put(uuid, friendRequestUUIDs);
-                this.friendRequestSettings.put(uuid, setting);
+                    Object2ObjectMap<String, Object> userData = entry.getValue();
+                    ObjectList<String> friendsList = (ObjectList<String>) userData.get("friends");
+                    ObjectList<String> requestsList = (ObjectList<String>) userData.get("requests");
+                    ObjectList<UUID> friendUUIDs = new ObjectArrayList<>();
+                    ObjectList<UUID> requestUUIDs = new ObjectArrayList<>();
+
+                    if (friendsList != null) {
+                        friendsList.forEach(friend -> friendUUIDs.add(UUID.fromString(friend)));
+                    }
+
+                    friends.put(uuid, friendUUIDs);
+
+                    if (requestsList != null) {
+                        requestsList.forEach(request -> requestUUIDs.add(UUID.fromString(request)));
+                    }
+                    friendRequests.put(uuid, requestUUIDs);
+
+                    Boolean setting = (Boolean) userData.get("setting");
+
+                    friendRequestSettings.put(uuid, setting != null ? setting : true);
+                }
+
+                VelocityInstance.getInstance().getLogger().log(Level.FINEST, "Successfully loaded data.");
+                return true;
+            } catch (IOException e) {
+                VelocityInstance.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+                return false;
             }
-
-            return true;
         });
     }
-
 
     @Override
     public CompletableFuture<Boolean> exit() {
         return CompletableFuture.supplyAsync(() -> {
+            Object2ObjectMap<String, Object2ObjectMap<String, Object>> toSave = new Object2ObjectOpenHashMap<>();
+
+            if (!jsonFile.exists()) {
+              try {
+                  jsonFile.getParentFile().mkdirs();
+                  jsonFile.createNewFile(); 
+              } catch (IOException e) {
+                  VelocityInstance.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+              }
+            }
+
             for (UUID uuid : friends.keySet()) {
-                ObjectList<String> friendUUIDStrings = new ObjectArrayList<>();
+                Object2ObjectMap<String, Object> userData = new Object2ObjectOpenHashMap<>();
+                ObjectList<UUID> friendsList = friends.get(uuid);
+                ObjectList<UUID> requestsList = friendRequests.get(uuid);
 
-                friends.get(uuid).forEach(friendUuid -> friendUUIDStrings.add(friendUuid.toString()));
-                config.set("storage." + uuid + ".friends", friendUUIDStrings);
+                userData.put("friends", friendsList.stream().map(UUID::toString).collect(ObjectArrayList::new, ObjectArrayList::add, ObjectArrayList::addAll));
+                userData.put("requests", requestsList != null ? requestsList.stream().map(UUID::toString).collect(ObjectArrayList::new, ObjectArrayList::add, ObjectArrayList::addAll) : new ObjectArrayList<>());
+                userData.put("setting", friendRequestSettings.get(uuid));
+
+                toSave.put(uuid.toString(), userData);
             }
 
-            for (UUID uuid : friendRequests.keySet()) {
-                ObjectList<String> requestUUIDStrings = new ObjectArrayList<>();
+            try (FileWriter writer = new FileWriter(jsonFile)) {
+                gson.toJson(toSave, writer);
 
-                friendRequests.get(uuid).forEach(requestUuid -> requestUUIDStrings.add(requestUuid.toString()));
-                config.set("storage." + uuid + ".requests", requestUUIDStrings);
+                VelocityInstance.getInstance().getLogger().log(Level.FINEST, "Successfully saved data.");
+
+                return true;
+            } catch (IOException e) {
+                VelocityInstance.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+                return false;
             }
-
-            for (UUID uuid : friendRequestSettings.keySet()) {
-                config.set("storage." + uuid + ".setting", friendRequestSettings.get(uuid));
-            }
-
-            //TODO Save
-            return true;
         });
     }
 
@@ -313,14 +365,29 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
         });
     }
 
-
     private void sendIfOnline(UUID player, String message){
-        OfflinePlayer p = Bukkit.getOfflinePlayer(player);
+        Optional<Player> optionalPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
 
-        if(!p.isOnline()){
+        if(optionalPlayer.isEmpty()){
             return;
         }
 
-        p.getPlayer().sendMessage(FriendCore.prefix().append(MiniMessage.miniMessage().deserialize(message)));
+        optionalPlayer.get().sendMessage(FriendCore.prefix().append(MiniMessage.miniMessage().deserialize(message)));
+    }
+
+
+    private void sendIfOnline(UUID player, String message, UUID target){
+        Optional<Player> optionalPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
+        Optional<Player> optionalTarget = VelocityInstance.getInstance().getProxy().getPlayer(target);
+
+        if(optionalPlayer.isEmpty()){
+            return;
+        }
+
+        if(optionalTarget.isEmpty()){
+            return;
+        }
+
+        optionalPlayer.get().sendMessage(FriendCore.prefix().append(MiniMessage.miniMessage().deserialize(message.replace("%s", optionalTarget.get().getUsername()))));
     }
 }

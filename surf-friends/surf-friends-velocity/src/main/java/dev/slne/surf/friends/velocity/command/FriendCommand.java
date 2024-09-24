@@ -6,7 +6,6 @@ import dev.slne.surf.friends.velocity.VelocityInstance;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAcceptCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAddCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendDenyCommand;
-import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendListCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendRemoveCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendSaveCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendToggleCommand;
@@ -20,7 +19,6 @@ public class FriendCommand extends CommandAPICommand {
         withSubcommand(new FriendAddCommand("add"));
         withSubcommand(new FriendAddCommand("request"));
         withSubcommand(new FriendDenyCommand("deny"));
-        withSubcommand(new FriendListCommand("list"));
         withSubcommand(new FriendRemoveCommand("remove"));
         withSubcommand(new FriendToggleCommand("toggle"));
         withSubcommand(new FriendSaveCommand("save"));

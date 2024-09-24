@@ -10,7 +10,8 @@ dependencies {
     api(project(":surf-friends:surf-friends-velocity"))
 
     compileOnlyApi(libs.paper.api)
-    compileOnlyApi(libs.inventory.framework)
+    compileOnlyApi(libs.velocity.api)
+    implementation(libs.inventory.framework)
 }
 
 paper {
@@ -22,6 +23,7 @@ paper {
 
 tasks.shadowJar{
     relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.paper.inventoryframework")
+    relocate("com.velocitypowered.api", "dev.slne.surf.friends.paper.velocityapi")
 
     archiveClassifier.set("")
 }
