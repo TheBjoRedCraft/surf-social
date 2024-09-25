@@ -30,13 +30,8 @@ import net.kyori.adventure.util.Services;
 @AutoService(FriendApi.class)
 @SuppressWarnings("unchecked")
 public class FriendApiFallback implements FriendApi, Services.Fallback {
-
     private final File jsonFile = new File("plugins/surf-friends-velocity/friends.json");
     private final Gson gson = new Gson();
-
-    private final Object2ObjectMap<UUID, ObjectList<UUID>> friends = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectMap<UUID, ObjectList<UUID>> friendRequests = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectMap<UUID, Boolean> friendRequestSettings = new Object2ObjectOpenHashMap<>();
 
     private final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
 
@@ -104,7 +99,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<Boolean> sendFriendRequest(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
-            FriendData friendData = this.getData(player);
+            FriendData friendData = this.getData(target);
 
             if(friendData.getFriendRequests().contains(player)){
 
@@ -118,7 +113,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 return false;
             }
 
-            if(friendData.getFriendList().contains(target)) {
+            if(friendData.getFriendList().contains(player)) {
                 this.sendIfOnline(player, "Du bist bereits mit <gold>%s</gold> befreundet.", target);
                 return false;
             }
@@ -126,7 +121,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
             friendData.getFriendRequests().add(player);
 
-            data.put(player, friendData);
+            data.put(target, friendData);
 
             this.sendIfOnline(player, "Du hast eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", target);
             this.sendIfOnline(target, "Du hast eine Freundschaftsanfrage von <gold>%s</gold> erhalten.", player);
@@ -147,7 +142,6 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
 
             if(!friendData.getFriendRequests().contains(target)){
-
                 this.sendIfOnline(player, "Du hast keine offene Freundschaftsanfrage von <gold>%s</gold>.", target);
                 return false;
             }
@@ -206,6 +200,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             if (!jsonFile.exists()) {
                 return true;
             }
+
             try (FileReader reader = new FileReader(jsonFile)) {
                 Type mapType = new TypeToken<Object2ObjectMap<UUID, FriendData>>(){}.getType();
                 Object2ObjectMap<UUID, FriendData> loadedData = gson.fromJson(reader, mapType);
@@ -227,6 +222,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
         return CompletableFuture.supplyAsync(() -> {
             if(!jsonFile.exists()){
                 jsonFile.getParentFile().mkdirs();
+
               try {
                 jsonFile.createNewFile();
               } catch (IOException e) {
