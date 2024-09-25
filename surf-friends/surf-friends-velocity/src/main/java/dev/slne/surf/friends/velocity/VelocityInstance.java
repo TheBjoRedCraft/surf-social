@@ -16,13 +16,16 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIVelocityConfig;
 import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.core.FriendCore;
+import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.command.FriendCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAddCommand;
 import java.nio.file.Path;
-import java.util.logging.Logger;
 
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.Services;
+import org.slf4j.Logger;
 
 @Plugin(
     id = "surf-friends",
@@ -46,6 +49,7 @@ public class VelocityInstance {
     this.proxy = proxy;
     this.logger = logger;
     this.dataDirectory = dataDirectory;
+
     instance = this;
 
     CommandAPI.onLoad(new CommandAPIVelocityConfig(proxy, this));
@@ -55,20 +59,26 @@ public class VelocityInstance {
     new FriendCommand("friends").register();
 
     new FriendAddCommand("fa").register();
+
+    info("Loading SurfSocial/SurfFriends:Velocity");
   }
 
   @Subscribe
   public void onProxyInitialization(ProxyInitializeEvent event) {
+    api.init();
+
     CommandAPI.onEnable();
 
-    api.init();
+    info("Successfully enabled.");
   }
 
   @Subscribe
   public void onShutdown(ProxyShutdownEvent event){
+    api.exit();
+
     CommandAPI.onDisable();
 
-    api.exit();
+    info("Successfully disabled.");
     //Shutdown
   }
 
@@ -79,5 +89,18 @@ public class VelocityInstance {
     player.getCurrentServer().ifPresent(serverConnection -> {
       serverConnection.sendPluginMessage(channel, out.toByteArray());
     });
+  }
+
+
+  public static void error(String message){
+    VelocityInstance.getInstance().getProxy().getConsoleCommandSource().sendMessage(FriendCore.prefix().append(Component.text(message).color(PluginColor.RED)));
+  }
+
+  public static void warn(String message){
+    VelocityInstance.getInstance().getProxy().getConsoleCommandSource().sendMessage(FriendCore.prefix().append(Component.text(message).color(PluginColor.YELLOW)));
+  }
+
+  public static void info(String message){
+    VelocityInstance.getInstance().getProxy().getConsoleCommandSource().sendMessage(FriendCore.prefix().append(Component.text(message).color(PluginColor.LIGHT_GREEN)));
   }
 }

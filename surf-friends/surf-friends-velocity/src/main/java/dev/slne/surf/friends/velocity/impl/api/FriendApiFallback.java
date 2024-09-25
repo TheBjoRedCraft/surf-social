@@ -198,6 +198,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     public CompletableFuture<Boolean> init() {
         return CompletableFuture.supplyAsync(() -> {
             if (!jsonFile.exists()) {
+                VelocityInstance.info("There was no data to load.");
                 return true;
             }
 
@@ -210,9 +211,11 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 }
 
             } catch (IOException e) {
-                VelocityInstance.getInstance().getLogger().severe(e.getMessage());
+                VelocityInstance.error(e.getMessage());
                 return false;
             }
+
+            VelocityInstance.info("Successfully loaded data from storage.");
             return true;
         });
     }
@@ -226,16 +229,18 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
               try {
                 jsonFile.createNewFile();
               } catch (IOException e) {
-                  VelocityInstance.getInstance().getLogger().severe(e.getMessage());
+                  VelocityInstance.error(e.getMessage());
               }
             }
 
             try (FileWriter writer = new FileWriter(jsonFile)) {
                 gson.toJson(data, writer);
             } catch (IOException e) {
-                VelocityInstance.getInstance().getLogger().severe(e.getMessage());
+                VelocityInstance.error(e.getMessage());
                 return false;
             }
+
+            VelocityInstance.info("Successfully saved data to storage.");
             return true;
         });
     }

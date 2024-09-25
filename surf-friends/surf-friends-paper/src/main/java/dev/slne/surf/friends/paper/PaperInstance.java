@@ -37,7 +37,7 @@ public class PaperInstance extends JavaPlugin {
     OfflinePlayer target = Bukkit.getOfflinePlayer(player);
 
     if(!target.isOnline()){
-      VelocityInstance.getInstance().getLogger().log(Level.WARNING, target.getName() + ": Failed to open menu. The player is not reachable.");
+      VelocityInstance.error(target.getName() + ": Failed to open menu. The player is not reachable.");
       PaperInstance.instance().logger().warn(target.getName() + ": Failed to open menu. The player is not reachable.");
       return;
     }

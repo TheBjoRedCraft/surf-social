@@ -8,4 +8,5 @@ public class PluginColor {
   public static TextColor LIGHT_BLUE = TextColor.fromHexString("#4bb8f8");
   public static TextColor RED = TextColor.fromHexString("#e9202b");
   public static TextColor LIGHT_GREEN = TextColor.fromHexString("#29e918");
+  public static TextColor YELLOW = TextColor.fromHexString("#e9dd33");
 }
