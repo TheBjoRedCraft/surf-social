@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public class FriendData {
   private ObjectList<UUID> friendList;

@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.velocitypowered.api.proxy.Player;
 
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.velocity.VelocityInstance;
@@ -43,14 +44,9 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<Boolean> addFriend(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
-            if(friends.get(player) == null){
-                friends.put(player, new ObjectArrayList<>());
-            }
+            FriendData friendData = this.getData(player);
 
-
-            ObjectList<UUID> beforeAction = new ObjectArrayList<>(friends.get(player));
-
-            if(beforeAction.contains(target)){
+            if(friendData.getFriendList().contains(target)){
                 this.sendIfOnline(player, "Du bist bereits mit <gold>%s</gold> befreundet.", target);
                 return false;
             }
@@ -60,8 +56,9 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 return false;
             }
 
-            beforeAction.add(target);
-            friends.put(player, beforeAction);
+            friendData.getFriendList().add(target);
+
+            data.put(player, friendData);
 
             this.sendIfOnline(player, "Du bist nun mit <gold>%s</gold> befreundet.", target);
             return true;
@@ -71,14 +68,10 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<Boolean> removeFriend(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
-            if(friends.get(player) == null){
-                friends.put(player, new ObjectArrayList<>());
-            }
-
-            ObjectList<UUID> beforeAction = new ObjectArrayList<>(friends.get(player));
+            FriendData friendData = this.getData(player);
 
 
-            if(!beforeAction.contains(target)){
+            if(!friendData.getFriendList().contains(target)){
                 this.sendIfOnline(player, "Du bist nicht mit <gold>%s</gold> befreundet.", target);
                 return false;
             }
@@ -88,10 +81,10 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 return false;
             }
 
-            beforeAction.remove(target);
+            friendData.getFriendList().remove(target);
 
 
-            this.friends.put(player, beforeAction);
+            data.put(player, friendData);
 
             this.sendIfOnline(player, "Du bist nun nicht mehr mit <gold>%s</gold> befreundet.", target);
             return true;
@@ -100,37 +93,20 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
     @Override
     public CompletableFuture<ObjectList<UUID>> getFriends(UUID player) {
-        return CompletableFuture.supplyAsync(() -> {
-            if(!friends.containsKey(player)){
-                friends.put(player, new ObjectArrayList<>());
-            }
-
-            return friends.get(player);
-        });
+        return CompletableFuture.supplyAsync(() -> this.getData(player).getFriendList());
     }
 
     @Override
     public CompletableFuture<Boolean> areFriends(UUID player, UUID target) {
-        return CompletableFuture.supplyAsync(() -> {
-            if(!friends.containsKey(player)){
-                return false;
-            }
-
-            return friends.get(player).contains(target);
-        });
+        return CompletableFuture.supplyAsync(() -> this.getData(player).getFriendList().contains(target));
     }
 
     @Override
     public CompletableFuture<Boolean> sendFriendRequest(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
-            if(!friendRequests.containsKey(target)){
-                friendRequests.put(target, new ObjectArrayList<>());
-            }
+            FriendData friendData = this.getData(player);
 
-
-            ObjectList<UUID> beforeAction = new ObjectArrayList<>(friendRequests.get(target));
-
-            if(beforeAction.contains(player)){
+            if(friendData.getFriendRequests().contains(player)){
 
                 this.sendIfOnline(player, "Du hast bereits eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", target);
                 return false;
@@ -142,19 +118,15 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 return false;
             }
 
-
-            if(!friends.containsKey(player)){
-                friends.put(player, new ObjectArrayList<>());
-            }
-
-            if(friends.get(player).contains(target)) {
+            if(friendData.getFriendList().contains(target)) {
                 this.sendIfOnline(player, "Du bist bereits mit <gold>%s</gold> befreundet.", target);
                 return false;
             }
 
 
-            beforeAction.add(player);
-            this.friendRequests.put(target, beforeAction);
+            friendData.getFriendRequests().add(player);
+
+            data.put(player, friendData);
 
             this.sendIfOnline(player, "Du hast eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", target);
             this.sendIfOnline(target, "Du hast eine Freundschaftsanfrage von <gold>%s</gold> erhalten.", player);
@@ -165,26 +137,16 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
     @Override
     public CompletableFuture<ObjectList<UUID>> getFriendRequests(UUID player) {
-        return CompletableFuture.supplyAsync(() -> {
-            if(!friendRequests.containsKey(player)){
-                friendRequests.put(player, new ObjectArrayList<>());
-            }
-
-            return friendRequests.get(player);
-        });
+        return CompletableFuture.supplyAsync(() -> this.getData(player).getFriendRequests());
     }
 
     @Override
     public CompletableFuture<Boolean> acceptFriendRequest(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
-            if(!friendRequests.containsKey(player)){
-                friendRequests.put(player, new ObjectArrayList<>());
-            }
-
-            ObjectList<UUID> beforeAction = new ObjectArrayList<>(friendRequests.get(player));
+            FriendData friendData = this.getData(player);
 
 
-            if(!beforeAction.contains(target)){
+            if(!friendData.getFriendRequests().contains(target)){
 
                 this.sendIfOnline(player, "Du hast keine offene Freundschaftsanfrage von <gold>%s</gold>.", target);
                 return false;
@@ -195,10 +157,10 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 return false;
             }
 
-            beforeAction.remove(target);
+            friendData.getFriendRequests().remove(target);
 
 
-            this.friendRequests.put(player, beforeAction);
+            data.put(player, friendData);
 
             this.addFriend(player, target);
             this.addFriend(target, player);
@@ -209,14 +171,10 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<Boolean> denyFriendRequest(UUID player, UUID target) {
         return CompletableFuture.supplyAsync(() -> {
-            if(!friendRequests.containsKey(player)){
-                friendRequests.put(player, new ObjectArrayList<>());
-            }
-
-            ObjectList<UUID> beforeAction = new ObjectArrayList<>(friendRequests.get(player));
+            FriendData friendData = this.getData(player);
 
 
-            if(!beforeAction.contains(target)){
+            if(!friendData.getFriendRequests().contains(target)){
                 this.sendIfOnline(player, "Du hast keine offene Freundschaftsanfrage von <gold>%s</gold>.", target);
                 return false;
             }
@@ -226,10 +184,10 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 return false;
             }
 
-            beforeAction.remove(target);
+            friendData.getFriendRequests().remove(target);
 
 
-            this.friendRequests.put(player, beforeAction);
+            data.put(player, friendData);
 
             this.sendIfOnline(player, "Du hast die Freundschaftsanfrage von <gold>%s</gold> abgelehnt.", target);
             this.sendIfOnline(target, "<gold>%s</gold> hat deine Freundschaftsanfrage abgelehnt.", player);
@@ -290,21 +248,18 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<Boolean> toggle(UUID player) {
         return CompletableFuture.supplyAsync(() -> {
-            if(friendRequestSettings.containsKey(player)){
-                if(friendRequestSettings.get(player)){
-                    friendRequestSettings.put(player, false);
+            FriendData friendData = this.getData(player);
 
-                    this.sendIfOnline(player, "Du hast nun Freundschaftsanfragen deaktiviert.");
-                }else{
-                    friendRequestSettings.put(player, true);
-
-                    this.sendIfOnline(player, "Du hast nun Freundschaftsanfragen aktiviert.");
-                }
-            }else{
-                friendRequestSettings.put(player, false);
+            if(friendData.getAllowRequests()){
+                friendData.allowRequests(false);
 
                 this.sendIfOnline(player, "Du hast nun Freundschaftsanfragen deaktiviert.");
+            }else{
+                friendData.allowRequests(true);
+
+                this.sendIfOnline(player, "Du hast nun Freundschaftsanfragen aktiviert.");
             }
+
 
             return true;
         });
@@ -313,11 +268,36 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<Boolean> send(UUID player, String server) {
         return CompletableFuture.supplyAsync(() -> {
-            //TODO: get server and implement method
+            Optional<RegisteredServer> registeredServer = VelocityInstance.getInstance().getProxy().getServer(server);
+            Optional<Player> velocityPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
+
+            if(registeredServer.isEmpty()){
+                return false;
+            }
+
+            if(velocityPlayer.isEmpty()){
+                return false;
+            }
+
+            this.sendIfOnline(player, String.format("Versuche dich zu %s zu senden...", server));
+
+            velocityPlayer.get().createConnectionRequest(registeredServer.get()).fireAndForget();
+
+            this.sendIfOnline(player, String.format("Du wurdest erfolgreich zu %s gesendet.", server));
 
             return true;
         });
     }
+
+    private FriendData getData(UUID uuid){
+        if(data.get(uuid) == null){
+            data.put(uuid, new FriendData().friendList(new ObjectArrayList<>()).friendRequests(new ObjectArrayList<>()).allowRequests(true));
+        }
+
+        return data.get(uuid);
+    }
+
+
 
     private void sendIfOnline(UUID player, String message){
         Optional<Player> optionalPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
