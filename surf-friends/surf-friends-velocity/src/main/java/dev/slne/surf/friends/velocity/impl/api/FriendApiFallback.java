@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 
 import com.google.gson.reflect.TypeToken;
 import com.velocitypowered.api.proxy.Player;
+
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.velocity.VelocityInstance;
@@ -12,22 +13,18 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
+
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 
 @AutoService(FriendApi.class)
 @SuppressWarnings("unchecked")
@@ -39,6 +36,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friends = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, ObjectList<UUID>> friendRequests = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<UUID, Boolean> friendRequestSettings = new Object2ObjectOpenHashMap<>();
+
+    private final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
 
 
     @Override
@@ -247,88 +246,43 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     public CompletableFuture<Boolean> init() {
         return CompletableFuture.supplyAsync(() -> {
             if (!jsonFile.exists()) {
-                return false;
-            }
-
-            try (FileReader reader = new FileReader(jsonFile)) {
-
-                Type dataType = new TypeToken<Map<String, Map<String, Object>>>() {}.getType();
-                Object2ObjectMap<String, Object2ObjectMap<String, Object>> data = gson.fromJson(reader, dataType);
-
-                if (data == null) {
-                    return false;
-                }
-
-                for (Entry<String, Object2ObjectMap<String, Object>> entry : data.entrySet()) {
-                    UUID uuid = UUID.fromString(entry.getKey());
-
-                    Object2ObjectMap<String, Object> userData = entry.getValue();
-                    ObjectList<String> friendsList = (ObjectList<String>) userData.get("friends");
-                    ObjectList<String> requestsList = (ObjectList<String>) userData.get("requests");
-                    ObjectList<UUID> friendUUIDs = new ObjectArrayList<>();
-                    ObjectList<UUID> requestUUIDs = new ObjectArrayList<>();
-
-                    if (friendsList != null) {
-                        friendsList.forEach(friend -> friendUUIDs.add(UUID.fromString(friend)));
-                    }
-
-                    friends.put(uuid, friendUUIDs);
-
-                    if (requestsList != null) {
-                        requestsList.forEach(request -> requestUUIDs.add(UUID.fromString(request)));
-                    }
-                    friendRequests.put(uuid, requestUUIDs);
-
-                    Boolean setting = (Boolean) userData.get("setting");
-
-                    friendRequestSettings.put(uuid, setting != null ? setting : true);
-                }
-
-                VelocityInstance.getInstance().getLogger().log(Level.FINEST, "Successfully loaded data.");
                 return true;
+            }
+            try (FileReader reader = new FileReader(jsonFile)) {
+                Type mapType = new TypeToken<Object2ObjectMap<UUID, FriendData>>(){}.getType();
+                Object2ObjectMap<UUID, FriendData> loadedData = gson.fromJson(reader, mapType);
+
+                if (loadedData != null) {
+                    data.putAll(loadedData);
+                }
+
             } catch (IOException e) {
-                VelocityInstance.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+                VelocityInstance.getInstance().getLogger().severe(e.getMessage());
                 return false;
             }
+            return true;
         });
     }
 
     @Override
     public CompletableFuture<Boolean> exit() {
         return CompletableFuture.supplyAsync(() -> {
-            Object2ObjectMap<String, Object2ObjectMap<String, Object>> toSave = new Object2ObjectOpenHashMap<>();
-
-            if (!jsonFile.exists()) {
+            if(!jsonFile.exists()){
+                jsonFile.getParentFile().mkdirs();
               try {
-                  jsonFile.getParentFile().mkdirs();
-                  jsonFile.createNewFile(); 
+                jsonFile.createNewFile();
               } catch (IOException e) {
-                  VelocityInstance.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+                  VelocityInstance.getInstance().getLogger().severe(e.getMessage());
               }
             }
 
-            for (UUID uuid : friends.keySet()) {
-                Object2ObjectMap<String, Object> userData = new Object2ObjectOpenHashMap<>();
-                ObjectList<UUID> friendsList = friends.get(uuid);
-                ObjectList<UUID> requestsList = friendRequests.get(uuid);
-
-                userData.put("friends", friendsList.stream().map(UUID::toString).collect(ObjectArrayList::new, ObjectArrayList::add, ObjectArrayList::addAll));
-                userData.put("requests", requestsList != null ? requestsList.stream().map(UUID::toString).collect(ObjectArrayList::new, ObjectArrayList::add, ObjectArrayList::addAll) : new ObjectArrayList<>());
-                userData.put("setting", friendRequestSettings.get(uuid));
-
-                toSave.put(uuid.toString(), userData);
-            }
-
             try (FileWriter writer = new FileWriter(jsonFile)) {
-                gson.toJson(toSave, writer);
-
-                VelocityInstance.getInstance().getLogger().log(Level.FINEST, "Successfully saved data.");
-
-                return true;
+                gson.toJson(data, writer);
             } catch (IOException e) {
-                VelocityInstance.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+                VelocityInstance.getInstance().getLogger().severe(e.getMessage());
                 return false;
             }
+            return true;
         });
     }
 
