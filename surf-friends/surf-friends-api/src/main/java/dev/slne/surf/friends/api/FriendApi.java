@@ -91,14 +91,14 @@ public interface FriendApi {
    *
    * @return A boolean indicating the success or failure of the operation.
    */
-  CompletableFuture<Boolean> init();
+  Boolean init();
 
   /**
    * Exit Tasks for stopping.
    *
    * @return A boolean indicating the success or failure of the operation.
    */
-  CompletableFuture<Boolean> exit();
+  Boolean exit();
 
   /**
    * Toggle friend requests.

@@ -20,10 +20,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import lombok.Getter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
 
@@ -195,54 +197,54 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     }
 
     @Override
-    public CompletableFuture<Boolean> init() {
-        return CompletableFuture.supplyAsync(() -> {
-            if (!jsonFile.exists()) {
-                VelocityInstance.info("There was no data to load.");
-                return true;
-            }
-
-            try (FileReader reader = new FileReader(jsonFile)) {
-                Type mapType = new TypeToken<Object2ObjectMap<UUID, FriendData>>(){}.getType();
-                Object2ObjectMap<UUID, FriendData> loadedData = gson.fromJson(reader, mapType);
-
-                if (loadedData != null) {
-                    data.putAll(loadedData);
-                }
-
-            } catch (IOException e) {
-                VelocityInstance.error(e.getMessage());
-                return false;
-            }
-
-            VelocityInstance.info("Successfully loaded data from storage.");
+    public Boolean init() {
+        if (!jsonFile.exists()) {
+            VelocityInstance.info("There was no data to load.");
             return true;
-        });
+        }
+
+        try (FileReader reader = new FileReader(jsonFile)) {
+            Type type = new TypeToken<Map<UUID, FriendData>>(){}.getType();
+            Map<UUID, FriendData> loadedData = gson.fromJson(reader, type);
+
+            if (loadedData != null) {
+                data.putAll(loadedData);
+            } else {
+                VelocityInstance.info("There was an error while loading data from storage.");
+            }
+
+        } catch (IOException e) {
+            VelocityInstance.error(e.getMessage());
+            return false;
+        }
+
+        VelocityInstance.info("Successfully loaded data from storage.");
+        return true;
     }
 
     @Override
-    public CompletableFuture<Boolean> exit() {
-        return CompletableFuture.supplyAsync(() -> {
-            if(!jsonFile.exists()){
-                jsonFile.getParentFile().mkdirs();
+    public Boolean exit() {
+        if(!jsonFile.exists()){
+            jsonFile.getParentFile().mkdirs();
 
-              try {
-                jsonFile.createNewFile();
-              } catch (IOException e) {
-                  VelocityInstance.error(e.getMessage());
-              }
-            }
 
-            try (FileWriter writer = new FileWriter(jsonFile)) {
-                gson.toJson(data, writer);
-            } catch (IOException e) {
-                VelocityInstance.error(e.getMessage());
-                return false;
-            }
+          try {
+            jsonFile.createNewFile();
+          } catch (IOException e) {
+              VelocityInstance.error(e.getMessage());
+          }
+        }
 
-            VelocityInstance.info("Successfully saved data to storage.");
-            return true;
-        });
+        try (FileWriter writer = new FileWriter(jsonFile)) {
+            gson.toJson(data, writer);
+
+        } catch (IOException e) {
+            VelocityInstance.error(e.getMessage());
+            return false;
+        }
+
+        VelocityInstance.info("Successfully saved data to storage.");
+        return true;
     }
 
 
