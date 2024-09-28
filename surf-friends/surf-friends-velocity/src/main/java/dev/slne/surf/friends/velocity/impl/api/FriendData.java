@@ -2,22 +2,23 @@ package dev.slne.surf.friends.velocity.impl.api;
 
 import com.google.gson.Gson;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import java.util.List;
 import java.util.UUID;
 
 import lombok.Getter;
 
 @Getter
 public class FriendData {
-  private ObjectList<UUID> friendList;
-  private ObjectList<UUID> friendRequests;
+  private List<UUID> friendList;
+  private List<UUID> friendRequests;
   private Boolean allowRequests;
 
-  public FriendData friendList(ObjectList<UUID> friendList){
+  public FriendData friendList(List<UUID> friendList){
     this.friendList = friendList;
     return this;
   }
 
-  public FriendData friendRequests(ObjectList<UUID> friendRequests){
+  public FriendData friendRequests(List<UUID> friendRequests){
     this.friendRequests = friendRequests;
     return this;
   }

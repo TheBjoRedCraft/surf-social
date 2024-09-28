@@ -6,4 +6,3 @@ features--------------------------
 bugs------------------------------
 
 - friends and friendrequest menu does not work -> players are not displayed
-- saving and loading does not work

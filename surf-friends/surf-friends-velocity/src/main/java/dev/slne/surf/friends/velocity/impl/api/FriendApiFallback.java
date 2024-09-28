@@ -11,6 +11,7 @@ import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.velocity.VelocityInstance;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
@@ -21,6 +22,7 @@ import java.io.IOException;
 
 import java.lang.reflect.Type;
 
+import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -89,7 +91,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
     @Override
     public CompletableFuture<ObjectList<UUID>> getFriends(UUID player) {
-        return CompletableFuture.supplyAsync(() -> this.getData(player).getFriendList());
+        return CompletableFuture.supplyAsync(() -> (ObjectList<UUID>) this.getData(player).getFriendList());
     }
 
     @Override
@@ -133,7 +135,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
     @Override
     public CompletableFuture<ObjectList<UUID>> getFriendRequests(UUID player) {
-        return CompletableFuture.supplyAsync(() -> this.getData(player).getFriendRequests());
+        return CompletableFuture.supplyAsync(() -> (ObjectList<UUID>) this.getData(player).getFriendRequests());
     }
 
     @Override
@@ -203,14 +205,11 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
         }
 
         try (FileReader reader = new FileReader(jsonFile)) {
-            Type type = new TypeToken<Object2ObjectMap<UUID, FriendData>>(){}.getType();
-            Object2ObjectMap<UUID, FriendData> loadedData = gson.fromJson(reader, type);
+            Type type = new TypeToken<LinkedHashMap<UUID, FriendData>>(){}.getType();
+            LinkedHashMap<UUID, FriendData> tempData = gson.fromJson(reader, type);
+            Object2ObjectMap<UUID, FriendData> loadedData = new Object2ObjectOpenHashMap<>(tempData);
 
-            if (loadedData != null) {
-                data.putAll(loadedData);
-            } else {
-                VelocityInstance.info("There was an error while loading data from storage.");
-            }
+            data.putAll(loadedData);
 
         } catch (IOException e) {
             VelocityInstance.error(e.getMessage());
