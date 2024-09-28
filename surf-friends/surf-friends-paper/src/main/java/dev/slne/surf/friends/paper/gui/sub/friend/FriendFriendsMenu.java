@@ -11,7 +11,6 @@ import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
-import dev.slne.surf.friends.velocity.VelocityInstance;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
@@ -26,7 +25,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class FriendFriendsMenu extends FriendMenu {
   private final FriendLogger logger = PaperInstance.instance().logger();
-  private final FriendApi api = FriendApi.get();
+  private final FriendApi api = PaperInstance.instance().api();
 
   public FriendFriendsMenu(UUID player) {
     super(5, "Deine Freunde");

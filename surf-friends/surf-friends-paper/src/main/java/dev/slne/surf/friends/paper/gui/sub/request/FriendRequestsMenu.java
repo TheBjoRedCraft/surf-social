@@ -11,7 +11,6 @@ import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
-import dev.slne.surf.friends.velocity.VelocityInstance;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
@@ -22,12 +21,14 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unchecked")
 public class FriendRequestsMenu extends FriendMenu {
 
+  private static final Logger log = LoggerFactory.getLogger(FriendRequestsMenu.class);
   private final FriendLogger logger = PaperInstance.instance().logger();
-  private final FriendApi api = FriendApi.get();
 
   public FriendRequestsMenu(UUID player) {
     super(5, "Freundschaftsanfragen");
@@ -88,7 +89,7 @@ public class FriendRequestsMenu extends FriendMenu {
     ObjectList<ItemStack> stacks = new ObjectArrayList<>();
 
     try {
-      for(UUID uuid : api.getFriendRequests(player).get()){
+      for(UUID uuid : PaperInstance.instance().api().getFriendRequests(player).get()){
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
         stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.getName()).setSkullOwner(offlinePlayer).build());

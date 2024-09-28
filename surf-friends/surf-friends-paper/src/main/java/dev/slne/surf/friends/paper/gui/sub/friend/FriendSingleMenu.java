@@ -13,7 +13,6 @@ import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
-import dev.slne.surf.friends.velocity.VelocityInstance;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -25,12 +24,11 @@ import net.kyori.adventure.text.format.TextDecoration.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
 
 public class FriendSingleMenu extends FriendMenu {
-  private final FriendApi api = FriendApi.get();
+  private final FriendApi api = PaperInstance.instance().api();
 
   public FriendSingleMenu(String name) {
     super(5, name);

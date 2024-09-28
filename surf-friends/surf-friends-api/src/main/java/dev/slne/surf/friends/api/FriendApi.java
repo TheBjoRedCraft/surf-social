@@ -1,7 +1,7 @@
 package dev.slne.surf.friends.api;
 
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import java.util.List;
+
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.util.Services;
@@ -113,12 +113,4 @@ public interface FriendApi {
    * @return A boolean indicating the success or failure of the operation.
    */
   CompletableFuture<Boolean> send(UUID player, String target);
-
-  static FriendApi get() {
-    return Accessor.INSTANCE;
-  }
-
-  class Accessor {
-    private static final FriendApi INSTANCE = Services.serviceWithFallback(FriendApi.class).orElseThrow(() -> new Error("FriendApi not available"));
-  }
 }

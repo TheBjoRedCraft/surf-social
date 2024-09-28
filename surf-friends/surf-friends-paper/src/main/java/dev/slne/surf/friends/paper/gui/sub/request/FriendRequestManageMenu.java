@@ -9,6 +9,7 @@ import com.github.stefvanschie.inventoryframework.pane.component.Label;
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
+import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
 import net.kyori.adventure.text.Component;
@@ -18,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class FriendRequestManageMenu extends FriendMenu {
-  private final FriendApi api = FriendApi.get();
+  private final FriendApi api = PaperInstance.instance().api();
 
   public FriendRequestManageMenu(String name) {
     super(5, "Anfrage von " + name);

@@ -8,10 +8,10 @@ import com.github.stefvanschie.inventoryframework.pane.component.ToggleButton;
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
+import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
-import dev.slne.surf.friends.velocity.VelocityInstance;
 import java.util.UUID;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -22,7 +22,7 @@ import net.kyori.adventure.text.format.TextDecoration.State;
 import org.bukkit.Material;
 
 public class FriendSettingsMenu extends FriendMenu {
-  private final FriendApi api = FriendApi.get();
+  FriendApi api = PaperInstance.instance().api();
 
   public FriendSettingsMenu(UUID player) {
     super(5, "Freundeseinstellungen");

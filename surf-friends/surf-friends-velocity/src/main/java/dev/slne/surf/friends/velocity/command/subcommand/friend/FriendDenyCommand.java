@@ -28,7 +28,7 @@ public class FriendDenyCommand extends CommandAPICommand {
 
             UUID target = optionalPlayer.get().getUniqueId();
 
-            FriendApi.get().denyFriendRequest(player.getUniqueId(), target);
+            VelocityInstance.getInstance().getApi().denyFriendRequest(player.getUniqueId(), target);
         });
     }
 }

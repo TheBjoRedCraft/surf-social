@@ -30,8 +30,8 @@ public class FriendRemoveCommand extends CommandAPICommand {
 
             UUID target = optionalPlayer.get().getUniqueId();
 
-            FriendApi.get().removeFriend(player.getUniqueId(), target);
-            FriendApi.get().removeFriend(target, player.getUniqueId());
+            VelocityInstance.getInstance().getApi().removeFriend(player.getUniqueId(), target);
+            VelocityInstance.getInstance().getApi().removeFriend(target, player.getUniqueId());
         });
     }
 }

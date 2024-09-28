@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.velocitypowered.api.proxy.Player;
 
+import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import lombok.Getter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
 
@@ -36,7 +38,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     private final File jsonFile = new File("plugins/surf-friends-velocity/friends.json");
     private final Gson gson = new Gson();
 
-    private final Object2ObjectMap<UUID, FriendData> data = VelocityInstance.getData();
+    @Getter
+    private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
 
 
     @Override
@@ -194,7 +197,20 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
     @Override
     public CompletableFuture<String> getServerFromPlayer(UUID player) {
-        return CompletableFuture.supplyAsync(() -> "Nicht angegeben");
+        return CompletableFuture.supplyAsync(() -> {
+            Optional<Player> velocityPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
+
+            if(velocityPlayer.isEmpty()){
+                return "N/A";
+            }
+
+            Optional<ServerConnection> connection = velocityPlayer.get().getCurrentServer();
+
+            if(connection.isEmpty()){
+                return "N/A";
+            }
+            return connection.get().getServer().getServerInfo().getName();
+        });
     }
 
     @Override

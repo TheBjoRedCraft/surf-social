@@ -47,10 +47,9 @@ public class VelocityInstance {
   private final Path dataDirectory;
 
   private final FriendApi api = Services.serviceWithFallback(FriendApi.class).orElseThrow(() -> new Error("FriendApi not available"));
-  private final MinecraftChannelIdentifier channel = MinecraftChannelIdentifier.create("surf-friends", "main");
 
-  @Getter
-  private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
+//  @Getter
+//  private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
 
   @Inject
   public VelocityInstance(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {
@@ -60,10 +59,8 @@ public class VelocityInstance {
 
     instance = this;
 
-    warn(data.toString());
-
     CommandAPI.onLoad(new CommandAPIVelocityConfig(proxy, this));
-    proxy.getChannelRegistrar().register(channel);
+    proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.create("surf-friends", "main"));
 
     new FriendCommand("friend").register();
     new FriendCommand("friends").register();
@@ -79,8 +76,6 @@ public class VelocityInstance {
 
     CommandAPI.onEnable();
 
-    warn(data.toString());
-
     info("Successfully enabled.");
   }
 
@@ -90,8 +85,6 @@ public class VelocityInstance {
 
     CommandAPI.onDisable();
 
-    warn(data.toString());
-
     info("Successfully disabled.");
   }
 
@@ -100,7 +93,7 @@ public class VelocityInstance {
 
     out.writeUTF(menu);
     player.getCurrentServer().ifPresent(serverConnection -> {
-      serverConnection.sendPluginMessage(channel, out.toByteArray());
+      serverConnection.sendPluginMessage(MinecraftChannelIdentifier.create("surf-friends", "main"), out.toByteArray());
     });
   }
 

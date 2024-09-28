@@ -31,7 +31,7 @@ public class FriendAddCommand extends CommandAPICommand {
             UUID target = optionalPlayer.get().getUniqueId();
             UUID playerUUID = player.getUniqueId();
 
-            FriendApi.get().sendFriendRequest(playerUUID, target);
+            VelocityInstance.getInstance().getApi().sendFriendRequest(playerUUID, target);
         });
     }
 }

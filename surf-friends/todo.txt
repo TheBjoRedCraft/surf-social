@@ -6,3 +6,4 @@ features--------------------------
 bugs------------------------------
 
 - friends and friendrequest menu does not work -> players are not displayed
+- paper plugin does not get api
