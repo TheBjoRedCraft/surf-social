@@ -11,7 +11,6 @@ import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.velocity.VelocityInstance;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
@@ -19,13 +18,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.lang.reflect.Type;
-import java.util.Map;
+
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import lombok.Getter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
 
@@ -35,7 +34,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     private final File jsonFile = new File("plugins/surf-friends-velocity/friends.json");
     private final Gson gson = new Gson();
 
-    private final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<UUID, FriendData> data = VelocityInstance.getData();
 
 
     @Override
@@ -204,8 +203,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
         }
 
         try (FileReader reader = new FileReader(jsonFile)) {
-            Type type = new TypeToken<Map<UUID, FriendData>>(){}.getType();
-            Map<UUID, FriendData> loadedData = gson.fromJson(reader, type);
+            Type type = new TypeToken<Object2ObjectMap<UUID, FriendData>>(){}.getType();
+            Object2ObjectMap<UUID, FriendData> loadedData = gson.fromJson(reader, type);
 
             if (loadedData != null) {
                 data.putAll(loadedData);

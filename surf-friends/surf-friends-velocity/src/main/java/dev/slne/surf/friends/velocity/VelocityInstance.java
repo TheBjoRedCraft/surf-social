@@ -20,8 +20,13 @@ import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.command.FriendCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAddCommand;
+import dev.slne.surf.friends.velocity.impl.api.FriendData;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.nio.file.Path;
 
+import java.util.UUID;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.Services;
@@ -44,6 +49,9 @@ public class VelocityInstance {
   private final FriendApi api = Services.serviceWithFallback(FriendApi.class).orElseThrow(() -> new Error("FriendApi not available"));
   private final MinecraftChannelIdentifier channel = MinecraftChannelIdentifier.create("surf-friends", "main");
 
+  @Getter
+  private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
+
   @Inject
   public VelocityInstance(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {
     this.proxy = proxy;
@@ -51,6 +59,8 @@ public class VelocityInstance {
     this.dataDirectory = dataDirectory;
 
     instance = this;
+
+    warn(data.toString());
 
     CommandAPI.onLoad(new CommandAPIVelocityConfig(proxy, this));
     proxy.getChannelRegistrar().register(channel);
@@ -69,6 +79,8 @@ public class VelocityInstance {
 
     CommandAPI.onEnable();
 
+    warn(data.toString());
+
     info("Successfully enabled.");
   }
 
@@ -78,8 +90,9 @@ public class VelocityInstance {
 
     CommandAPI.onDisable();
 
+    warn(data.toString());
+
     info("Successfully disabled.");
-    //Shutdown
   }
 
   public void openMenu(Player player, String menu) {
