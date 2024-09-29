@@ -20,22 +20,16 @@ import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.command.FriendCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAddCommand;
-import dev.slne.surf.friends.velocity.impl.api.FriendData;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.nio.file.Path;
 
-import java.util.UUID;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.util.Services;
 import org.slf4j.Logger;
 
 @Plugin(
     id = "surf-friends",
     name = "SurfFriends",
-    authors = "TheBjoRedCraft and SLNE Development",
+    authors = {"TheBjoRedCraft", "SLNE Development"},
     version = "1.21-2.1.0-SNAPSHOT"
 )
 @Getter
@@ -46,7 +40,7 @@ public class VelocityInstance {
   private final ProxyServer proxy;
   private final Path dataDirectory;
 
-  private final FriendApi api = Services.serviceWithFallback(FriendApi.class).orElseThrow(() -> new Error("FriendApi not available"));
+  private final FriendApi api = FriendApi.get();
 
 //  @Getter
 //  private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();

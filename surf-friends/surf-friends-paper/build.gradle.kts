@@ -8,6 +8,8 @@ plugins {
 dependencies {
     api(project(":surf-friends:surf-friends-core"))
 
+    implementation(project(":surf-friends:surf-friends-velocity"))
+
     compileOnlyApi(libs.paper.api)
     compileOnlyApi(libs.velocity.api)
     implementation(libs.inventory.framework)
