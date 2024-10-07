@@ -12,6 +12,7 @@ import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
+import dev.slne.surf.friends.velocity.VelocityFriendApiProvider;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class FriendRequestManageMenu extends FriendMenu {
-  private final FriendApi api = PaperInstance.instance().api();
-
   public FriendRequestManageMenu(String name) {
     super(5, "Anfrage von " + name);
 
@@ -59,12 +58,12 @@ public class FriendRequestManageMenu extends FriendMenu {
     });
 
     accept.setOnClick(event -> {
-      api.acceptFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      VelocityFriendApiProvider.get().acceptFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 
     deny.setOnClick(event -> {
-      api.denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      VelocityFriendApiProvider.get().denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 

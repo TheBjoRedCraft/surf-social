@@ -24,7 +24,8 @@ paper {
 
 tasks.shadowJar{
     relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.paper.inventoryframework")
-    relocate("com.velocitypowered.api", "dev.slne.surf.friends.paper.velocityapi")
+    relocate("dev.jorel.commandapi", "dev.slne.surf.friends.velocity.commandapi")
+    relocate("it.unimi.dsi.fastutil", "dev.slne.surf.friends.velocity.fastutil")
 
     archiveClassifier.set("")
 }

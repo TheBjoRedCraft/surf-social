@@ -2,12 +2,12 @@ package dev.slne.surf.friends.velocity.impl.api;
 
 import com.google.auto.service.AutoService;
 import com.google.gson.Gson;
-
 import com.google.gson.reflect.TypeToken;
-import com.velocitypowered.api.proxy.Player;
 
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.velocity.VelocityInstance;
@@ -29,11 +29,13 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import lombok.Getter;
+
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
 
 @AutoService(FriendApi.class)
 @SuppressWarnings("unchecked")
+
 public class FriendApiFallback implements FriendApi, Services.Fallback {
     private final File jsonFile = new File("plugins/surf-friends-velocity/friends.json");
     private final Gson gson = new Gson();

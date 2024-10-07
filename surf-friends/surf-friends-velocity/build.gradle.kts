@@ -15,8 +15,5 @@ dependencies {
 }
 
 tasks.shadowJar {
-    relocate("dev.jorel.commandapi", "dev.slne.surf.friends.velocity.commandapi")
-    relocate("it.unimi.dsi.fastutil", "dev.slne.surf.friends.velocity.fastutil")
-
     archiveClassifier.set("")
 }

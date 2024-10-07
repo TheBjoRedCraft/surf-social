@@ -11,6 +11,7 @@ import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
+import dev.slne.surf.friends.velocity.VelocityFriendApiProvider;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
@@ -25,7 +26,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class FriendFriendsMenu extends FriendMenu {
   private final FriendLogger logger = PaperInstance.instance().logger();
-  private final FriendApi api = PaperInstance.instance().api();
 
   public FriendFriendsMenu(UUID player) {
     super(5, "Deine Freunde");
@@ -86,7 +86,7 @@ public class FriendFriendsMenu extends FriendMenu {
     ObjectList<ItemStack> stacks = new ObjectArrayList<>();
 
     try {
-      for(UUID uuid : api.getFriends(player).get()){
+      for(UUID uuid : VelocityFriendApiProvider.get().getFriends(player).get()){
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
         stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.getName()).setSkullOwner(offlinePlayer).build());

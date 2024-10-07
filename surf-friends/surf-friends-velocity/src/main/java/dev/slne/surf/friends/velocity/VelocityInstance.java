@@ -40,10 +40,7 @@ public class VelocityInstance {
   private final ProxyServer proxy;
   private final Path dataDirectory;
 
-  private final FriendApi api = FriendApi.get();
-
-//  @Getter
-//  private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
+  private final FriendApi api = VelocityFriendApiProvider.get();
 
   @Inject
   public VelocityInstance(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {

@@ -5,13 +5,13 @@ import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 
 import com.github.stefvanschie.inventoryframework.pane.component.ToggleButton;
-import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
+import dev.slne.surf.friends.velocity.VelocityFriendApiProvider;
 import java.util.UUID;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -22,7 +22,6 @@ import net.kyori.adventure.text.format.TextDecoration.State;
 import org.bukkit.Material;
 
 public class FriendSettingsMenu extends FriendMenu {
-  FriendApi api = PaperInstance.instance().api();
 
   public FriendSettingsMenu(UUID player) {
     super(5, "Freundeseinstellungen");
@@ -42,11 +41,11 @@ public class FriendSettingsMenu extends FriendMenu {
 
     mid.setEnabledItem(build(new ItemBuilder(Material.WRITABLE_BOOK)
         .addLoreLine(Component.text("Aktuell ist diese Einstellung aktiviert.").decoration(TextDecoration.ITALIC, State.FALSE))
-        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> api.toggle(player)));
+        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> VelocityFriendApiProvider.get().toggle(player)));
 
     mid.setDisabledItem(build(new ItemBuilder(Material.WRITABLE_BOOK)
         .addLoreLine(Component.text("Aktuell ist diese Einstellung deaktiviert.").decoration(TextDecoration.ITALIC, State.FALSE))
-        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> api.toggle(player)));
+        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> VelocityFriendApiProvider.get().toggle(player)));
 
     navigation.addItem(build(new ItemBuilder(Material.BARRIER)
         .setName(Component.text("Zurück")

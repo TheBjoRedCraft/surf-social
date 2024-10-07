@@ -4,10 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectList;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import net.kyori.adventure.util.Services;
 
 public interface FriendApi {
-  FriendApi INSTANCE = Services.serviceWithFallback(FriendApi.class).orElseThrow();
 
 
   /**
@@ -115,8 +113,4 @@ public interface FriendApi {
    * @return A boolean indicating the success or failure of the operation.
    */
   CompletableFuture<Boolean> send(UUID player, String target);
-
-  static FriendApi get(){
-    return INSTANCE;
-  }
 }

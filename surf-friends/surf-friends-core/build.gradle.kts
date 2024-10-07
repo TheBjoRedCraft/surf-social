@@ -9,4 +9,12 @@ dependencies {
 
     compileOnlyApi(libs.velocity.api)
     compileOnlyApi(libs.paper.api)
+
+    implementation(libs.fastutil)
+}
+
+tasks.shadowJar {
+    relocate("it.unimi.dsi.fastutil", "dev.slne.surf.friends.core.fastutil")
+
+    archiveClassifier.set("")
 }

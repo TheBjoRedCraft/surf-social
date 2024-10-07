@@ -13,6 +13,7 @@ import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
+import dev.slne.surf.friends.velocity.VelocityFriendApiProvider;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -28,8 +29,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 
 public class FriendSingleMenu extends FriendMenu {
-  private final FriendApi api = PaperInstance.instance().api();
-
   public FriendSingleMenu(String name) {
     super(5, name);
 
@@ -68,10 +67,10 @@ public class FriendSingleMenu extends FriendMenu {
       if (offlinePlayer.isOnline()) {
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Nachspringen").color(PluginColor.LIGHT_BLUE))
-            .addLoreLine(Component.text("Server: " + api
+            .addLoreLine(Component.text("Server: " + VelocityFriendApiProvider.get()
                     .getServerFromPlayer(offlinePlayer.getUniqueId()).get())
                 .decoration(TextDecoration.ITALIC, State.FALSE))
-            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> api.send(event.getWhoClicked().getUniqueId(), name)));
+            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> VelocityFriendApiProvider.get().send(event.getWhoClicked().getUniqueId(), name)));
       }else{
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Der Spieler ist offline.").color(PluginColor.LIGHT_BLUE))
