@@ -37,7 +37,7 @@ public class CommunicationHandler implements PluginMessageListener {
   public void sendRequest(RequestType type, Player player, UUID target){
     try {
       switch (type) {
-        case ADD, REMOVE, SEND_REQUEST, DENY_REQUEST, REMOVE_BOTH, ACCEPT_REQUEST -> {
+        case ADD, REMOVE, SEND_REQUEST, DENY_REQUEST, REMOVE_BOTH, ACCEPT_REQUEST, TOGGLE -> {
           ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
           DataOutputStream out = new DataOutputStream(byteArrayOutputStream);
 
@@ -50,7 +50,7 @@ public class CommunicationHandler implements PluginMessageListener {
           byteArrayOutputStream.close();
         }
 
-        case FRIENDS, REQUESTS, SEND -> {
+        case FRIENDS, REQUESTS -> {
           player.sendPluginMessage(plugin, "surf-friends:communication", type.toString().getBytes(StandardCharsets.UTF_8));
         }
       }
