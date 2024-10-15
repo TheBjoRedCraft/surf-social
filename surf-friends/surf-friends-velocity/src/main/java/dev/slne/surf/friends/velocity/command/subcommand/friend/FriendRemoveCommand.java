@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
 
 import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.VelocityInstance;
@@ -30,8 +31,8 @@ public class FriendRemoveCommand extends CommandAPICommand {
 
             UUID target = optionalPlayer.get().getUniqueId();
 
-            VelocityInstance.getInstance().getApi().removeFriend(player.getUniqueId(), target);
-            VelocityInstance.getInstance().getApi().removeFriend(target, player.getUniqueId());
+            FriendApiFallbackInstance.instance().friendApi().removeFriend(player.getUniqueId(), target);
+            FriendApiFallbackInstance.instance().friendApi().removeFriend(target, player.getUniqueId());
         });
     }
 }

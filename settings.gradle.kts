@@ -20,3 +20,5 @@ include("surf-friends:surf-friends-core")
 findProject(":surf-friends:surf-friends-core")?.name = "surf-friends-core"
 include("surf-friends:surf-friends-api")
 findProject(":surf-friends:surf-friends-api")?.name = "surf-friends-api"
+include("surf-friends:surf-friends-api-fallback")
+findProject(":surf-friends:surf-friends-api-fallback")?.name = "surf-friends-api-fallback"

@@ -4,19 +4,23 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-import dev.slne.surf.friends.api.FriendApi;
+
+import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
-import dev.slne.surf.friends.velocity.VelocityFriendApiProvider;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+
 import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -90,7 +94,7 @@ public class FriendRequestsMenu extends FriendMenu {
     ObjectList<ItemStack> stacks = new ObjectArrayList<>();
 
     try {
-      for(UUID uuid : VelocityFriendApiProvider.get().getFriendRequests(player).get()){
+      for(UUID uuid : FriendApiFallbackInstance.instance().friendApi().getFriendRequests(player).get()){
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
         stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.getName()).setSkullOwner(offlinePlayer).build());

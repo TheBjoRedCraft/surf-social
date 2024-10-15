@@ -7,13 +7,12 @@ import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
 
-import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
-import dev.slne.surf.friends.velocity.VelocityFriendApiProvider;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -67,10 +66,10 @@ public class FriendSingleMenu extends FriendMenu {
       if (offlinePlayer.isOnline()) {
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Nachspringen").color(PluginColor.LIGHT_BLUE))
-            .addLoreLine(Component.text("Server: " + VelocityFriendApiProvider.get()
+            .addLoreLine(Component.text("Server: " + FriendApiFallbackInstance.instance().friendApi()
                     .getServerFromPlayer(offlinePlayer.getUniqueId()).get())
                 .decoration(TextDecoration.ITALIC, State.FALSE))
-            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> VelocityFriendApiProvider.get().send(event.getWhoClicked().getUniqueId(), name)));
+            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> FriendApiFallbackInstance.instance().friendApi().send(event.getWhoClicked().getUniqueId(), name)));
       }else{
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Der Spieler ist offline.").color(PluginColor.LIGHT_BLUE))

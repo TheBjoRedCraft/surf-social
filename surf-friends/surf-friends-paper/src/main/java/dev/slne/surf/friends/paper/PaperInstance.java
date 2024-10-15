@@ -1,10 +1,10 @@
 package dev.slne.surf.friends.paper;
 
 import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.paper.listener.PlayerJoinListener;
 import dev.slne.surf.friends.paper.listener.VelocityListener;
-import dev.slne.surf.friends.velocity.VelocityFriendApiProvider;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -21,7 +21,6 @@ public class PaperInstance extends JavaPlugin {
 
   private static final Logger log = LoggerFactory.getLogger(PaperInstance.class);
   private final FriendLogger logger = new FriendLogger();
-  private final FriendApi api = VelocityFriendApiProvider.get();
 
   @Override
   public void onLoad() {

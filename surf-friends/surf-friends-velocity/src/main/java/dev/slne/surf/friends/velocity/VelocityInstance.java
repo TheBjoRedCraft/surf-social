@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
@@ -16,6 +17,7 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIVelocityConfig;
 import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.command.FriendCommand;
@@ -30,7 +32,10 @@ import org.slf4j.Logger;
     id = "surf-friends",
     name = "SurfFriends",
     authors = {"TheBjoRedCraft", "SLNE Development"},
-    version = "1.21-2.1.0-SNAPSHOT"
+    version = "1.21-2.1.0-SNAPSHOT",
+    dependencies = {
+        @Dependency(id = "surf-friends-api-fallback")
+    }
 )
 @Getter
 public class VelocityInstance {
@@ -39,8 +44,6 @@ public class VelocityInstance {
   private final Logger logger;
   private final ProxyServer proxy;
   private final Path dataDirectory;
-
-  private final FriendApi api = VelocityFriendApiProvider.get();
 
   @Inject
   public VelocityInstance(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {
@@ -63,8 +66,6 @@ public class VelocityInstance {
 
   @Subscribe
   public void onProxyInitialization(ProxyInitializeEvent event) {
-    api.init();
-
     CommandAPI.onEnable();
 
     info("Successfully enabled.");
@@ -72,8 +73,6 @@ public class VelocityInstance {
 
   @Subscribe
   public void onShutdown(ProxyShutdownEvent event){
-    api.exit();
-
     CommandAPI.onDisable();
 
     info("Successfully disabled.");

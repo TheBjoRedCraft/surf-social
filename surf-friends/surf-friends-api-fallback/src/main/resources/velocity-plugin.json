@@ -1,0 +1,11 @@
+{
+  "id": "surf-friends-api-fallback",
+  "name": "SurfFriendsApiFallback",
+  "version": "1.21-1.0.0-SNAPSHOT",
+  "main": "dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance",
+  "authors": [
+    "SLNE Development",
+    "TheBjoRedCraft"
+  ],
+  "dependencies": []
+}

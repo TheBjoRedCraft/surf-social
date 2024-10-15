@@ -5,8 +5,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":surf-friends:surf-friends-api"))
-
     compileOnlyApi(libs.velocity.api)
     compileOnlyApi(libs.paper.api)
 

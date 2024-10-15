@@ -6,12 +6,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":surf-friends:surf-friends-core"))
+    implementation(project(":surf-friends:surf-friends-api-fallback"))
 
-    implementation(project(":surf-friends:surf-friends-velocity"))
 
     compileOnlyApi(libs.paper.api)
-    compileOnlyApi(libs.velocity.api)
     implementation(libs.inventory.framework)
 }
 
@@ -24,8 +22,7 @@ paper {
 
 tasks.shadowJar{
     relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.paper.inventoryframework")
-    relocate("dev.jorel.commandapi", "dev.slne.surf.friends.velocity.commandapi")
-    relocate("it.unimi.dsi.fastutil", "dev.slne.surf.friends.velocity.fastutil")
 
     archiveClassifier.set("")
+    archiveVersion.set("")
 }

@@ -1,16 +1,16 @@
-package dev.slne.surf.friends.velocity.impl.api;
+package dev.slne.surf.friends.api.fallback;
 
 import com.google.auto.service.AutoService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
-import dev.slne.surf.friends.velocity.VelocityInstance;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -34,11 +34,13 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
 
 @AutoService(FriendApi.class)
-@SuppressWarnings("unchecked")
 
 public class FriendApiFallback implements FriendApi, Services.Fallback {
     private final File jsonFile = new File("plugins/surf-friends-velocity/friends.json");
     private final Gson gson = new Gson();
+    private final UUID id = UUID.randomUUID();
+
+    private final ProxyServer proxy = FriendApiFallbackInstance.instance().proxy();
 
     @Getter
     private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
@@ -200,7 +202,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<String> getServerFromPlayer(UUID player) {
         return CompletableFuture.supplyAsync(() -> {
-            Optional<Player> velocityPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
+            Optional<Player> velocityPlayer = proxy.getPlayer(player);
 
             if(velocityPlayer.isEmpty()){
                 return "N/A";
@@ -218,7 +220,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public Boolean init() {
         if (!jsonFile.exists()) {
-            VelocityInstance.info("There was no data to load.");
+            FriendApiFallbackInstance.info("There was no data to load.");
             return true;
         }
 
@@ -230,11 +232,12 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             data.putAll(loadedData);
 
         } catch (IOException e) {
-            VelocityInstance.error(e.getMessage());
+            FriendApiFallbackInstance.error(e.getMessage());
             return false;
         }
 
-        VelocityInstance.info("Successfully loaded data from storage.");
+        FriendApiFallbackInstance.info("Successfully loaded data from storage.");
+        FriendApiFallbackInstance.info("Api Fallback Identifier: " + id);
         return true;
     }
 
@@ -247,7 +250,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
           try {
             jsonFile.createNewFile();
           } catch (IOException e) {
-              VelocityInstance.error(e.getMessage());
+              FriendApiFallbackInstance.error(e.getMessage());
           }
         }
 
@@ -255,11 +258,11 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             gson.toJson(data, writer);
 
         } catch (IOException e) {
-            VelocityInstance.error(e.getMessage());
+            FriendApiFallbackInstance.error(e.getMessage());
             return false;
         }
 
-        VelocityInstance.info("Successfully saved data to storage.");
+        FriendApiFallbackInstance.info("Successfully saved data to storage.");
         return true;
     }
 
@@ -287,8 +290,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public CompletableFuture<Boolean> send(UUID player, String server) {
         return CompletableFuture.supplyAsync(() -> {
-            Optional<RegisteredServer> registeredServer = VelocityInstance.getInstance().getProxy().getServer(server);
-            Optional<Player> velocityPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
+            Optional<RegisteredServer> registeredServer = proxy.getServer(server);
+            Optional<Player> velocityPlayer = proxy.getPlayer(player);
 
             if(registeredServer.isEmpty()){
                 return false;
@@ -319,7 +322,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
 
     private void sendIfOnline(UUID player, String message){
-        Optional<Player> optionalPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
+        Optional<Player> optionalPlayer = proxy.getPlayer(player);
 
         if(optionalPlayer.isEmpty()){
             return;
@@ -330,8 +333,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
 
     private void sendIfOnline(UUID player, String message, UUID target){
-        Optional<Player> optionalPlayer = VelocityInstance.getInstance().getProxy().getPlayer(player);
-        Optional<Player> optionalTarget = VelocityInstance.getInstance().getProxy().getPlayer(target);
+        Optional<Player> optionalPlayer = proxy.getPlayer(player);
+        Optional<Player> optionalTarget = proxy.getPlayer(target);
 
         if(optionalPlayer.isEmpty()){
             return;

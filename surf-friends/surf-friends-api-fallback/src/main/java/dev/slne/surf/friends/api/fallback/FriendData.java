@@ -1,7 +1,7 @@
-package dev.slne.surf.friends.velocity.impl.api;
+package dev.slne.surf.friends.api.fallback;
 
 import com.google.gson.Gson;
-import it.unimi.dsi.fastutil.objects.ObjectList;
+
 import java.util.List;
 import java.util.UUID;
 

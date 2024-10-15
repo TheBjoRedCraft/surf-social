@@ -4,6 +4,7 @@ import com.velocitypowered.api.proxy.Player;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.VelocityInstance;
@@ -28,7 +29,7 @@ public class FriendDenyCommand extends CommandAPICommand {
 
             UUID target = optionalPlayer.get().getUniqueId();
 
-            VelocityInstance.getInstance().getApi().denyFriendRequest(player.getUniqueId(), target);
+            FriendApiFallbackInstance.instance().friendApi().denyFriendRequest(player.getUniqueId(), target);
         });
     }
 }

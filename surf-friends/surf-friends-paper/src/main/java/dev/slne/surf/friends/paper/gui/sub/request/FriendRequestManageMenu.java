@@ -6,13 +6,12 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
-import dev.slne.surf.friends.api.FriendApi;
+
+import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
-import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
-import dev.slne.surf.friends.velocity.VelocityFriendApiProvider;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -58,12 +57,12 @@ public class FriendRequestManageMenu extends FriendMenu {
     });
 
     accept.setOnClick(event -> {
-      VelocityFriendApiProvider.get().acceptFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      FriendApiFallbackInstance.instance().friendApi().acceptFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 
     deny.setOnClick(event -> {
-      VelocityFriendApiProvider.get().denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      FriendApiFallbackInstance.instance().friendApi().denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 
