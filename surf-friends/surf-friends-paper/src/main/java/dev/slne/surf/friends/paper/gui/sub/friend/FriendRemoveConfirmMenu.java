@@ -4,15 +4,17 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 
-import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
+import dev.slne.surf.friends.paper.communication.CommunicationHandler;
+import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 public class FriendRemoveConfirmMenu extends FriendMenu {
 
@@ -36,8 +38,7 @@ public class FriendRemoveConfirmMenu extends FriendMenu {
     mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(Component.text("Möchtest du " + name + " wirklich enfernen?")).setSkullOwner(offlinePlayer)));
 
     left.addItem(build(new ItemBuilder(Material.GREEN_WOOL).setName(Component.text("Bestätigen").color(PluginColor.LIGHT_GREEN)), event -> {
-      FriendApiFallbackInstance.instance().friendApi().removeFriend(event.getWhoClicked().getUniqueId(), offlinePlayer.getUniqueId());
-      FriendApiFallbackInstance.instance().friendApi().removeFriend(offlinePlayer.getUniqueId(), event.getWhoClicked().getUniqueId());
+      CommunicationHandler.instance().sendRequest(RequestType.REMOVE_BOTH, (Player) event.getWhoClicked(), offlinePlayer.getUniqueId());
 
       new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     }));

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":surf-friends:surf-friends-api-fallback"))
+    implementation(project(":surf-friends:surf-friends-core"))
 
 
     compileOnlyApi(libs.paper.api)

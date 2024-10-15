@@ -7,15 +7,14 @@ import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
 
-import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
-import dev.slne.surf.friends.paper.PaperInstance;
+import dev.slne.surf.friends.paper.communication.CommunicationHandler;
+import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -24,6 +23,7 @@ import net.kyori.adventure.text.format.TextDecoration.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
 
@@ -61,15 +61,14 @@ public class FriendSingleMenu extends FriendMenu {
 
       return new GuiItem(stack);
     });
-
-    try {
       if (offlinePlayer.isOnline()) {
+        CommunicationHandler.instance().sendRequest(RequestType.REQUEST_SERVER, offlinePlayer.getPlayer(), null);
+
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Nachspringen").color(PluginColor.LIGHT_BLUE))
-            .addLoreLine(Component.text("Server: " + FriendApiFallbackInstance.instance().friendApi()
-                    .getServerFromPlayer(offlinePlayer.getUniqueId()).get())
-                .decoration(TextDecoration.ITALIC, State.FALSE))
-            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> FriendApiFallbackInstance.instance().friendApi().send(event.getWhoClicked().getUniqueId(), name)));
+            .addLoreLine(Component.text("Server: " + CommunicationHandler.instance().cachedServer().get(offlinePlayer.getUniqueId())).decoration(TextDecoration.ITALIC, State.FALSE))
+            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> CommunicationHandler.instance().sendRequest(RequestType.SEND, (Player) event.getWhoClicked(), null)));
+
       }else{
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Der Spieler ist offline.").color(PluginColor.LIGHT_BLUE))
@@ -77,9 +76,6 @@ public class FriendSingleMenu extends FriendMenu {
                 .decoration(TextDecoration.ITALIC, State.FALSE))
             .setSkullOwner(Bukkit.getOfflinePlayer(name))));
       }
-    } catch (InterruptedException | ExecutionException e){
-      PaperInstance.instance().logger().error(e);
-    }
 
     remove.setOnClick(event -> {
       new FriendRemoveConfirmMenu(name).show(event.getWhoClicked());

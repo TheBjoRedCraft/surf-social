@@ -5,11 +5,12 @@ import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 
-import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
+import dev.slne.surf.friends.paper.communication.CommunicationHandler;
+import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
@@ -17,13 +18,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -89,17 +88,10 @@ public class FriendFriendsMenu extends FriendMenu {
   private ObjectList<ItemStack> getFriendItems(UUID player){
     ObjectList<ItemStack> stacks = new ObjectArrayList<>();
 
-    try {
-      for(UUID uuid : FriendApiFallbackInstance.instance().friendApi().getFriends(player).get()){
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+    CommunicationHandler.instance().sendRequest(RequestType.FRIENDS, Bukkit.getPlayer(player), null);
 
-        stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.getName()).setSkullOwner(offlinePlayer).build());
-      }
-      return stacks;
+    CommunicationHandler.instance().cachedFriends().get(player).forEach(friend -> stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(Bukkit.getOfflinePlayer(friend).getName()).setSkullOwner(Bukkit.getOfflinePlayer(friend)).build()));
 
-    } catch (InterruptedException | ExecutionException e) {
-      logger.error(e);
-      return null;
-    }
+    return stacks;
   }
 }

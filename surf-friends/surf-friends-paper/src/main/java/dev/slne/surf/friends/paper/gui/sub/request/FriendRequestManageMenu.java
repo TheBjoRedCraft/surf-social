@@ -7,14 +7,16 @@ import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
 
-import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
+import dev.slne.surf.friends.paper.communication.CommunicationHandler;
+import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -57,12 +59,12 @@ public class FriendRequestManageMenu extends FriendMenu {
     });
 
     accept.setOnClick(event -> {
-      FriendApiFallbackInstance.instance().friendApi().acceptFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      CommunicationHandler.instance().sendRequest(RequestType.ACCEPT_REQUEST, (Player) event.getWhoClicked(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 
     deny.setOnClick(event -> {
-      FriendApiFallbackInstance.instance().friendApi().denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      CommunicationHandler.instance().sendRequest(RequestType.DENY_REQUEST, (Player) event.getWhoClicked(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 

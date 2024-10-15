@@ -10,6 +10,8 @@ import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
+import dev.slne.surf.friends.paper.communication.CommunicationHandler;
+import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
@@ -93,17 +95,10 @@ public class FriendRequestsMenu extends FriendMenu {
   private ObjectList<ItemStack> getFriendRequestsItems(UUID player){
     ObjectList<ItemStack> stacks = new ObjectArrayList<>();
 
-    try {
-      for(UUID uuid : FriendApiFallbackInstance.instance().friendApi().getFriendRequests(player).get()){
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+    CommunicationHandler.instance().sendRequest(RequestType.REQUESTS, Bukkit.getPlayer(player), null);
 
-        stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.getName()).setSkullOwner(offlinePlayer).build());
-      }
-      return stacks;
+    CommunicationHandler.instance().cachedRequests().get(player).forEach(friend -> stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(Bukkit.getOfflinePlayer(friend).getName()).setSkullOwner(Bukkit.getOfflinePlayer(friend)).build()));
 
-    } catch (InterruptedException | ExecutionException e) {
-      logger.error(e);
-      return null;
-    }
+    return stacks;
   }
 }

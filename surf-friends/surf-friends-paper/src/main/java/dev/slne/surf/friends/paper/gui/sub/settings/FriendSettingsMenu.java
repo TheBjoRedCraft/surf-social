@@ -5,9 +5,10 @@ import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.ToggleButton;
 
-import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
+import dev.slne.surf.friends.paper.communication.CommunicationHandler;
+import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
@@ -20,6 +21,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 public class FriendSettingsMenu extends FriendMenu {
@@ -42,16 +44,14 @@ public class FriendSettingsMenu extends FriendMenu {
 
     mid.setEnabledItem(build(new ItemBuilder(Material.WRITABLE_BOOK)
         .addLoreLine(Component.text("Aktuell ist diese Einstellung aktiviert.").decoration(TextDecoration.ITALIC, State.FALSE))
-        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> FriendApiFallbackInstance.instance().friendApi().toggle(player)));
+        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> CommunicationHandler.instance().sendRequest(RequestType.TOGGLE, Bukkit.getPlayer(player), null)));
 
     mid.setDisabledItem(build(new ItemBuilder(Material.WRITABLE_BOOK)
         .addLoreLine(Component.text("Aktuell ist diese Einstellung deaktiviert.").decoration(TextDecoration.ITALIC, State.FALSE))
-        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> FriendApiFallbackInstance.instance().friendApi().toggle(player)));
+        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> CommunicationHandler.instance().sendRequest(RequestType.TOGGLE, Bukkit.getPlayer(player), null)));
 
     navigation.addItem(build(new ItemBuilder(Material.BARRIER)
-        .setName(Component.text("Zurück")
-            .color(PluginColor.RED)), event ->
-        new FriendMainMenu().show(event.getWhoClicked())), 4, 0);
+        .setName(Component.text("Zurück").color(PluginColor.RED)), event -> new FriendMainMenu().show(event.getWhoClicked())), 4, 0);
 
     mid.setOnClick(event -> {
       event.getWhoClicked().playSound(sound);
