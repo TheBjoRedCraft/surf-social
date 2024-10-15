@@ -1,7 +1,6 @@
 package dev.slne.surf.friends.paper.communication;
 
 import dev.slne.surf.friends.paper.PaperInstance;
-import dev.slne.surf.friends.paper.gui.sub.friend.FriendFriendsMenu;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -96,13 +95,8 @@ public class CommunicationHandler implements PluginMessageListener {
       DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
       try {
-        String players = in.readUTF();
-        ObjectList<String> requests = (ObjectList<String>) Arrays.asList(players.split(", "));
-        ObjectList<UUID> uuids = new ObjectArrayList<>();
 
-        requests.forEach(friend -> uuids.add(UUID.fromString(friend)));
-
-        cachedRequests.put(player.getUniqueId(), uuids);
+        cachedServer.put(player.getUniqueId(), in.readUTF());
 
       } catch (IOException e) {
         plugin.logger().error(e);
