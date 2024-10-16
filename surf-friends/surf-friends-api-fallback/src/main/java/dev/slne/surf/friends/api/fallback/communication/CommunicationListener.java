@@ -4,15 +4,21 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.Optional;
 import java.util.UUID;
 
 public class CommunicationListener {
+  public static final MinecraftChannelIdentifier COMMUNICATION_FRIENDS = MinecraftChannelIdentifier.from("surf-friends:communication-friends");
+  public static final MinecraftChannelIdentifier COMMUNICATION_REQUESTS = MinecraftChannelIdentifier.from("surf-friends:communication-requests");
+  public static final MinecraftChannelIdentifier COMMUNICATION_SERVER = MinecraftChannelIdentifier.from("surf-friends:communication-server");
+
   @Subscribe
   public void onPluginMessage(PluginMessageEvent event) {
     if (event.getIdentifier().getId().equals("surf-friends:communication")) {
@@ -22,7 +28,6 @@ public class CommunicationListener {
           DataInputStream in = new DataInputStream(byteArrayInputStream);
 
           String type = in.readUTF();
-          UUID target = in.readUTF().isEmpty() ? null : UUID.fromString(in.readUTF());
 
           switch (type){
             case "FRIENDS" -> {
@@ -34,7 +39,7 @@ public class CommunicationListener {
 
               out.writeUTF(builder.toString());
 
-              player.sendPluginMessage(MinecraftChannelIdentifier.from("surf-friends:communication-friends"), byteArrayOutputStream.toByteArray());
+              player.sendPluginMessage(COMMUNICATION_FRIENDS, byteArrayOutputStream.toByteArray());
             }
             case "REQUESTS" -> {
               ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -45,7 +50,7 @@ public class CommunicationListener {
 
               out.writeUTF(builder.toString());
 
-              player.sendPluginMessage(MinecraftChannelIdentifier.from("surf-friends:communication-requests"), byteArrayOutputStream.toByteArray());
+              player.sendPluginMessage(COMMUNICATION_REQUESTS, byteArrayOutputStream.toByteArray());
             }
             case "SERVER" -> {
               ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -53,9 +58,11 @@ public class CommunicationListener {
 
               out.writeUTF(player.getCurrentServer().get().getServerInfo().getName());
 
-              player.sendPluginMessage(MinecraftChannelIdentifier.from("surf-friends:communication-server"), byteArrayOutputStream.toByteArray());
+              player.sendPluginMessage(COMMUNICATION_SERVER, byteArrayOutputStream.toByteArray());
             }
             case "ADD" -> {
+              UUID target = in.readUTF().isEmpty() ? null : UUID.fromString(in.readUTF());
+
               if(target == null){
                 return;
               }
@@ -63,6 +70,8 @@ public class CommunicationListener {
               FriendApiFallbackInstance.instance().friendApi().addFriend(player.getUniqueId(), target);
             }
             case "REMOVE" -> {
+              UUID target = in.readUTF().isEmpty() ? null : UUID.fromString(in.readUTF());
+
               if(target == null){
                 return;
               }
@@ -70,6 +79,8 @@ public class CommunicationListener {
               FriendApiFallbackInstance.instance().friendApi().removeFriend(player.getUniqueId(), target);
             }
             case "SEND_REQUEST" -> {
+              UUID target = in.readUTF().isEmpty() ? null : UUID.fromString(in.readUTF());
+
               if(target == null){
                 return;
               }
@@ -77,13 +88,17 @@ public class CommunicationListener {
               FriendApiFallbackInstance.instance().friendApi().sendFriendRequest(player.getUniqueId(), target);
             }
             case "DENY_REQUEST" -> {
+              UUID target = in.readUTF().isEmpty() ? null : UUID.fromString(in.readUTF());
+
               if(target == null){
                 return;
               }
 
               FriendApiFallbackInstance.instance().friendApi().denyFriendRequest(player.getUniqueId(), target);
             }
-            case "REMOVE BOTH" -> {
+            case "REMOVE_BOTH" -> {
+              UUID target = in.readUTF().isEmpty() ? null : UUID.fromString(in.readUTF());
+
               if(target == null){
                 return;
               }
@@ -92,6 +107,8 @@ public class CommunicationListener {
               FriendApiFallbackInstance.instance().friendApi().removeFriend(target, player.getUniqueId());
             }
             case "ACCEPT_REQUEST" -> {
+              UUID target = in.readUTF().isEmpty() ? null : UUID.fromString(in.readUTF());
+
               if(target == null){
                 return;
               }
@@ -102,7 +119,14 @@ public class CommunicationListener {
               FriendApiFallbackInstance.instance().friendApi().toggle(player.getUniqueId());
             }
             case "SEND" -> {
+              String server = in.readUTF();
+              Optional<RegisteredServer> optional = FriendApiFallbackInstance.instance().proxy().getServer(server);
 
+              if(optional.isEmpty()){
+                return;
+              }
+
+              player.createConnectionRequest(optional.get());
             }
           }
 

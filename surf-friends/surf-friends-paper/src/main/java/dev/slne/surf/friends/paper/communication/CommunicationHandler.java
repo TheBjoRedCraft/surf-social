@@ -50,7 +50,7 @@ public class CommunicationHandler implements PluginMessageListener {
           byteArrayOutputStream.close();
         }
 
-        case FRIENDS, REQUESTS -> {
+        case FRIENDS, REQUESTS, SEND -> {
           player.sendPluginMessage(plugin, "surf-friends:communication", type.toString().getBytes(StandardCharsets.UTF_8));
         }
       }

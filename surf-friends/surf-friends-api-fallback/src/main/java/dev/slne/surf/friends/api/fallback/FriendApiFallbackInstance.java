@@ -10,6 +10,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 
 import dev.slne.surf.friends.api.FriendApi;
+import dev.slne.surf.friends.api.fallback.communication.CommunicationListener;
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.PluginColor;
 import java.nio.file.Path;
@@ -51,6 +52,10 @@ public class FriendApiFallbackInstance {
   @Subscribe
   public void onProxyInitialization(ProxyInitializeEvent event) {
     friendApi.init();
+
+    proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_FRIENDS);
+    proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_REQUESTS);
+    proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_SERVER);
 
     info("Successfully enabled.");
   }
