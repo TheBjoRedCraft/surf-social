@@ -13,21 +13,25 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.Optional;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 
 public class CommunicationListener {
   public static final MinecraftChannelIdentifier COMMUNICATION_FRIENDS = MinecraftChannelIdentifier.from("surf-friends:communication-friends");
   public static final MinecraftChannelIdentifier COMMUNICATION_REQUESTS = MinecraftChannelIdentifier.from("surf-friends:communication-requests");
   public static final MinecraftChannelIdentifier COMMUNICATION_SERVER = MinecraftChannelIdentifier.from("surf-friends:communication-server");
+  public static final MinecraftChannelIdentifier COMMUNICATION_MAIN = MinecraftChannelIdentifier.from("surf-friends:communication");
 
   @Subscribe
   public void onPluginMessage(PluginMessageEvent event) {
-    if (event.getIdentifier().getId().equals("surf-friends:communication")) {
+    if (event.getIdentifier().equals(COMMUNICATION_MAIN)) {
       if (event.getSource() instanceof Player player) {
         try {
           ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(event.getData());
           DataInputStream in = new DataInputStream(byteArrayInputStream);
 
           String type = in.readUTF();
+
+          player.sendMessage(Component.text("Received: " + in.readUTF()));
 
           switch (type){
             case "FRIENDS" -> {

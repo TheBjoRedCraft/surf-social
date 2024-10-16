@@ -13,6 +13,7 @@ import dev.slne.surf.friends.paper.communication.CommunicationHandler;
 import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -63,6 +64,10 @@ public class FriendSingleMenu extends FriendMenu {
     });
       if (offlinePlayer.isOnline()) {
         CommunicationHandler.instance().sendRequest(RequestType.REQUEST_SERVER, offlinePlayer.getPlayer(), null);
+
+        if(CommunicationHandler.instance().cachedServer().get(offlinePlayer.getUniqueId()) == null){
+          CommunicationHandler.instance().cachedServer().put(offlinePlayer.getUniqueId(), "N/A");
+        }
 
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Nachspringen").color(PluginColor.LIGHT_BLUE))

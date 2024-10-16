@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.paper.communication;
 
+import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.paper.PaperInstance;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -41,8 +43,11 @@ public class CommunicationHandler implements PluginMessageListener {
           ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
           DataOutputStream out = new DataOutputStream(byteArrayOutputStream);
 
-          out.writeUTF(type.toString());
-          out.writeUTF(target.toString());
+          out.writeUTF(type.name());
+
+          if(target != null){
+            out.writeUTF(target.toString());
+          }
 
           player.sendPluginMessage(plugin, "surf-friends:communication", byteArrayOutputStream.toByteArray());
 
@@ -51,7 +56,7 @@ public class CommunicationHandler implements PluginMessageListener {
         }
 
         case FRIENDS, REQUESTS, SEND -> {
-          player.sendPluginMessage(plugin, "surf-friends:communication", type.toString().getBytes(StandardCharsets.UTF_8));
+          player.sendPluginMessage(plugin, "surf-friends:communication", type.name().getBytes(StandardCharsets.UTF_8));
         }
       }
     }catch (Exception e){
@@ -65,6 +70,10 @@ public class CommunicationHandler implements PluginMessageListener {
       DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
       try {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+          onlinePlayer.sendMessage("received: " + in.readUTF());
+        }
+
         String players = in.readUTF();
         ObjectList<String> friends = (ObjectList<String>) Arrays.asList(players.split(", "));
         ObjectList<UUID> uuids = new ObjectArrayList<>();
@@ -80,6 +89,10 @@ public class CommunicationHandler implements PluginMessageListener {
       DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
       try {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+          onlinePlayer.sendMessage("received: " + in.readUTF());
+        }
+
         String players = in.readUTF();
         ObjectList<String> requests = (ObjectList<String>) Arrays.asList(players.split(", "));
         ObjectList<UUID> uuids = new ObjectArrayList<>();
@@ -95,6 +108,9 @@ public class CommunicationHandler implements PluginMessageListener {
       DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
       try {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+          onlinePlayer.sendMessage("received: " + in.readUTF());
+        }
 
         cachedServer.put(player.getUniqueId(), in.readUTF());
 

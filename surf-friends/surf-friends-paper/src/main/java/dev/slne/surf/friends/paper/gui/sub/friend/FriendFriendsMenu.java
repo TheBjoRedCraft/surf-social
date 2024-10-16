@@ -90,6 +90,10 @@ public class FriendFriendsMenu extends FriendMenu {
 
     CommunicationHandler.instance().sendRequest(RequestType.FRIENDS, Bukkit.getPlayer(player), null);
 
+    if(CommunicationHandler.instance().cachedFriends().get(player) == null){
+      CommunicationHandler.instance().cachedFriends().put(player, new ObjectArrayList<>());
+    }
+
     CommunicationHandler.instance().cachedFriends().get(player).forEach(friend -> stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(Bukkit.getOfflinePlayer(friend).getName()).setSkullOwner(Bukkit.getOfflinePlayer(friend)).build()));
 
     return stacks;

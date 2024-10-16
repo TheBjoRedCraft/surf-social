@@ -1,11 +1,9 @@
 package dev.slne.surf.friends.paper.listener;
 
-import dev.slne.surf.friends.api.fallback.FriendApiFallbackInstance;
 import dev.slne.surf.friends.core.FriendCore;
-import dev.slne.surf.friends.core.util.FriendLogger;
+import dev.slne.surf.friends.paper.communication.CommunicationHandler;
 
-import dev.slne.surf.friends.paper.PaperInstance;
-import java.util.concurrent.ExecutionException;
+import dev.slne.surf.friends.paper.communication.RequestType;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.entity.Player;
@@ -18,14 +16,11 @@ public class PlayerJoinListener implements Listener {
   @EventHandler
   public void onJoin(PlayerJoinEvent event){
     Player player = event.getPlayer();
-    FriendLogger logger = PaperInstance.instance().logger();
 
-    try {
-      if(!FriendApiFallbackInstance.instance().friendApi().getFriendRequests(player.getUniqueId()).get().isEmpty()){
-        player.sendMessage(FriendCore.prefix().append(Component.text(String.format("Du hast noch %s Freundschaftsanfragen offen.", FriendApiFallbackInstance.instance().friendApi().getFriendRequests(player.getUniqueId()).get().size()))));
-      }
-    } catch (InterruptedException | ExecutionException e) {
-      logger.error(e.getMessage());
+    CommunicationHandler.instance().sendRequest(RequestType.REQUESTS, player, null);
+
+    if(!CommunicationHandler.instance().cachedRequests().isEmpty()){
+      player.sendMessage(FriendCore.prefix().append(Component.text(String.format("Du hast noch %s Freundschaftsanfragen offen.", CommunicationHandler.instance().cachedRequests().size()))));
     }
   }
 }
