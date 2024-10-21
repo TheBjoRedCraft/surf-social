@@ -1,6 +1,5 @@
 package dev.slne.surf.friends.paper.communication;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -8,23 +7,19 @@ import dev.slne.surf.friends.paper.PaperInstance;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.messaging.PluginMessageListener;
-
-import org.jetbrains.annotations.NotNull;
 
 @Accessors(fluent = true)
 @Getter
-public class CommunicationHandler implements PluginMessageListener {
+public class CommunicationHandler {
   @Getter
   private static CommunicationHandler instance = new CommunicationHandler();
 
@@ -52,39 +47,12 @@ public class CommunicationHandler implements PluginMessageListener {
           out.writeUTF(UUID.randomUUID().toString());
 
           player.sendPluginMessage(plugin, "surf-friends:communication", out.toByteArray());
+
+          Bukkit.getConsoleSender().sendMessage("Send");//REMOVE
         }
       }
     }catch (Exception e){
       plugin.logger().error(e);
-    }
-  }
-
-  @Override
-  public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
-    if (channel.equalsIgnoreCase("surf-friends:communication-friends")) {
-      ByteArrayDataInput in = ByteStreams.newDataInput(message);
-
-      String players = in.readUTF();
-      ObjectList<String> friends = (ObjectList<String>) Arrays.asList(players.split(", "));
-      ObjectList<UUID> uuids = new ObjectArrayList<>();
-
-      friends.forEach(friend -> uuids.add(UUID.fromString(friend)));
-      cachedFriends.put(player.getUniqueId(), uuids);
-
-    }else if (channel.equalsIgnoreCase("surf-friends:communication-requests")) {
-      ByteArrayDataInput in = ByteStreams.newDataInput(message);
-
-      String players = in.readUTF();
-      ObjectList<String> requests = (ObjectList<String>) Arrays.asList(players.split(", "));
-      ObjectList<UUID> uuids = new ObjectArrayList<>();
-
-      requests.forEach(friend -> uuids.add(UUID.fromString(friend)));
-      cachedRequests.put(player.getUniqueId(), uuids);
-
-    } else if (channel.equalsIgnoreCase("surf-friends:communication-server")) {
-      ByteArrayDataInput in = ByteStreams.newDataInput(message);
-
-      cachedServer.put(player.getUniqueId(), in.readUTF());
     }
   }
 }

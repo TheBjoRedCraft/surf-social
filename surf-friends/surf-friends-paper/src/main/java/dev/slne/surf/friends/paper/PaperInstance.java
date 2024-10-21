@@ -2,6 +2,7 @@ package dev.slne.surf.friends.paper;
 
 import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.paper.communication.CommunicationHandler;
+import dev.slne.surf.friends.paper.communication.CommunicationListener;
 import dev.slne.surf.friends.paper.listener.PlayerJoinListener;
 import dev.slne.surf.friends.paper.listener.VelocityListener;
 
@@ -31,17 +32,9 @@ public class PaperInstance extends JavaPlugin {
     Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
 
     this.getServer().getMessenger().registerOutgoingPluginChannel(this, "surf-friends:communication");
-    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication", new CommunicationHandler());
-
-    this.getServer().getMessenger().registerOutgoingPluginChannel(this, "surf-friends:communication-friends");
-    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-friends", new CommunicationHandler());
-
-    this.getServer().getMessenger().registerOutgoingPluginChannel(this, "surf-friends:communication-requests");
-    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-requests", new CommunicationHandler());
-
-    this.getServer().getMessenger().registerOutgoingPluginChannel(this, "surf-friends:communication-server");
-    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-server", new CommunicationHandler());
-
+    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-friends", new CommunicationListener());
+    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-requests", new CommunicationListener());
+    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-server", new CommunicationListener());
     this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:main", new VelocityListener());
   }
 

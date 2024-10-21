@@ -3,6 +3,7 @@ package dev.slne.surf.friends.velocity;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.Player;
@@ -29,21 +30,27 @@ public class CommunicationListener {
 
         switch (type){
           case "FRIENDS" -> {
+            VelocityInstance.error("GOT");//REMOVE
+
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
             StringBuilder builder = new StringBuilder();
             VelocityInstance.instance().friendApi().getFriends(player.getUniqueId()).getNow(new ObjectArrayList<>()).forEach(friend -> builder.append(friend.toString()).append(", "));
 
             out.writeUTF(builder.toString());
             player.sendPluginMessage(COMMUNICATION_FRIENDS, out.toByteArray());
+
+            VelocityInstance.error("SEND");//REMOVE
           }
 
           case "REQUESTS" -> {
+            VelocityInstance.error("GOT");//REMOVE
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
             StringBuilder builder = new StringBuilder();
             VelocityInstance.instance().friendApi().getFriendRequests(player.getUniqueId()).getNow(new ObjectArrayList<>()).forEach(request -> builder.append(request.toString()).append(", "));
 
             out.writeUTF(builder.toString());
             player.sendPluginMessage(COMMUNICATION_REQUESTS, out.toByteArray());
+            VelocityInstance.error("SEND");//REMOVE
           }
 
           case "SERVER" -> {
