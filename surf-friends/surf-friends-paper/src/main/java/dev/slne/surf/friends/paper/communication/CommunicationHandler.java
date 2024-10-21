@@ -1,25 +1,22 @@
 package dev.slne.surf.friends.paper.communication;
 
-import dev.slne.surf.friends.core.util.FriendLogger;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 import dev.slne.surf.friends.paper.PaperInstance;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -39,24 +36,22 @@ public class CommunicationHandler implements PluginMessageListener {
   public void sendRequest(RequestType type, Player player, UUID target){
     try {
       switch (type) {
-        case ADD, REMOVE, SEND_REQUEST, DENY_REQUEST, REMOVE_BOTH, ACCEPT_REQUEST, TOGGLE -> {
-          ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-          DataOutputStream out = new DataOutputStream(byteArrayOutputStream);
+        case ADD, REMOVE, SEND_REQUEST, DENY_REQUEST, REMOVE_BOTH, ACCEPT_REQUEST -> {
+          ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
           out.writeUTF(type.name());
+          out.writeUTF(target.toString());
 
-          if(target != null){
-            out.writeUTF(target.toString());
-          }
-
-          player.sendPluginMessage(plugin, "surf-friends:communication", byteArrayOutputStream.toByteArray());
-
-          out.close();
-          byteArrayOutputStream.close();
+          player.sendPluginMessage(plugin, "surf-friends:communication", out.toByteArray());
         }
 
-        case FRIENDS, REQUESTS, SEND -> {
-          player.sendPluginMessage(plugin, "surf-friends:communication", type.name().getBytes(StandardCharsets.UTF_8));
+        case FRIENDS, REQUESTS, TOGGLE -> {
+          ByteArrayDataOutput out = ByteStreams.newDataOutput();
+
+          out.writeUTF(type.name());
+          out.writeUTF(UUID.randomUUID().toString());
+
+          player.sendPluginMessage(plugin, "surf-friends:communication", out.toByteArray());
         }
       }
     }catch (Exception e){
@@ -67,56 +62,29 @@ public class CommunicationHandler implements PluginMessageListener {
   @Override
   public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
     if (channel.equalsIgnoreCase("surf-friends:communication-friends")) {
-      DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
+      ByteArrayDataInput in = ByteStreams.newDataInput(message);
 
-      try {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-          onlinePlayer.sendMessage("received: " + in.readUTF());
-        }
+      String players = in.readUTF();
+      ObjectList<String> friends = (ObjectList<String>) Arrays.asList(players.split(", "));
+      ObjectList<UUID> uuids = new ObjectArrayList<>();
 
-        String players = in.readUTF();
-        ObjectList<String> friends = (ObjectList<String>) Arrays.asList(players.split(", "));
-        ObjectList<UUID> uuids = new ObjectArrayList<>();
+      friends.forEach(friend -> uuids.add(UUID.fromString(friend)));
+      cachedFriends.put(player.getUniqueId(), uuids);
 
-        friends.forEach(friend -> uuids.add(UUID.fromString(friend)));
-
-        cachedFriends.put(player.getUniqueId(), uuids);
-
-      } catch (IOException e) {
-        plugin.logger().error(e);
-      }
     }else if (channel.equalsIgnoreCase("surf-friends:communication-requests")) {
-      DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
+      ByteArrayDataInput in = ByteStreams.newDataInput(message);
 
-      try {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-          onlinePlayer.sendMessage("received: " + in.readUTF());
-        }
+      String players = in.readUTF();
+      ObjectList<String> requests = (ObjectList<String>) Arrays.asList(players.split(", "));
+      ObjectList<UUID> uuids = new ObjectArrayList<>();
 
-        String players = in.readUTF();
-        ObjectList<String> requests = (ObjectList<String>) Arrays.asList(players.split(", "));
-        ObjectList<UUID> uuids = new ObjectArrayList<>();
+      requests.forEach(friend -> uuids.add(UUID.fromString(friend)));
+      cachedRequests.put(player.getUniqueId(), uuids);
 
-        requests.forEach(friend -> uuids.add(UUID.fromString(friend)));
+    } else if (channel.equalsIgnoreCase("surf-friends:communication-server")) {
+      ByteArrayDataInput in = ByteStreams.newDataInput(message);
 
-        cachedRequests.put(player.getUniqueId(), uuids);
-
-      } catch (IOException e) {
-        plugin.logger().error(e);
-      }
-    }else if (channel.equalsIgnoreCase("surf-friends:communication-server")) {
-      DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
-
-      try {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-          onlinePlayer.sendMessage("received: " + in.readUTF());
-        }
-
-        cachedServer.put(player.getUniqueId(), in.readUTF());
-
-      } catch (IOException e) {
-        plugin.logger().error(e);
-      }
+      cachedServer.put(player.getUniqueId(), in.readUTF());
     }
   }
 }

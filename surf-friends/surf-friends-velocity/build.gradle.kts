@@ -5,7 +5,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":surf-friends:surf-friends-api-fallback"))
+    api(project(":surf-friends:surf-friends-api"))
+    api(project(":surf-friends:surf-friends-core"))
 
     annotationProcessor(libs.velocity.api.annotation)
     compileOnlyApi(libs.velocity.api)

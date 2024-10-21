@@ -1,10 +1,8 @@
-package dev.slne.surf.friends.api.fallback;
+package dev.slne.surf.friends.velocity;
 
 import com.google.gson.Gson;
-
 import java.util.List;
 import java.util.UUID;
-
 import lombok.Getter;
 
 @Getter

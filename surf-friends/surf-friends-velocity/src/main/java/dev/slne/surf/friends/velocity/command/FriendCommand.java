@@ -3,6 +3,7 @@ package dev.slne.surf.friends.velocity.command;
 import dev.jorel.commandapi.CommandAPICommand;
 
 import dev.slne.surf.friends.velocity.VelocityInstance;
+
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAcceptCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAddCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendDenyCommand;
@@ -24,7 +25,7 @@ public class FriendCommand extends CommandAPICommand {
         withSubcommand(new FriendSaveCommand("save"));
 
         executesPlayer((player, info) -> {
-            VelocityInstance.getInstance().openMenu(player, "friends:main");
+            VelocityInstance.instance().openMenu(player, "friends:main");
         });
     }
 }

@@ -32,6 +32,16 @@ public class PaperInstance extends JavaPlugin {
 
     this.getServer().getMessenger().registerOutgoingPluginChannel(this, "surf-friends:communication");
     this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication", new CommunicationHandler());
+
+    this.getServer().getMessenger().registerOutgoingPluginChannel(this, "surf-friends:communication-friends");
+    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-friends", new CommunicationHandler());
+
+    this.getServer().getMessenger().registerOutgoingPluginChannel(this, "surf-friends:communication-requests");
+    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-requests", new CommunicationHandler());
+
+    this.getServer().getMessenger().registerOutgoingPluginChannel(this, "surf-friends:communication-server");
+    this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:communication-server", new CommunicationHandler());
+
     this.getServer().getMessenger().registerIncomingPluginChannel(this, "surf-friends:main", new VelocityListener());
   }
 

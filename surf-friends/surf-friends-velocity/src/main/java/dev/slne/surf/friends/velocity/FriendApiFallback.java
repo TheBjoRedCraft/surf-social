@@ -1,35 +1,30 @@
-package dev.slne.surf.friends.api.fallback;
+package dev.slne.surf.friends.velocity;
 
 import com.google.auto.service.AutoService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-
 import dev.slne.surf.friends.api.FriendApi;
+
 import dev.slne.surf.friends.core.FriendCore;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.lang.reflect.Type;
-
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
 import lombok.Getter;
-
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
 
@@ -40,7 +35,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     private final Gson gson = new Gson();
     private final UUID id = UUID.randomUUID();
 
-    private final ProxyServer proxy = FriendApiFallbackInstance.instance().proxy();
+    private final ProxyServer proxy = VelocityInstance.instance().proxy();
 
     @Getter
     private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
@@ -134,15 +129,17 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             data.put(target, friendData);
 
             this.sendIfOnline(player, "Du hast eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", target);
-            this.sendIfOnline(target, "Du hast eine Freundschaftsanfrage von <gold>%s</gold> erhalten.", player);
+
+            if(friendData.getAllowRequests()){
+                this.sendIfOnline(target, "Du hast eine Freundschaftsanfrage von <gold>%s</gold> erhalten.", player);
+            }
 
             return true;
         });
     }
 
-    @Override
     public CompletableFuture<ObjectList<UUID>> getFriendRequests(UUID player) {
-        return CompletableFuture.supplyAsync(() -> (ObjectList<UUID>) this.getData(player).getFriendRequests());
+        return CompletableFuture.supplyAsync(() -> new ObjectArrayList<>(this.getData(player).getFriendRequests()));
     }
 
     @Override
@@ -220,7 +217,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     @Override
     public Boolean init() {
         if (!jsonFile.exists()) {
-            FriendApiFallbackInstance.info("There was no data to load.");
+            VelocityInstance.info("There was no data to load.");
             return true;
         }
 
@@ -232,12 +229,12 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             data.putAll(loadedData);
 
         } catch (IOException e) {
-            FriendApiFallbackInstance.error(e.getMessage());
+            VelocityInstance.error(e.getMessage());
             return false;
         }
 
-        FriendApiFallbackInstance.info("Successfully loaded data from storage.");
-        FriendApiFallbackInstance.info("Api Fallback Identifier: " + id);
+        VelocityInstance.info("Successfully loaded data from storage.");
+        VelocityInstance.info("Api Fallback Identifier: " + id);
         return true;
     }
 
@@ -250,7 +247,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
           try {
             jsonFile.createNewFile();
           } catch (IOException e) {
-              FriendApiFallbackInstance.error(e.getMessage());
+              VelocityInstance.error(e.getMessage());
           }
         }
 
@@ -258,11 +255,11 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
             gson.toJson(data, writer);
 
         } catch (IOException e) {
-            FriendApiFallbackInstance.error(e.getMessage());
+            VelocityInstance.error(e.getMessage());
             return false;
         }
 
-        FriendApiFallbackInstance.info("Successfully saved data to storage.");
+        VelocityInstance.info("Successfully saved data to storage.");
         return true;
     }
 
