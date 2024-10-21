@@ -7,6 +7,7 @@ import dev.slne.surf.friends.velocity.VelocityInstance;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAcceptCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAddCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendDenyCommand;
+import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendJumpCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendRemoveCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendSaveCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendToggleCommand;
@@ -23,6 +24,7 @@ public class FriendCommand extends CommandAPICommand {
         withSubcommand(new FriendRemoveCommand("remove"));
         withSubcommand(new FriendToggleCommand("toggle"));
         withSubcommand(new FriendSaveCommand("save"));
+        withSubcommand(new FriendJumpCommand("jump"));
 
         executesPlayer((player, info) -> {
             VelocityInstance.instance().openMenu(player, "friends:main");
