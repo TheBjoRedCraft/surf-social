@@ -279,6 +279,7 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
                 this.sendIfOnline(player, "Du hast nun Freundschaftsanfragen aktiviert.");
             }
 
+            data.put(player, friendData);
 
             return true;
         });
