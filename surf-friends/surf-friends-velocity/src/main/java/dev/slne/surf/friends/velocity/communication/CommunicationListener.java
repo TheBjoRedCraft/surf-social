@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.velocity;
+package dev.slne.surf.friends.velocity.communication;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 
+import dev.slne.surf.friends.velocity.VelocityInstance;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
@@ -31,41 +32,11 @@ public class CommunicationListener {
 
         switch (type){
           case "FRIENDS" -> {
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            ObjectList<UUID> friends = VelocityInstance.instance().friendApi().getFriends(player.getUniqueId()).getNow(new ObjectArrayList<>());
-
-            out.writeInt(friends.size());
-
-            friends.forEach(friend -> {
-              out.writeLong(friend.getMostSignificantBits());
-              out.writeLong(friend.getLeastSignificantBits());
-            });
-
-            connection.getServer().sendPluginMessage(COMMUNICATION_FRIENDS, out.toByteArray());
+            updateFriends(connection);
           }
 
           case "REQUESTS" -> {
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            ObjectList<UUID> requests = VelocityInstance.instance().friendApi().getFriendRequests(player.getUniqueId()).getNow(new ObjectArrayList<>());
-
-            VelocityInstance.info("Size: " + requests.size());
-            VelocityInstance.info("Requests: " + requests);
-
-            out.writeInt(requests.size());
-            requests.forEach(request -> {
-              out.writeLong(request.getMostSignificantBits());
-              out.writeLong(request.getLeastSignificantBits());
-            });
-            VelocityInstance.info("WROTE");
-
-            connection.getServer().sendPluginMessage(COMMUNICATION_REQUESTS, out.toByteArray());
-          }
-
-          case "SERVER" -> {
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-
-            out.writeUTF(player.getCurrentServer().get().getServerInfo().getName());
-            connection.getServer().sendPluginMessage(COMMUNICATION_SERVER, out.toByteArray());
+            updateRequests(connection);
           }
 
           case "ADD" -> {
@@ -96,9 +67,40 @@ public class CommunicationListener {
           case "TOGGLE" -> {
             VelocityInstance.instance().friendApi().toggle(player.getUniqueId());
           }
-
         }
       }
     }
+  }
+  
+  public static void updateFriends(ServerConnection connection){
+    ByteArrayDataOutput out = ByteStreams.newDataOutput();
+    ObjectList<UUID> friends = VelocityInstance.instance().friendApi().getFriends(connection.getPlayer().getUniqueId()).getNow(new ObjectArrayList<>());
+
+    out.writeInt(friends.size());
+
+    friends.forEach(friend -> {
+      out.writeLong(friend.getMostSignificantBits());
+      out.writeLong(friend.getLeastSignificantBits());
+    });
+
+    connection.getServer().sendPluginMessage(COMMUNICATION_FRIENDS, out.toByteArray());
+  }
+
+  public static void updateRequests(ServerConnection connection){
+    ByteArrayDataOutput out = ByteStreams.newDataOutput();
+    ObjectList<UUID> requests = VelocityInstance.instance().friendApi().getFriendRequests(connection.getPlayer().getUniqueId()).getNow(new ObjectArrayList<>());
+
+    VelocityInstance.info("Size: " + requests.size());
+    VelocityInstance.info("Requests: " + requests);
+
+    out.writeInt(requests.size());
+
+    requests.forEach(request -> {
+      out.writeLong(request.getMostSignificantBits());
+      out.writeLong(request.getLeastSignificantBits());
+    });
+    VelocityInstance.info("WROTE");
+
+    connection.getServer().sendPluginMessage(COMMUNICATION_REQUESTS, out.toByteArray());
   }
 }

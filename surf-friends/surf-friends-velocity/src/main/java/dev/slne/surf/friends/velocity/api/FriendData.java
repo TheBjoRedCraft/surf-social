@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.velocity;
+package dev.slne.surf.friends.velocity.api;
 
 import com.google.gson.Gson;
 import java.util.List;

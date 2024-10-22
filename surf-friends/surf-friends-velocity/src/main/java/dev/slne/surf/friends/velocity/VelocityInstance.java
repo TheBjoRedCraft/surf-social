@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
@@ -22,6 +21,7 @@ import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.command.FriendCommand;
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendAddCommand;
+import dev.slne.surf.friends.velocity.communication.CommunicationListener;
 import java.nio.file.Path;
 
 import lombok.Getter;

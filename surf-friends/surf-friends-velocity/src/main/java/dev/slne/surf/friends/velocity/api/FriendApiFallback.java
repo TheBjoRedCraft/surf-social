@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.velocity;
+package dev.slne.surf.friends.velocity.api;
 
 import com.google.auto.service.AutoService;
 import com.google.gson.Gson;
@@ -12,6 +12,7 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
 
+import dev.slne.surf.friends.velocity.VelocityInstance;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
