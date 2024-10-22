@@ -47,8 +47,6 @@ public class CommunicationHandler {
           out.writeUTF(UUID.randomUUID().toString());
 
           player.sendPluginMessage(plugin, "surf-friends:communication", out.toByteArray());
-
-          Bukkit.getConsoleSender().sendMessage("Send");//REMOVE
         }
       }
     }catch (Exception e){

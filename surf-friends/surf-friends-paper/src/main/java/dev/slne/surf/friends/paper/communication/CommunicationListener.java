@@ -14,35 +14,50 @@ import org.jetbrains.annotations.NotNull;
 public class CommunicationListener implements PluginMessageListener {
   @Override
   public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
-    Bukkit.getConsoleSender().sendMessage("GOT SOMETHING");//REMOVE
     if (channel.equalsIgnoreCase("surf-friends:communication-friends")) {
       ByteArrayDataInput in = ByteStreams.newDataInput(message);
-
-      String players = in.readUTF();
-      ObjectList<String> friends = (ObjectList<String>) Arrays.asList(players.split(", "));
       ObjectList<UUID> uuids = new ObjectArrayList<>();
 
-      friends.forEach(friend -> uuids.add(UUID.fromString(friend)));
-      CommunicationHandler.instance().cachedFriends().put(player.getUniqueId(), uuids);
+      int size = in.readInt();
 
-      Bukkit.getConsoleSender().sendMessage("GOT");//REMOVE
+      for (int i = 0; i < size; i++) {
+        long most = in.readLong();
+        long least = in.readLong();
+
+        uuids.add(new UUID(most, least));
+      }
+
+      CommunicationHandler.instance().cachedFriends().remove(player.getUniqueId());
+      CommunicationHandler.instance().cachedFriends().put(player.getUniqueId(), uuids);
 
     } else if (channel.equalsIgnoreCase("surf-friends:communication-requests")) {
       ByteArrayDataInput in = ByteStreams.newDataInput(message);
-
-      String players = in.readUTF();
-      ObjectList<String> requests = (ObjectList<String>) Arrays.asList(players.split(", "));
       ObjectList<UUID> uuids = new ObjectArrayList<>();
 
-      requests.forEach(friend -> uuids.add(UUID.fromString(friend)));
+      int size = in.readInt();
+
+      Bukkit.getConsoleSender().sendMessage("GOT SIZE: " + size);
+
+      for (int i = 0; i < size; i++) {
+        long most = in.readLong();
+        long least = in.readLong();
+
+        uuids.add(new UUID(most, least));
+      }
+
+      Bukkit.getConsoleSender().sendMessage("GOT");
+      Bukkit.getConsoleSender().sendMessage("GOT: [" + uuids + "]");
+
+      CommunicationHandler.instance().cachedRequests().remove(player.getUniqueId());
       CommunicationHandler.instance().cachedRequests().put(player.getUniqueId(), uuids);
 
-      Bukkit.getConsoleSender().sendMessage("GOT");//REMOVE
-
+      Bukkit.getConsoleSender().sendMessage("PUT");
     } else if (channel.equalsIgnoreCase("surf-friends:communication-server")) {
       ByteArrayDataInput in = ByteStreams.newDataInput(message);
 
+      CommunicationHandler.instance().cachedServer().remove(player.getUniqueId());
       CommunicationHandler.instance().cachedServer().put(player.getUniqueId(), in.readUTF());
+      
     }
   }
 }

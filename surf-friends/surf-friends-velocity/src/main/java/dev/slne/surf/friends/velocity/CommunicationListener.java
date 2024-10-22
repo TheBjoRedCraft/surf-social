@@ -11,6 +11,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
 
 public class CommunicationListener {
@@ -30,34 +31,41 @@ public class CommunicationListener {
 
         switch (type){
           case "FRIENDS" -> {
-            VelocityInstance.error("GOT");//REMOVE
-
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            StringBuilder builder = new StringBuilder();
-            VelocityInstance.instance().friendApi().getFriends(player.getUniqueId()).getNow(new ObjectArrayList<>()).forEach(friend -> builder.append(friend.toString()).append(", "));
+            ObjectList<UUID> friends = VelocityInstance.instance().friendApi().getFriends(player.getUniqueId()).getNow(new ObjectArrayList<>());
 
-            out.writeUTF(builder.toString());
-            player.sendPluginMessage(COMMUNICATION_FRIENDS, out.toByteArray());
+            out.writeInt(friends.size());
 
-            VelocityInstance.error("SEND");//REMOVE
+            friends.forEach(friend -> {
+              out.writeLong(friend.getMostSignificantBits());
+              out.writeLong(friend.getLeastSignificantBits());
+            });
+
+            connection.getServer().sendPluginMessage(COMMUNICATION_FRIENDS, out.toByteArray());
           }
 
           case "REQUESTS" -> {
-            VelocityInstance.error("GOT");//REMOVE
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            StringBuilder builder = new StringBuilder();
-            VelocityInstance.instance().friendApi().getFriendRequests(player.getUniqueId()).getNow(new ObjectArrayList<>()).forEach(request -> builder.append(request.toString()).append(", "));
+            ObjectList<UUID> requests = VelocityInstance.instance().friendApi().getFriendRequests(player.getUniqueId()).getNow(new ObjectArrayList<>());
 
-            out.writeUTF(builder.toString());
-            player.sendPluginMessage(COMMUNICATION_REQUESTS, out.toByteArray());
-            VelocityInstance.error("SEND");//REMOVE
+            VelocityInstance.info("Size: " + requests.size());
+            VelocityInstance.info("Requests: " + requests);
+
+            out.writeInt(requests.size());
+            requests.forEach(request -> {
+              out.writeLong(request.getMostSignificantBits());
+              out.writeLong(request.getLeastSignificantBits());
+            });
+            VelocityInstance.info("WROTE");
+
+            connection.getServer().sendPluginMessage(COMMUNICATION_REQUESTS, out.toByteArray());
           }
 
           case "SERVER" -> {
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
             out.writeUTF(player.getCurrentServer().get().getServerInfo().getName());
-            player.sendPluginMessage(COMMUNICATION_SERVER, out.toByteArray());
+            connection.getServer().sendPluginMessage(COMMUNICATION_SERVER, out.toByteArray());
           }
 
           case "ADD" -> {
