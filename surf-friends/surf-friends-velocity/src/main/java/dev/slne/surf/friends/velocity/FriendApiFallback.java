@@ -3,38 +3,43 @@ package dev.slne.surf.friends.velocity;
 import com.google.auto.service.AutoService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import dev.slne.surf.friends.api.FriendApi;
 
+import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
-import java.util.List;
+
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
 import lombok.Getter;
+
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.Services;
 
 @AutoService(FriendApi.class)
 
 public class FriendApiFallback implements FriendApi, Services.Fallback {
+    private final ProxyServer proxy = VelocityInstance.instance().proxy();
     private final File jsonFile = new File("plugins/surf-friends-velocity/friends.json");
     private final Gson gson = new Gson();
-
-    private final ProxyServer proxy = VelocityInstance.instance().proxy();
 
     @Getter
     private static final Object2ObjectMap<UUID, FriendData> data = new Object2ObjectOpenHashMap<>();
