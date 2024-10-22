@@ -32,7 +32,7 @@ public class FriendJumpCommand extends CommandAPICommand {
         return;
       }
 
-      player.createConnectionRequest(target.getCurrentServer().get().getServer());
+      player.createConnectionRequest(target.getCurrentServer().get().getServer()).fireAndForget();
       player.sendMessage(FriendCore.prefix().append(Component.text("Du wurdest erfolgreich mit dem Server von " + target.getUsername() + " verbunden.").color(PluginColor.LIGHT_GREEN)));
     });
   }
