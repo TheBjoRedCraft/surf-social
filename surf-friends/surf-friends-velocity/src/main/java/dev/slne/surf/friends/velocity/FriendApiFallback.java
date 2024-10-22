@@ -33,7 +33,6 @@ import net.kyori.adventure.util.Services;
 public class FriendApiFallback implements FriendApi, Services.Fallback {
     private final File jsonFile = new File("plugins/surf-friends-velocity/friends.json");
     private final Gson gson = new Gson();
-    private final UUID id = UUID.randomUUID();
 
     private final ProxyServer proxy = VelocityInstance.instance().proxy();
 
@@ -234,7 +233,6 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
         }
 
         VelocityInstance.info("Successfully loaded data from storage.");
-        VelocityInstance.info("Api Fallback Identifier: " + id);
         return true;
     }
 
