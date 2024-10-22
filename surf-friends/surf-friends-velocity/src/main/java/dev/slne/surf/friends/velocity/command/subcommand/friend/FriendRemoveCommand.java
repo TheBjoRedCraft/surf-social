@@ -1,36 +1,26 @@
 package dev.slne.surf.friends.velocity.command.subcommand.friend;
 
 import com.velocitypowered.api.proxy.Player;
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.StringArgument;
 
-import dev.slne.surf.friends.core.FriendCore;
-import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.VelocityInstance;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import net.kyori.adventure.text.Component;
+import dev.slne.surf.friends.velocity.command.argument.PlayerArgument;
 
 public class FriendRemoveCommand extends CommandAPICommand {
     public FriendRemoveCommand(String name) {
         super(name);
-        withArguments(new StringArgument("player"));
+        withArguments(PlayerArgument.player("target"));
 
-        executesPlayer((player, info)-> {
-            Optional<Player> optionalPlayer = VelocityInstance.instance().proxy().getPlayer((String) info.getUnchecked("player"));
+        executesPlayer((player, args)-> {
+            Player target = PlayerArgument.getPlayer("target", args);
 
-            if(optionalPlayer.isEmpty()){
-                player.sendMessage(FriendCore.prefix().append(
-                    Component.text("Der Spieler wurde nicht gefunden.").color(PluginColor.RED)));
-                return;
+            if (target == null) {
+                throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.");
             }
 
-            UUID target = optionalPlayer.get().getUniqueId();
-
-            VelocityInstance.instance().friendApi().removeFriend(player.getUniqueId(), target);
-            VelocityInstance.instance().friendApi().removeFriend(target, player.getUniqueId());
+            VelocityInstance.instance().friendApi().removeFriend(player.getUniqueId(), target.getUniqueId());
+            VelocityInstance.instance().friendApi().removeFriend(target.getUniqueId(), player.getUniqueId());
         });
     }
 }

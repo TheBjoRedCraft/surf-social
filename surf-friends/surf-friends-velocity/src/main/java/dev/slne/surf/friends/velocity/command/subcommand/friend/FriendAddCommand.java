@@ -1,37 +1,26 @@
 package dev.slne.surf.friends.velocity.command.subcommand.friend;
 
 import com.velocitypowered.api.proxy.Player;
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.StringArgument;
 
-import dev.slne.surf.friends.core.FriendCore;
-import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.velocity.VelocityInstance;
-
-import java.util.Optional;
-import net.kyori.adventure.text.Component;
-
-import java.util.UUID;
+import dev.slne.surf.friends.velocity.command.argument.PlayerArgument;
 
 public class FriendAddCommand extends CommandAPICommand {
     public FriendAddCommand(String name) {
         super(name);
 
-        withArguments(new StringArgument("player"));
+        withArguments(PlayerArgument.player("target"));
 
-        executesPlayer((player, info)-> {
-            Optional<Player> optionalPlayer = VelocityInstance.instance().proxy().getPlayer((String) info.getUnchecked("player"));
+        executesPlayer((player, args)-> {
+            Player target = PlayerArgument.getPlayer("target", args);
 
-            if(optionalPlayer.isEmpty()){
-                player.sendMessage(FriendCore.prefix().append(
-                    Component.text("Der Spieler wurde nicht gefunden.").color(PluginColor.RED)));
-                return;
+            if (target == null) {
+                throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.");
             }
 
-            UUID target = optionalPlayer.get().getUniqueId();
-            UUID playerUUID = player.getUniqueId();
-
-            VelocityInstance.instance().friendApi().sendFriendRequest(playerUUID, target);
+            VelocityInstance.instance().friendApi().sendFriendRequest(player.getUniqueId(), target.getUniqueId());
         });
     }
 }
