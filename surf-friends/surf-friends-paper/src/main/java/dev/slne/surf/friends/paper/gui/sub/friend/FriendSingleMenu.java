@@ -9,11 +9,8 @@ import com.github.stefvanschie.inventoryframework.pane.component.Label;
 
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
-import dev.slne.surf.friends.paper.communication.CommunicationHandler;
-import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -63,16 +60,10 @@ public class FriendSingleMenu extends FriendMenu {
       return new GuiItem(stack);
     });
       if (offlinePlayer.isOnline()) {
-        CommunicationHandler.instance().sendRequest(RequestType.REQUEST_SERVER, offlinePlayer.getPlayer(), null);
-
-        if(CommunicationHandler.instance().cachedServer().get(offlinePlayer.getUniqueId()) == null){
-          CommunicationHandler.instance().cachedServer().put(offlinePlayer.getUniqueId(), "N/A");
-        }
-
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Nachspringen").color(PluginColor.LIGHT_BLUE))
-            .addLoreLine(Component.text("Server: " + CommunicationHandler.instance().cachedServer().get(offlinePlayer.getUniqueId())).decoration(TextDecoration.ITALIC, State.FALSE))
-            .setSkullOwner(Bukkit.getOfflinePlayer(name)), event -> CommunicationHandler.instance().sendRequest(RequestType.SEND, (Player) event.getWhoClicked(), null)));
+            .addLoreLine(Component.text("Server: N/A").decoration(TextDecoration.ITALIC, State.FALSE))
+            .setSkullOwner(Bukkit.getOfflinePlayer(name))));
 
       }else{
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)

@@ -11,6 +11,7 @@ dependencies {
 
 
     compileOnlyApi(libs.paper.api)
+    compileOnly(libs.commandapi.bukkit)
     implementation(libs.inventory.framework)
 }
 

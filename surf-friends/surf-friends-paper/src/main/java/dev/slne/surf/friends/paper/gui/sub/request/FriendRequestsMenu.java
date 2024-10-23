@@ -93,13 +93,8 @@ public class FriendRequestsMenu extends FriendMenu {
   private ObjectList<ItemStack> getFriendRequestsItems(UUID player){
     ObjectList<ItemStack> stacks = new ObjectArrayList<>();
 
-    if(CommunicationHandler.instance().cachedRequests().get(player) == null){
-      CommunicationHandler.instance().cachedRequests().put(player, new ObjectArrayList<>());
-    }
 
-    CommunicationHandler.instance().sendRequest(RequestType.REQUESTS, Bukkit.getPlayer(player), null);
-
-    CommunicationHandler.instance().cachedRequests().get(player).forEach(friend -> stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(Bukkit.getOfflinePlayer(friend).getName()).setSkullOwner(Bukkit.getOfflinePlayer(friend)).build()));
+    PaperInstance.instance().friendApi().getFriendRequests(player).forEach(friend -> stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(Bukkit.getOfflinePlayer(friend).getName()).setSkullOwner(Bukkit.getOfflinePlayer(friend)).build()));
 
     return stacks;
   }

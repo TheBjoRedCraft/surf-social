@@ -9,8 +9,7 @@ import com.github.stefvanschie.inventoryframework.pane.component.Label;
 
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
-import dev.slne.surf.friends.paper.communication.CommunicationHandler;
-import dev.slne.surf.friends.paper.communication.RequestType;
+import dev.slne.surf.friends.paper.PaperInstance;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
 import net.kyori.adventure.text.Component;
@@ -59,12 +58,12 @@ public class FriendRequestManageMenu extends FriendMenu {
     });
 
     accept.setOnClick(event -> {
-      CommunicationHandler.instance().sendRequest(RequestType.ACCEPT_REQUEST, (Player) event.getWhoClicked(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      PaperInstance.instance().friendApi().acceptFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 
     deny.setOnClick(event -> {
-      CommunicationHandler.instance().sendRequest(RequestType.DENY_REQUEST, (Player) event.getWhoClicked(), Bukkit.getOfflinePlayer(name).getUniqueId());
+      PaperInstance.instance().friendApi().denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
       new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     });
 
