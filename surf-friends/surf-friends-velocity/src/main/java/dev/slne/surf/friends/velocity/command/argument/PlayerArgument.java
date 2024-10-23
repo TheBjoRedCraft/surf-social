@@ -1,10 +1,13 @@
 package dev.slne.surf.friends.velocity.command.argument;
 
 import com.velocitypowered.api.proxy.Player;
+
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
+
 import dev.slne.surf.friends.velocity.VelocityInstance;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,8 +1,8 @@
 package dev.slne.surf.friends.velocity.api;
 
-import com.google.gson.Gson;
 import java.util.List;
 import java.util.UUID;
+
 import lombok.Getter;
 
 @Getter
@@ -24,13 +24,5 @@ public class FriendData {
   public FriendData allowRequests(Boolean allowRequests){
     this.allowRequests = allowRequests;
     return this;
-  }
-
-  public String serialize() {
-    return new Gson().toJson(this);
-  }
-
-  public static FriendData deserialize(String json) {
-    return new Gson().fromJson(json, FriendData.class);
   }
 }

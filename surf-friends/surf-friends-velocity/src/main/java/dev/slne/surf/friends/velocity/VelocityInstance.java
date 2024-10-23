@@ -56,7 +56,6 @@ public class VelocityInstance {
     this.friendApi = Services.serviceWithFallback(FriendApi.class).orElse(null);
 
     CommandAPI.onLoad(new CommandAPIVelocityConfig(proxy, this));
-    proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.create("surf-friends", "main"));
 
     new FriendCommand("friend").register();
     new FriendCommand("friends").register();
@@ -74,6 +73,7 @@ public class VelocityInstance {
     proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_REQUESTS);
     proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_SERVER);
     proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_MAIN);
+    proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.create("surf-friends", "main"));
 
     proxy.getEventManager().register(this, new CommunicationListener());
 
