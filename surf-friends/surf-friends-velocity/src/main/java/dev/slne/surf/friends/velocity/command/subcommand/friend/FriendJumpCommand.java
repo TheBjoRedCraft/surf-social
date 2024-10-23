@@ -34,6 +34,8 @@ public class FriendJumpCommand extends CommandAPICommand {
 
       player.createConnectionRequest(target.getCurrentServer().get().getServer()).fireAndForget();
       player.sendMessage(FriendCore.prefix().append(Component.text("Du wurdest erfolgreich mit dem Server von " + target.getUsername() + " verbunden.").color(PluginColor.LIGHT_GREEN)));
+
+      //TODO: Cloud implementation
     });
   }
 }
