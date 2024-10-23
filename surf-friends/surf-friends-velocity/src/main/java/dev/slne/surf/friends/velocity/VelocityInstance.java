@@ -71,7 +71,6 @@ public class VelocityInstance {
 
     proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_FRIENDS);
     proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_REQUESTS);
-    proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_SERVER);
     proxy.getChannelRegistrar().register(CommunicationListener.COMMUNICATION_MAIN);
     proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.create("surf-friends", "main"));
 

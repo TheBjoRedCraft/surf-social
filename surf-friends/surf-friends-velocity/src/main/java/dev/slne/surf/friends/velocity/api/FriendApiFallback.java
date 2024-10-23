@@ -6,13 +6,12 @@ import com.google.gson.reflect.TypeToken;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.ServerConnection;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
 
 import dev.slne.surf.friends.api.FriendApi;
 import dev.slne.surf.friends.core.FriendCore;
 
 import dev.slne.surf.friends.velocity.VelocityInstance;
+import dev.slne.surf.friends.velocity.communication.CommunicationListener;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -65,6 +64,14 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
             data.put(player, friendData);
 
+            if(VelocityInstance.instance().proxy().getPlayer(target).isPresent()){
+                CommunicationListener.updateFriends(VelocityInstance.instance().proxy().getPlayer(target).get().getCurrentServer().get());
+            }
+
+            if(VelocityInstance.instance().proxy().getPlayer(player).isPresent()){
+                CommunicationListener.updateFriends(VelocityInstance.instance().proxy().getPlayer(player).get().getCurrentServer().get());
+            }
+
             this.sendIfOnline(player, "Du bist nun mit <gold>%s</gold> befreundet.", target);
             return true;
         });
@@ -88,6 +95,14 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
             friendData.getFriendList().remove(target);
 
+            if(VelocityInstance.instance().proxy().getPlayer(target).isPresent()){
+                CommunicationListener.updateFriends(VelocityInstance.instance().proxy().getPlayer(target).get().getCurrentServer().get());
+            }
+
+            if(VelocityInstance.instance().proxy().getPlayer(player).isPresent()){
+                CommunicationListener.updateFriends(VelocityInstance.instance().proxy().getPlayer(player).get().getCurrentServer().get());
+            }
+
 
             data.put(player, friendData);
 
@@ -97,8 +112,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
     }
 
     @Override
-    public CompletableFuture<ObjectList<UUID>> getFriends(UUID player) {
-        return CompletableFuture.supplyAsync(() -> (ObjectList<UUID>) this.getData(player).getFriendList());
+    public ObjectList<UUID> getFriends(UUID player) {
+        return new ObjectArrayList<>(this.getData(player).getFriendList());
     }
 
     @Override
@@ -131,6 +146,10 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
             friendData.getFriendRequests().add(player);
 
+            if(VelocityInstance.instance().proxy().getPlayer(target).isPresent()){
+                CommunicationListener.updateRequests(VelocityInstance.instance().proxy().getPlayer(target).get().getCurrentServer().get());
+            }
+
             data.put(target, friendData);
 
             this.sendIfOnline(player, "Du hast eine Freundschaftsanfrage an <gold>%s</gold> gesendet.", target);
@@ -143,8 +162,8 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
         });
     }
 
-    public CompletableFuture<ObjectList<UUID>> getFriendRequests(UUID player) {
-        return CompletableFuture.supplyAsync(() -> new ObjectArrayList<>(this.getData(player).getFriendRequests()));
+    public ObjectList<UUID> getFriendRequests(UUID player) {
+        return new ObjectArrayList<>(this.getData(player).getFriendRequests());
     }
 
     @Override
@@ -195,27 +214,13 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
 
             data.put(player, friendData);
 
+            if(VelocityInstance.instance().proxy().getPlayer(player).isPresent()){
+                CommunicationListener.updateRequests(VelocityInstance.instance().proxy().getPlayer(player).get().getCurrentServer().get());
+            }
+
             this.sendIfOnline(player, "Du hast die Freundschaftsanfrage von <gold>%s</gold> abgelehnt.", target);
             this.sendIfOnline(target, "<gold>%s</gold> hat deine Freundschaftsanfrage abgelehnt.", player);
             return true;
-        });
-    }
-
-    @Override
-    public CompletableFuture<String> getServerFromPlayer(UUID player) {
-        return CompletableFuture.supplyAsync(() -> {
-            Optional<Player> velocityPlayer = proxy.getPlayer(player);
-
-            if(velocityPlayer.isEmpty()){
-                return "N/A";
-            }
-
-            Optional<ServerConnection> connection = velocityPlayer.get().getCurrentServer();
-
-            if(connection.isEmpty()){
-                return "N/A";
-            }
-            return connection.get().getServer().getServerInfo().getName();
         });
     }
 
@@ -289,29 +294,6 @@ public class FriendApiFallback implements FriendApi, Services.Fallback {
         });
     }
 
-    @Override
-    public CompletableFuture<Boolean> send(UUID player, String server) {
-        return CompletableFuture.supplyAsync(() -> {
-            Optional<RegisteredServer> registeredServer = proxy.getServer(server);
-            Optional<Player> velocityPlayer = proxy.getPlayer(player);
-
-            if(registeredServer.isEmpty()){
-                return false;
-            }
-
-            if(velocityPlayer.isEmpty()){
-                return false;
-            }
-
-            this.sendIfOnline(player, String.format("Versuche dich zu %s zu senden...", server));
-
-            velocityPlayer.get().createConnectionRequest(registeredServer.get()).fireAndForget();
-
-            this.sendIfOnline(player, String.format("Du wurdest erfolgreich zu %s gesendet.", server));
-
-            return true;
-        });
-    }
 
     private FriendData getData(UUID uuid){
         if(data.get(uuid) == null){

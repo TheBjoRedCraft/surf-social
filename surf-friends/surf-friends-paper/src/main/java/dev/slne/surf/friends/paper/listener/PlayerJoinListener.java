@@ -1,10 +1,7 @@
 package dev.slne.surf.friends.paper.listener;
 
-import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.paper.communication.CommunicationHandler;
-
 import dev.slne.surf.friends.paper.communication.RequestType;
-import net.kyori.adventure.text.Component;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,9 +15,6 @@ public class PlayerJoinListener implements Listener {
     Player player = event.getPlayer();
 
     CommunicationHandler.instance().sendRequest(RequestType.REQUESTS, player, null);
-
-    if(!CommunicationHandler.instance().cachedRequests().isEmpty()){
-      player.sendMessage(FriendCore.prefix().append(Component.text(String.format("Du hast noch %s Freundschaftsanfragen offen.", CommunicationHandler.instance().cachedRequests().size()))));
-    }
+    CommunicationHandler.instance().sendRequest(RequestType.FRIENDS, player, null);
   }
 }

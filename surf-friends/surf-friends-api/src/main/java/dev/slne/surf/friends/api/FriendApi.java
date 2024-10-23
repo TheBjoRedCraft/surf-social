@@ -32,7 +32,7 @@ public interface FriendApi {
    * @param player The UUID of the player.
    * @return A List containing the list of friend UUIDs.
    */
-  CompletableFuture<ObjectList<UUID>> getFriends(UUID player);
+  ObjectList<UUID> getFriends(UUID player);
 
   /**
    * Check if two players are friends.
@@ -58,7 +58,7 @@ public interface FriendApi {
    * @param player The UUID of the player.
    * @return A List of UUIDs
    */
-  CompletableFuture<ObjectList<UUID>> getFriendRequests(UUID player);
+  ObjectList<UUID> getFriendRequests(UUID player);
 
   /**
    * Accept a friend request.
@@ -77,14 +77,6 @@ public interface FriendApi {
    * @return A boolean indicating if they are friends.
    */
   CompletableFuture<Boolean> denyFriendRequest(UUID player, UUID target);
-
-  /**
-   * Get server name from player.
-   *
-   * @param player The UUID of the player.
-   * @return The name of the server from the player
-   */
-  CompletableFuture<String> getServerFromPlayer(UUID player);
 
   /**
    * Init Tasks for starting.
@@ -106,11 +98,4 @@ public interface FriendApi {
    * @return A boolean indicating the success or failure of the operation.
    */
   CompletableFuture<Boolean> toggle(UUID player);
-
-  /**
-   * Send a velocity player to a server
-   *
-   * @return A boolean indicating the success or failure of the operation.
-   */
-  CompletableFuture<Boolean> send(UUID player, String target);
 }
