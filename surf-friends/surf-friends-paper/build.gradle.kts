@@ -1,3 +1,5 @@
+import net.minecrell.pluginyml.paper.PaperPluginDescription
+
 plugins {
     id("java")
     id("dev.slne.java-common")
@@ -20,6 +22,13 @@ paper {
     apiVersion = "1.21"
     authors = listOf("TheBjoRedCraft", "SLNE Development")
     prefix = "SurfSocial/SurfFriends"
+
+    serverDependencies {
+        register("CommandAPI") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            required = true
+        }
+    }
 }
 
 tasks.shadowJar{

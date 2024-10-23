@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import net.kyori.adventure.util.Services;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class PaperInstance extends JavaPlugin {
 
   private final FriendLogger logger = new FriendLogger();
-  private final FriendApi friendApi = Services.serviceWithFallback(FriendApi.class).orElse(null);
+  private FriendApi friendApi;
 
   @Override
   public void onLoad() {
@@ -26,10 +27,17 @@ public class PaperInstance extends JavaPlugin {
 
   @Override
   public void onEnable() {
-    Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(), this);
+    /* init */
+    friendApi = Services.serviceWithFallback(FriendApi.class).orElse(null);
 
+    /* Plugin Management */
+    Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(), this);
     new FriendCommand("friend").register();
 
+    /* Configuration */
+    this.saveDefaultConfig();
+
+    /* Debug */
     logger.info("Successfully enabled.");
   }
 

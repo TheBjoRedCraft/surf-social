@@ -318,7 +318,7 @@ public class FriendApiFallback implements FriendApi {
       return;
     }
 
-    player.sendMessage(FriendCore.prefix().append(Component.text(String.join(message, target.getName()))));
+    player.sendMessage(FriendCore.prefix().append(Component.text(String.format(message, target.getName()))));
   }
 
   public void handleJoin(PlayerJoinEvent event){

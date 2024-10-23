@@ -1,7 +1,5 @@
 package dev.slne.surf.friends.paper.command.subcommand;
 
-import com.velocitypowered.api.proxy.Player;
-
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
