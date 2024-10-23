@@ -7,8 +7,10 @@ import dev.jorel.commandapi.CommandAPICommand;
 
 import dev.slne.surf.friends.core.FriendCore;
 import dev.slne.surf.friends.core.util.PluginColor;
+import dev.slne.surf.friends.velocity.VelocityInstance;
 import dev.slne.surf.friends.velocity.command.argument.PlayerArgument;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.kyori.adventure.text.Component;
 
 public class FriendJumpCommand extends CommandAPICommand {
@@ -23,6 +25,10 @@ public class FriendJumpCommand extends CommandAPICommand {
 
       if (target == null) {
         throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.");
+      }
+
+      if(!VelocityInstance.instance().friendApi().getFriends(player.getUniqueId()).getNow(new ObjectArrayList<>()).contains(target.getUniqueId())){
+        throw CommandAPI.failWithString("Du bist nicht mit " + target.getUsername() + " befreundet.");
       }
 
       player.sendMessage(FriendCore.prefix().append(Component.text("Du wirst mit dem Server von " + target.getUsername() + " verbunden.")));
