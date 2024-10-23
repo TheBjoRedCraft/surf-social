@@ -9,8 +9,6 @@ import dev.slne.surf.friends.core.util.FriendLogger;
 import dev.slne.surf.friends.core.util.ItemBuilder;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.paper.PaperInstance;
-import dev.slne.surf.friends.paper.communication.CommunicationHandler;
-import dev.slne.surf.friends.paper.communication.RequestType;
 import dev.slne.surf.friends.paper.gui.FriendMainMenu;
 import dev.slne.surf.friends.paper.gui.FriendMenu;
 
