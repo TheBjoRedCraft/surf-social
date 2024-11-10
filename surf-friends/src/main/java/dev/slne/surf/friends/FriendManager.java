@@ -5,6 +5,8 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 import dev.slne.surf.friends.database.Database;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -93,6 +95,14 @@ public class FriendManager {
         .join();
   }
 
+  public CompletableFuture<ObjectList<UUID>> getFriends(UUID player) {
+    return this.queryFriendData(player).thenApply(friendData -> friendData != null ? friendData.getFriends() : ObjectArrayList.of());
+  }
+
+  public CompletableFuture<ObjectList<UUID>> getFriendRequests(UUID player) {
+    return this.queryFriendData(player).thenApply(friendData -> friendData != null ? friendData.getFriendRequests() : ObjectArrayList.of());
+  }
+
   public boolean toggle(UUID player) {
     this.queryFriendData(player).thenApply(friendData -> {
       friendData.setAllowRequests(!friendData.getAllowRequests());
@@ -106,12 +116,11 @@ public class FriendManager {
 
   /* Async FriendData Management */
 
-
   private CompletableFuture<FriendData> queryFriendData(UUID player) {
     return cache.get(player, Database::getFriendData);
   }
 
-  private CompletableFuture<Void> saveFriendData(UUID player) {
+  public CompletableFuture<Void> saveFriendData(UUID player) {
     return this.queryFriendData(player).thenCompose(friendData -> {
       if (friendData == null) {
         return CompletableFuture.completedFuture(null);
@@ -119,6 +128,17 @@ public class FriendManager {
 
       return CompletableFuture.runAsync(() -> Database.saveFriendData(friendData)).thenRun(() -> this.cache.synchronous().invalidate(player));
     });
+  }
+  public void saveAll() {
+    ObjectList<CompletableFuture<Void>> futures = new ObjectArrayList<>();
+
+    for (UUID player : cache.synchronous().asMap().keySet()) {
+      CompletableFuture<Void> future = this.saveFriendData(player);
+
+      futures.add(future);
+    }
+
+    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
   }
 
   public void sendPlayer(UUID player, UUID target) {
