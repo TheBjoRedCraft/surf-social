@@ -8,10 +8,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":surf-friends:surf-friends-api"))
-    api(project(":surf-friends:surf-friends-core"))
-
-
     compileOnlyApi(libs.paper.api)
     compileOnly(libs.commandapi.bukkit)
     implementation(libs.inventory.framework)
@@ -26,6 +22,7 @@ paper {
     apiVersion = "1.21"
     authors = listOf("TheBjoRedCraft", "SLNE Development")
     prefix = "SurfSocial/SurfFriends"
+    name = "SurfFriends"
 
     serverDependencies {
         register("CommandAPI") {
@@ -39,5 +36,6 @@ tasks.shadowJar {
     relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.inventoryframework")
 
     archiveClassifier.set("")
-    archiveVersion.set("")
+    archiveVersion.set("1.0.0-SNAPSHOT")
+    archiveBaseName.set("surf-friends")
 }

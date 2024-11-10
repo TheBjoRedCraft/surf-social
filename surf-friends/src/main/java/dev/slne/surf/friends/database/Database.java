@@ -39,11 +39,11 @@ public class Database {
 
   private static void createTable() {
     String table = """
-            CREATE TABLE IF NOT EXISTS surf-friends (
-                player_uuid CHAR(36) PRIMARY KEY,
-                friends TEXT,
-                friend_requests TEXT,
-                allow_requests BOOLEAN
+            CREATE TABLE IF NOT EXISTS surffriends (
+            uuid VARCHAR(36) PRIMARY KEY,
+            friends TEXT,
+            friendrequests TEXT,
+            allowrequests boolean
             );
             """;
 
@@ -55,7 +55,7 @@ public class Database {
   }
 
   public static FriendData getFriendData(UUID player) {
-    String query = "SELECT * FROM surf-friends WHERE player_uuid = ?";
+    String query = "SELECT * FROM surffriends WHERE uuid = ?";
 
     try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(query)) {
 
@@ -64,8 +64,8 @@ public class Database {
 
       if (rs.next()) {
         ObjectList<UUID> friends = parseUUIDList(rs.getString("friends"));
-        ObjectList<UUID> friendRequests = parseUUIDList(rs.getString("friend_requests"));
-        Boolean allowRequests = rs.getBoolean("allow_requests");
+        ObjectList<UUID> friendRequests = parseUUIDList(rs.getString("friendrequests"));
+        Boolean allowRequests = rs.getBoolean("allowrequests");
 
         return FriendData.builder()
             .player(player)
@@ -82,12 +82,12 @@ public class Database {
 
   public static void saveFriendData(FriendData friendData) {
     String query = """
-            INSERT INTO surf-friends (player_uuid, friends, friend_requests, allow_requests)
+            INSERT INTO surffriends (uuid, friends, friendrequests, allowrequests)
             VALUES (?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 friends = VALUES(friends),
-                friend_requests = VALUES(friend_requests),
-                allow_requests = VALUES(allow_requests)
+                friendrequests = VALUES(friendrequests),
+                allowrequests = VALUES(allowrequests)
             """;
 
     try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(query)) {
