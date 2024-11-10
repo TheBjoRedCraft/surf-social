@@ -12,4 +12,5 @@ public class PluginColor {
   public static final TextColor LIGHT_GRAY = TextColor.fromHexString("#d3d3d3");
   public static final TextColor DARK_GRAY = TextColor.fromHexString("#a9a9a9");
   public static final TextColor WHITE = TextColor.fromHexString("#ffffff");
+  public static TextColor LIGHT_GREEN = TextColor.fromHexString("#29e918");
 }
