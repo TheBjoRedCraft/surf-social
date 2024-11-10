@@ -32,7 +32,7 @@ public class FriendManager {
       if (friendData != null && !friendData.getFriends().contains(target)) {
         friendData.getFriends().add(target);
 
-        cache.put(player, CompletableFuture.completedFuture(friendData));
+        cache.synchronous().put(player, friendData);
       }
     });
 
@@ -40,7 +40,7 @@ public class FriendManager {
       if (friendData != null && !friendData.getFriends().contains(player)) {
         friendData.getFriends().add(player);
 
-        cache.put(target, CompletableFuture.completedFuture(friendData));
+        cache.synchronous().put(target, friendData);
       }
     });
 
@@ -53,7 +53,7 @@ public class FriendManager {
       if (friendData != null) {
         friendData.getFriends().remove(target);
 
-        cache.put(player, CompletableFuture.completedFuture(friendData));
+        cache.synchronous().put(player, friendData);
       }
     });
 
@@ -61,7 +61,7 @@ public class FriendManager {
       if (friendData != null) {
         friendData.getFriends().remove(player);
 
-        cache.put(target, CompletableFuture.completedFuture(friendData));
+        cache.synchronous().put(target, friendData);
       }
     });
 
@@ -74,7 +74,7 @@ public class FriendManager {
       if (friendData != null && !friendData.getFriendRequests().contains(player)) {
         friendData.getFriendRequests().add(player);
 
-        cache.put(target, CompletableFuture.completedFuture(friendData));
+        cache.synchronous().put(target, friendData);
       }
     });
 
@@ -86,7 +86,7 @@ public class FriendManager {
     this.queryFriendData(player).thenAccept(friendData -> {
       if (friendData != null && friendData.getFriendRequests().contains(target)) {
         friendData.getFriendRequests().remove(target);
-        cache.put(player, CompletableFuture.completedFuture(friendData));
+        cache.synchronous().put(player, friendData);
 
         this.addFriend(player, target);
       }
@@ -101,7 +101,7 @@ public class FriendManager {
       if (friendData != null) {
         friendData.getFriendRequests().remove(target);
 
-        cache.put(player, CompletableFuture.completedFuture(friendData));
+        cache.synchronous().put(player, friendData);
       }
     });
 
@@ -133,7 +133,7 @@ public class FriendManager {
     this.queryFriendData(player).thenApply(friendData -> {
       friendData.setAllowRequests(!friendData.getAllowRequests());
 
-      cache.put(player, CompletableFuture.completedFuture(friendData));
+      cache.synchronous().put(player, friendData);
 
       return friendData.getAllowRequests();
     });
