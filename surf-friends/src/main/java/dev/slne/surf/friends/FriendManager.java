@@ -1,6 +1,6 @@
 package dev.slne.surf.friends;
 
-import com.github.benmanes.caffeine.cache.AsyncCache;
+import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
 import dev.slne.surf.friends.database.Database;
@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 public class FriendManager {
   @Getter
   private static final FriendManager instance = new FriendManager();
-  private final AsyncCache<UUID, FriendData> cache = Caffeine.newBuilder().buildAsync(Database::getFriendData);
+  private final AsyncLoadingCache<UUID, FriendData> cache = Caffeine.newBuilder().buildAsync(Database::getFriendData);
 
   /* Friend Management */
 
