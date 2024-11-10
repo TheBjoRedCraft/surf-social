@@ -37,7 +37,7 @@ public class Database {
     createTable();
   }
 
-  public static void createTable() {
+  private static void createTable() {
     String table = """
             CREATE TABLE IF NOT EXISTS surf-friends (
                 player_uuid CHAR(36) PRIMARY KEY,

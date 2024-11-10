@@ -4,6 +4,7 @@ import dev.slne.surf.friends.command.FriendCommand;
 import dev.slne.surf.friends.command.subcommand.FriendAddCommand;
 import dev.slne.surf.friends.config.PluginConfig;
 import dev.slne.surf.friends.core.util.PluginColor;
+import dev.slne.surf.friends.database.Database;
 import dev.slne.surf.friends.listener.PlayerJoinListener;
 import dev.slne.surf.friends.listener.PlayerQuitListener;
 
@@ -20,6 +21,7 @@ public class SurfFriendsPlugin extends JavaPlugin {
     this.registerCommands();
 
     PluginConfig.createConfig();
+    Database.createConnection();
   }
 
   @Override
