@@ -7,6 +7,7 @@ import dev.slne.surf.friends.command.subcommand.FriendDenyCommand;
 import dev.slne.surf.friends.command.subcommand.FriendJumpCommand;
 import dev.slne.surf.friends.command.subcommand.FriendRemoveCommand;
 import dev.slne.surf.friends.command.subcommand.FriendToggleCommand;
+import dev.slne.surf.friends.menu.FriendMainMenu;
 
 public class FriendCommand extends CommandAPICommand {
 
@@ -22,5 +23,8 @@ public class FriendCommand extends CommandAPICommand {
     withSubcommand(new FriendToggleCommand("toggle"));
     withSubcommand(new FriendJumpCommand("jump"));
 
+    executesPlayer((player, args) -> {
+      new FriendMainMenu().show(player);
+    });
   }
 }
