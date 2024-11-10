@@ -2,14 +2,18 @@ package dev.slne.surf.friends.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import dev.slne.surf.friends.FriendData;
 import dev.slne.surf.friends.SurfFriendsPlugin;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
 import java.sql.*;
 import java.util.UUID;
+
 import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 
 public class Database {

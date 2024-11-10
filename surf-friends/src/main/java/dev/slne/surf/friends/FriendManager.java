@@ -7,6 +7,7 @@ import dev.slne.surf.friends.database.Database;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 

@@ -5,8 +5,10 @@ import dev.slne.surf.friends.command.subcommand.FriendAddCommand;
 import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.listener.PlayerJoinListener;
 import dev.slne.surf.friends.listener.PlayerQuitListener;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

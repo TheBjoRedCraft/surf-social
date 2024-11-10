@@ -1,6 +1,7 @@
 package dev.slne.surf.friends.listener;
 
 import dev.slne.surf.friends.FriendManager;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
