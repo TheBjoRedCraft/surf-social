@@ -6,11 +6,11 @@ import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.ToggleButton;
 
 import dev.slne.surf.friends.FriendManager;
-import dev.slne.surf.friends.core.util.ItemBuilder;
-import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.menu.FriendMainMenu;
 import dev.slne.surf.friends.menu.FriendMenu;
 
+import dev.slne.surf.friends.util.ItemBuilder;
+import dev.slne.surf.friends.util.PluginColor;
 import java.util.UUID;
 
 import net.kyori.adventure.key.Key;
@@ -42,11 +42,11 @@ public class FriendSettingsMenu extends FriendMenu {
 
     mid.setEnabledItem(build(new ItemBuilder(Material.WRITABLE_BOOK)
         .addLoreLine(Component.text("Aktuell ist diese Einstellung aktiviert.").decoration(TextDecoration.ITALIC, State.FALSE))
-        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> FriendManager.instance().toggle(player)));
+        .setName(Component.text("Freundesanfragen").color(PluginColor.BLUE_LIGHT)), event -> FriendManager.instance().toggle(player)));
 
     mid.setDisabledItem(build(new ItemBuilder(Material.WRITABLE_BOOK)
         .addLoreLine(Component.text("Aktuell ist diese Einstellung deaktiviert.").decoration(TextDecoration.ITALIC, State.FALSE))
-        .setName(Component.text("Freundesanfragen").color(PluginColor.LIGHT_BLUE)), event -> FriendManager.instance().toggle(player)));
+        .setName(Component.text("Freundesanfragen").color(PluginColor.BLUE_LIGHT)), event -> FriendManager.instance().toggle(player)));
 
     navigation.addItem(build(new ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED)), event -> new FriendMainMenu().show(event.getWhoClicked())), 4, 0);
 

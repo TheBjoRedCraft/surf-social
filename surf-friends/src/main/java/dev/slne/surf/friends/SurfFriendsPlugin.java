@@ -3,11 +3,11 @@ package dev.slne.surf.friends;
 import dev.slne.surf.friends.command.FriendCommand;
 import dev.slne.surf.friends.command.subcommand.FriendAddCommand;
 import dev.slne.surf.friends.config.PluginConfig;
-import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.database.Database;
 import dev.slne.surf.friends.listener.PlayerJoinListener;
 import dev.slne.surf.friends.listener.PlayerQuitListener;
 
+import dev.slne.surf.friends.util.PluginColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -32,7 +32,7 @@ public class SurfFriendsPlugin extends JavaPlugin {
 
   public static Component getPrefix() {
     return Component.text(">> ").color(NamedTextColor.GRAY)
-        .append(Component.text("Friends").color(PluginColor.LIGHT_BLUE))
+        .append(Component.text("Friends").color(PluginColor.BLUE_LIGHT))
         .append(Component.text(" | ").color(NamedTextColor.DARK_GRAY));
   }
 

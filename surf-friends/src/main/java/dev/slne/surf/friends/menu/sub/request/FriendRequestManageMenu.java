@@ -7,9 +7,9 @@ import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
 import dev.slne.surf.friends.FriendManager;
-import dev.slne.surf.friends.core.util.ItemBuilder;
-import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.menu.FriendMenu;
+import dev.slne.surf.friends.util.ItemBuilder;
+import dev.slne.surf.friends.util.PluginColor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -28,7 +28,7 @@ public class FriendRequestManageMenu extends FriendMenu {
     Label accept = new Label(1, 2, 1, 1, Priority.NORMAL, Font.OAK_PLANKS);
     Label deny = new Label(7, 2, 1, 1, Priority.NORMAL, Font.OAK_PLANKS);
 
-    ItemStack target = new ItemBuilder(Material.PLAYER_HEAD).setSkullOwner(name).setName(Component.text(name).color(PluginColor.LIGHT_BLUE)).build();
+    ItemStack target = new ItemBuilder(Material.PLAYER_HEAD).setSkullOwner(name).setName(Component.text(name).color(PluginColor.BLUE_LIGHT)).build();
 
     header.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
     header.setRepeat(true);

@@ -2,7 +2,7 @@ package dev.slne.surf.friends.menu;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
-import dev.slne.surf.friends.core.util.ItemBuilder;
+import dev.slne.surf.friends.util.ItemBuilder;
 import java.util.function.Consumer;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;

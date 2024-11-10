@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 import dev.slne.surf.friends.database.Database;
 
+import dev.slne.surf.friends.util.PluginColor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
@@ -13,6 +14,9 @@ import java.util.concurrent.CompletableFuture;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 @Getter
 @Accessors(fluent = true)
@@ -39,6 +43,9 @@ public class FriendManager {
         cache.put(target, CompletableFuture.completedFuture(friendData));
       }
     });
+
+    this.sendMessage(player, Component.text("Du bist nun mit ").append(Component.text(Bukkit.getOfflinePlayer(target).getName(), PluginColor.GOLD)).append(Component.text(" befreundet.")));
+    this.sendMessage(target, Component.text("Du bist nun mit ").append(Component.text(Bukkit.getOfflinePlayer(player).getName(), PluginColor.GOLD)).append(Component.text(" befreundet.")));
   }
 
   public void removeFriend(UUID player, UUID target) {
@@ -57,6 +64,9 @@ public class FriendManager {
         cache.put(target, CompletableFuture.completedFuture(friendData));
       }
     });
+
+    this.sendMessage(player, Component.text("Du hast ").append(Component.text(Bukkit.getOfflinePlayer(target).getName(), PluginColor.GOLD)).append(Component.text(" als Freund entfernt.")));
+    this.sendMessage(target, Component.text("Du wurdest von ").append(Component.text(Bukkit.getOfflinePlayer(player).getName(), PluginColor.GOLD)).append(Component.text(" als Freund entfernt.")));
   }
 
   public void sendFriendRequest(UUID player, UUID target) {
@@ -67,17 +77,23 @@ public class FriendManager {
         cache.put(target, CompletableFuture.completedFuture(friendData));
       }
     });
+
+    this.sendMessage(player, Component.text("Du hast eine Freundschaftsanfrage an ").append(Component.text(Bukkit.getOfflinePlayer(target).getName(), PluginColor.GOLD)).append(Component.text(" gesendet.")));
+    this.sendMessage(target, Component.text("Du hast eine Freundschaftsanfrage von ").append(Component.text(Bukkit.getOfflinePlayer(player).getName(), PluginColor.GOLD)).append(Component.text(" erhalten.")));
   }
 
   public void acceptFriendRequests(UUID player, UUID target) {
     this.queryFriendData(player).thenAccept(friendData -> {
       if (friendData != null && friendData.getFriendRequests().contains(target)) {
         friendData.getFriendRequests().remove(target);
-
         cache.put(player, CompletableFuture.completedFuture(friendData));
+
         this.addFriend(player, target);
       }
     });
+
+    this.sendMessage(player, Component.text("Du hast die Freundschaftsanfrage von ").append(Component.text(Bukkit.getOfflinePlayer(target).getName(), PluginColor.GOLD)).append(Component.text(" akzeptiert.")));
+    this.sendMessage(target, Component.text("Die Freundschaftsanfrage von ").append(Component.text(Bukkit.getOfflinePlayer(player).getName(), PluginColor.GOLD)).append(Component.text(" wurde akzeptiert.")));
   }
 
   public void denyFriendRequest(UUID player, UUID target) {
@@ -88,11 +104,20 @@ public class FriendManager {
         cache.put(player, CompletableFuture.completedFuture(friendData));
       }
     });
+
+    this.sendMessage(player, Component.text("Du hast die Freundschaftsanfrage von ").append(Component.text(Bukkit.getOfflinePlayer(target).getName(), PluginColor.GOLD)).append(Component.text(" abgelehnt.")));
+    this.sendMessage(target, Component.text("Die Freundschaftsanfrage von ").append(Component.text(Bukkit.getOfflinePlayer(player).getName(), PluginColor.GOLD)).append(Component.text(" wurde abgelehnt.")));
   }
 
   public boolean areFriends(UUID player, UUID target) {
     return this.queryFriendData(player)
         .thenApply(friendData -> friendData != null && friendData.getFriends().contains(target))
+        .join();
+  }
+
+  public boolean hasFriendRequest(UUID player, UUID target) {
+    return this.queryFriendData(player)
+        .thenApply(friendData -> friendData != null && friendData.getFriendRequests().contains(target))
         .join();
   }
 
@@ -109,6 +134,7 @@ public class FriendManager {
       friendData.setAllowRequests(!friendData.getAllowRequests());
 
       cache.put(player, CompletableFuture.completedFuture(friendData));
+
       return friendData.getAllowRequests();
     });
 
@@ -144,5 +170,15 @@ public class FriendManager {
 
   public void sendPlayer(UUID player, UUID target) {
     //TODO: Send to Server
+  }
+
+  private void sendMessage(UUID uuid, Component message) {
+    Player player = Bukkit.getPlayer(uuid);
+
+    if(player == null) {
+      return;
+    }
+
+    player.sendMessage(SurfFriendsPlugin.getPrefix().append(message));
   }
 }

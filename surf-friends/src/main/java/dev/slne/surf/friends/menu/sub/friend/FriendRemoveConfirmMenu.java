@@ -4,9 +4,9 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import dev.slne.surf.friends.FriendManager;
-import dev.slne.surf.friends.core.util.ItemBuilder;
-import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.menu.FriendMenu;
+import dev.slne.surf.friends.util.ItemBuilder;
+import dev.slne.surf.friends.util.PluginColor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -31,7 +31,7 @@ public class FriendRemoveConfirmMenu extends FriendMenu {
     footer.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
     footer.setRepeat(true);
 
-    mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(Component.text("Möchtest du " + name + " wirklich enfernen?")).setSkullOwner(offlinePlayer)));
+    mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(Component.text("Möchtest du " + name + " wirklich enfernen?")).setSkullOwner(offlinePlayer.getName())));
 
     left.addItem(build(new ItemBuilder(Material.GREEN_WOOL).setName(Component.text("Bestätigen").color(PluginColor.LIGHT_GREEN)), event -> {
       FriendManager.instance().removeFriend(event.getWhoClicked().getUniqueId(), offlinePlayer.getUniqueId());

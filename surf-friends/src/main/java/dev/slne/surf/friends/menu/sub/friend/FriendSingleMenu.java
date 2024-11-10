@@ -6,9 +6,9 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
-import dev.slne.surf.friends.core.util.ItemBuilder;
-import dev.slne.surf.friends.core.util.PluginColor;
 import dev.slne.surf.friends.menu.FriendMenu;
+import dev.slne.surf.friends.util.ItemBuilder;
+import dev.slne.surf.friends.util.PluginColor;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import net.kyori.adventure.text.Component;
@@ -44,7 +44,7 @@ public class FriendSingleMenu extends FriendMenu {
     footer.setRepeat(true);
 
     navigation.addItem(build(new ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED)), event -> new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked())), 4, 0);
-    mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(name).setSkullOwner(offlinePlayer)));
+    mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(name).setSkullOwner(offlinePlayer.getName())));
 
     remove.setText("-", (c, stack) -> {
       ItemMeta meta = stack.getItemMeta();
@@ -56,16 +56,16 @@ public class FriendSingleMenu extends FriendMenu {
     });
       if (offlinePlayer.isOnline()) {
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
-            .setName(Component.text("Nachspringen").color(PluginColor.LIGHT_BLUE))
+            .setName(Component.text("Nachspringen").color(PluginColor.BLUE_LIGHT))
             .addLoreLine(Component.text("Server: N/A").decoration(TextDecoration.ITALIC, State.FALSE))
-            .setSkullOwner(Bukkit.getOfflinePlayer(name))));
+            .setSkullOwner(name)));
 
       }else{
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
-            .setName(Component.text("Der Spieler ist offline.").color(PluginColor.LIGHT_BLUE))
+            .setName(Component.text("Der Spieler ist offline.").color(PluginColor.BLUE_LIGHT))
             .addLoreLine(Component.text("Zuletzt gesehen: " + dateFormat.format(date))
                 .decoration(TextDecoration.ITALIC, State.FALSE))
-            .setSkullOwner(Bukkit.getOfflinePlayer(name))));
+            .setSkullOwner(name)));
       }
 
     remove.setOnClick(event -> {
