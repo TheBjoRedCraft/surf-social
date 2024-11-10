@@ -27,6 +27,7 @@ public class SurfFriendsPlugin extends JavaPlugin {
   @Override
   public void onDisable() {
     FriendManager.instance().saveAll();
+    Database.closeConnection();
   }
 
   public static Component getPrefix() {

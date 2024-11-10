@@ -124,7 +124,7 @@ public class Database {
     return sb.substring(0, sb.length() - 1);
   }
 
-  public static void close() {
+  public static void closeConnection() {
     if (dataSource != null && !dataSource.isClosed()) {
       dataSource.close();
     }
