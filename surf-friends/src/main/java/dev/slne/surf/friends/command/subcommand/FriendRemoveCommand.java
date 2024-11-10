@@ -18,6 +18,10 @@ public class FriendRemoveCommand extends CommandAPICommand {
                 throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.");
             }
 
+            if(!FriendManager.instance().areFriends(player.getUniqueId(), target.getUniqueId())){
+                throw CommandAPI.failWithString(String.format("Du bist nicht mit %s befreundet.", target.getName()));
+            }
+
             FriendManager.instance().removeFriend(player.getUniqueId(), target.getUniqueId());
             FriendManager.instance().removeFriend(target.getUniqueId(), player.getUniqueId());
         });

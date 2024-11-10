@@ -19,6 +19,10 @@ public class FriendAcceptCommand extends CommandAPICommand {
                 throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.");
             }
 
+            if(!FriendManager.instance().hasFriendRequest(player.getUniqueId(), target.getUniqueId())){
+                throw CommandAPI.failWithString("Du hast keine Freundschaftsanfrage von " + target.getName());
+            }
+
             FriendManager.instance().acceptFriendRequests(player.getUniqueId(), target.getUniqueId());
         });
     }
