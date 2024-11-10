@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import dev.slne.surf.friends.FriendData;
 import dev.slne.surf.friends.SurfFriendsPlugin;
 
+import dev.slne.surf.friends.config.PluginConfig;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
@@ -18,18 +19,22 @@ import org.bukkit.Bukkit;
 
 public class Database {
 
-  private static final HikariDataSource dataSource;
+  private static HikariDataSource dataSource;
 
-  static {
+  public static void createConnection() {
     HikariConfig config = new HikariConfig();
-    config.setJdbcUrl("jdbc:mysql://localhost:3306/your_database_name");
-    config.setUsername("your_username");
-    config.setPassword("your_password");
+    config.setJdbcUrl(PluginConfig.config().getString("mysql.url"));
+    config.setUsername(PluginConfig.config().getString("mysql.user"));
+    config.setPassword(PluginConfig.config().getString("mysql.password"));
+
     config.addDataSourceProperty("cachePrepStmts", "true");
     config.addDataSourceProperty("prepStmtCacheSize", "250");
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+    config.setMaximumPoolSize(10);
+    config.setMaxLifetime(600000);
 
     dataSource = new HikariDataSource(config);
+    createTable();
   }
 
   public static void createTable() {
