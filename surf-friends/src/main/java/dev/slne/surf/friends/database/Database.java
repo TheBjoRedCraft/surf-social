@@ -13,6 +13,7 @@ import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.sql.*;
 import java.util.UUID;
 
+import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
@@ -54,34 +55,38 @@ public class Database {
     }
   }
 
-  public static FriendData getFriendData(UUID player) {
-    String query = "SELECT * FROM surffriends WHERE uuid = ?";
+  public static CompletableFuture<FriendData> getFriendData(UUID player) {
+    return CompletableFuture.supplyAsync(() -> {
+      String query = "SELECT * FROM surffriends WHERE uuid = ?";
 
-    try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(query)) {
+      try (Connection connection = dataSource.getConnection();
+          PreparedStatement ps = connection.prepareStatement(query)) {
 
-      ps.setString(1, player.toString());
-      ResultSet rs = ps.executeQuery();
+        ps.setString(1, player.toString());
+        ResultSet rs = ps.executeQuery();
 
-      if (rs.next()) {
-        ObjectList<UUID> friends = parseUUIDList(rs.getString("friends"));
-        ObjectList<UUID> friendRequests = parseUUIDList(rs.getString("friendrequests"));
-        Boolean allowRequests = rs.getBoolean("allowrequests");
+        if (rs.next()) {
+          ObjectList<UUID> friends = parseUUIDList(rs.getString("friends"));
+          ObjectList<UUID> friendRequests = parseUUIDList(rs.getString("friendrequests"));
+          Boolean allowRequests = rs.getBoolean("allowrequests");
 
-        return FriendData.builder()
-            .player(player)
-            .friends(friends)
-            .friendRequests(friendRequests)
-            .allowRequests(allowRequests)
-            .build();
+          return FriendData.builder()
+              .player(player)
+              .friends(friends)
+              .friendRequests(friendRequests)
+              .allowRequests(allowRequests)
+              .build();
+        }
+      } catch (SQLException e) {
+        Bukkit.getConsoleSender().sendMessage(SurfFriendsPlugin.getPrefix().append(Component.text(e.getMessage())));
       }
-    } catch (SQLException e) {
-      Bukkit.getConsoleSender().sendMessage(SurfFriendsPlugin.getPrefix().append(Component.text(e.getMessage())));
-    }
-    return null;
+      return null;
+    });
   }
 
-  public static void saveFriendData(FriendData friendData) {
-    String query = """
+  public static CompletableFuture<Void> saveFriendData(FriendData friendData) {
+    return CompletableFuture.runAsync(() -> {
+      String query = """
             INSERT INTO surffriends (uuid, friends, friendrequests, allowrequests)
             VALUES (?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
@@ -90,17 +95,19 @@ public class Database {
                 allowrequests = VALUES(allowrequests)
             """;
 
-    try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(query)) {
+      try (Connection connection = dataSource.getConnection();
+          PreparedStatement ps = connection.prepareStatement(query)) {
 
-      ps.setString(1, friendData.getPlayer().toString());
-      ps.setString(2, formatUUIDList(friendData.getFriends()));
-      ps.setString(3, formatUUIDList(friendData.getFriendRequests()));
-      ps.setBoolean(4, friendData.getAllowRequests());
+        ps.setString(1, friendData.getPlayer().toString());
+        ps.setString(2, formatUUIDList(friendData.getFriends()));
+        ps.setString(3, formatUUIDList(friendData.getFriendRequests()));
+        ps.setBoolean(4, friendData.getAllowRequests());
 
-      ps.executeUpdate();
-    } catch (SQLException e) {
-      Bukkit.getConsoleSender().sendMessage(SurfFriendsPlugin.getPrefix().append(Component.text(e.getMessage())));
-    }
+        ps.executeUpdate();
+      } catch (SQLException e) {
+        Bukkit.getConsoleSender().sendMessage(SurfFriendsPlugin.getPrefix().append(Component.text(e.getMessage())));
+      }
+    });
   }
 
   private static ObjectList<UUID> parseUUIDList(String data) {

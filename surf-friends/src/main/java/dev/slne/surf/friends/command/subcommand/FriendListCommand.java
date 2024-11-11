@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.slne.surf.friends.FriendManager;
 import dev.slne.surf.friends.SurfFriendsPlugin;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.Bukkit;
@@ -16,22 +17,27 @@ public class FriendListCommand extends CommandAPICommand {
     super(commandName);
 
     executesPlayer((player, args) -> {
-      FriendManager.instance().getFriends(player.getUniqueId()).thenAccept(friends ->  {
-        StringBuilder message = new StringBuilder("Deine Freunde: <gray>(<yellow>" + friends.size() + "<gray>) <white>");
-        int current = 0;
+      String message = "Du hast keine Freunde.";
 
-        for (UUID uuid : friends) {
-          current ++;
+      ObjectList<UUID> friends = FriendManager.instance().getFriends(player.getUniqueId());
+      StringBuilder builder = new StringBuilder("Momentan hast du <yellow>" + friends.size() + "<white> Freunde: ");
+      int current = 0;
 
-          if(current == friends.size()) {
-            message.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName());
-          }else{
-            message.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName()).append("<gray>, ");
-          }
+      for (UUID uuid : friends) {
+        current ++;
+
+        if(current == friends.size()) {
+          builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName());
+        }else{
+          builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName()).append("<gray>, ");
         }
+      }
 
-        player.sendMessage(SurfFriendsPlugin.getPrefix().append(MiniMessage.miniMessage().deserialize(message.toString())));
-      });
+      if(!friends.isEmpty()) {
+        message = builder.toString();
+      }
+
+      player.sendMessage(SurfFriendsPlugin.getPrefix().append(MiniMessage.miniMessage().deserialize(message)));
     });
   }
 }

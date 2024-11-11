@@ -78,14 +78,13 @@ public class FriendFriendsMenu extends FriendMenu {
 
   private ObjectList<ItemStack> getFriendItems(UUID player){
     ObjectList<ItemStack> stacks = new ObjectArrayList<>();
+    ObjectList<UUID> friends = FriendManager.instance().getFriends(player);
 
-    FriendManager.instance().getFriends(player).thenAccept(friends -> {
-      for (UUID friend : friends) {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(friend);
+    for (UUID friend : friends) {
+      OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(friend);
 
-        stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.getName()).setSkullOwner(offlinePlayer.getName()).build());
-      }
-    });
+      stacks.add(new ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.getName()).setSkullOwner(offlinePlayer.getName()).build());
+    }
 
     return stacks;
   }

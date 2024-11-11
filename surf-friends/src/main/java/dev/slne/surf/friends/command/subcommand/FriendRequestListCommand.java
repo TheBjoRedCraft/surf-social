@@ -3,6 +3,7 @@ package dev.slne.surf.friends.command.subcommand;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.slne.surf.friends.FriendManager;
 import dev.slne.surf.friends.SurfFriendsPlugin;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import java.util.UUID;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -12,22 +13,27 @@ public class FriendRequestListCommand extends CommandAPICommand {
     super(commandName);
 
     executesPlayer((player, args) -> {
-      FriendManager.instance().getFriendRequests(player.getUniqueId()).thenAccept(friendRequests ->  {
-        StringBuilder message = new StringBuilder("Du hast aktuell <yellow>" + friendRequests.size() + "<white> Freundschaftsanfragen offen: ");
-        int current = 0;
+      String message = "Du hast keine Freunde.";
 
-        for (UUID uuid : friendRequests) {
-          current ++;
+      ObjectList<UUID> requests = FriendManager.instance().getFriendRequests(player.getUniqueId());
+      StringBuilder builder = new StringBuilder("Du hast aktuell <yellow>" + requests.size() + "<white> Freundschaftsanfragen offen: ");
+      int current = 0;
 
-          if(current == friendRequests.size()) {
-            message.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName());
-          }else{
-            message.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName()).append("<gray>, ");
-          }
+      for (UUID uuid : requests) {
+        current ++;
+
+        if(current == requests.size()) {
+          builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName());
+        }else{
+          builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName()).append("<gray>, ");
         }
+      }
 
-        player.sendMessage(SurfFriendsPlugin.getPrefix().append(MiniMessage.miniMessage().deserialize(message.toString())));
-      });
+      if(!requests.isEmpty()) {
+        message = builder.toString();
+      }
+
+      player.sendMessage(SurfFriendsPlugin.getPrefix().append(MiniMessage.miniMessage().deserialize(message)));
     });
   }
 }

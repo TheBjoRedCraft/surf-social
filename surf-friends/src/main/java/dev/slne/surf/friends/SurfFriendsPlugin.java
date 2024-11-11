@@ -4,7 +4,6 @@ import dev.slne.surf.friends.command.FriendCommand;
 import dev.slne.surf.friends.command.subcommand.FriendAddCommand;
 import dev.slne.surf.friends.config.PluginConfig;
 import dev.slne.surf.friends.database.Database;
-import dev.slne.surf.friends.listener.PlayerJoinListener;
 import dev.slne.surf.friends.listener.PlayerQuitListener;
 
 import dev.slne.surf.friends.util.PluginColor;
@@ -19,6 +18,7 @@ public class SurfFriendsPlugin extends JavaPlugin {
   @Override
   public void onEnable() {
     this.registerCommands();
+    this.registerListener();
 
     PluginConfig.createConfig();
     Database.createConnection();
@@ -26,8 +26,7 @@ public class SurfFriendsPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    FriendManager.instance().saveAll();
-    Database.closeConnection();
+    FriendManager.instance().saveAll(true).join();
   }
 
   public static Component getPrefix() {
@@ -46,8 +45,6 @@ public class SurfFriendsPlugin extends JavaPlugin {
   }
 
   private void registerListener() {
-    Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
     Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
-
   }
 }
