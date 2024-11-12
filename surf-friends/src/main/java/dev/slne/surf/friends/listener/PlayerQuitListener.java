@@ -12,6 +12,6 @@ public class PlayerQuitListener implements Listener {
   public void onQuit(PlayerQuitEvent event) {
     Player player = event.getPlayer();
 
-    FriendManager.instance().saveFriendData(player.getUniqueId());
+    FriendManager.instance().saveFriendData(player.getUniqueId()).thenRun(() -> FriendManager.instance().cache().invalidate(player.getUniqueId()));
   }
 }

@@ -11,9 +11,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.UUID;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
@@ -59,24 +61,37 @@ public class Database {
     return CompletableFuture.supplyAsync(() -> {
       String query = "SELECT * FROM surffriends WHERE uuid = ?";
 
-      try (Connection connection = dataSource.getConnection();
-          PreparedStatement ps = connection.prepareStatement(query)) {
+      try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
 
-        ps.setString(1, player.toString());
-        ResultSet rs = ps.executeQuery();
+        statement.setString(1, player.toString());
 
-        if (rs.next()) {
-          ObjectList<UUID> friends = parseUUIDList(rs.getString("friends"));
-          ObjectList<UUID> friendRequests = parseUUIDList(rs.getString("friendrequests"));
-          Boolean allowRequests = rs.getBoolean("allowrequests");
+        try (ResultSet resultSet = statement.executeQuery()) {
+          if (resultSet.next()) {
+            String friends = resultSet.getString("friends");
+            String friendRequests = resultSet.getString("friendrequests");
+            boolean allowRequests = resultSet.getBoolean("allowrequests");
 
-          return FriendData.builder()
-              .player(player)
-              .friends(friends)
-              .friendRequests(friendRequests)
-              .allowRequests(allowRequests)
-              .build();
+            ObjectList<UUID> friendsList = friends.isEmpty()
+                ? new ObjectArrayList<>()
+                : new ObjectArrayList<>(Arrays.stream(friends.split(","))
+                    .map(UUID::fromString)
+                    .collect(Collectors.toList()));
+
+            ObjectList<UUID> friendRequestsList = friendRequests.isEmpty()
+                ? new ObjectArrayList<>()
+                : new ObjectArrayList<>(Arrays.stream(friendRequests.split(","))
+                    .map(UUID::fromString)
+                    .collect(Collectors.toList()));
+
+            return FriendData.builder()
+                .player(player)
+                .friends(friendsList)
+                .friendRequests(friendRequestsList)
+                .allowRequests(allowRequests)
+                .build();
+          }
         }
+
       } catch (SQLException e) {
         Bukkit.getConsoleSender().sendMessage(SurfFriendsPlugin.getPrefix().append(Component.text(e.getMessage())));
       }
@@ -87,48 +102,34 @@ public class Database {
   public static CompletableFuture<Void> saveFriendData(FriendData friendData) {
     return CompletableFuture.runAsync(() -> {
       String query = """
-            INSERT INTO surffriends (uuid, friends, friendrequests, allowrequests)
-            VALUES (?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                friends = VALUES(friends),
-                friendrequests = VALUES(friendrequests),
-                allowrequests = VALUES(allowrequests)
-            """;
+          INSERT INTO surffriends (uuid, friends, friendrequests, allowrequests)
+          VALUES (?, ?, ?, ?)
+          ON DUPLICATE KEY UPDATE
+          friends = VALUES(friends),
+          friendrequests = VALUES(friendrequests),
+          allowrequests = VALUES(allowrequests);
+          """;
 
-      try (Connection connection = dataSource.getConnection();
-          PreparedStatement ps = connection.prepareStatement(query)) {
+      String friends = friendData.getFriends().stream()
+          .map(UUID::toString)
+          .collect(Collectors.joining(","));
+      String friendRequests = friendData.getFriendRequests().stream()
+          .map(UUID::toString)
+          .collect(Collectors.joining(","));
 
-        ps.setString(1, friendData.getPlayer().toString());
-        ps.setString(2, formatUUIDList(friendData.getFriends()));
-        ps.setString(3, formatUUIDList(friendData.getFriendRequests()));
-        ps.setBoolean(4, friendData.getAllowRequests());
+      try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
 
-        ps.executeUpdate();
+        statement.setString(1, friendData.getPlayer().toString());
+        statement.setString(2, friends);
+        statement.setString(3, friendRequests);
+        statement.setBoolean(4, friendData.getAllowRequests());
+
+        statement.executeUpdate();
+
       } catch (SQLException e) {
         Bukkit.getConsoleSender().sendMessage(SurfFriendsPlugin.getPrefix().append(Component.text(e.getMessage())));
       }
     });
-  }
-
-  private static ObjectList<UUID> parseUUIDList(String data) {
-    ObjectList<UUID> list = new ObjectArrayList<>();
-
-    if (data == null || data.isEmpty()) return list;
-
-    String[] uuids = data.split(",");
-    for (String uuid : uuids) {
-      list.add(UUID.fromString(uuid.trim()));
-    }
-    return list;
-  }
-
-  private static String formatUUIDList(ObjectList<UUID> uuidList) {
-    if (uuidList == null || uuidList.isEmpty()) return "";
-    StringBuilder sb = new StringBuilder();
-    for (UUID uuid : uuidList) {
-      sb.append(uuid.toString()).append(",");
-    }
-    return sb.substring(0, sb.length() - 1);
   }
 
   public static void closeConnection() {

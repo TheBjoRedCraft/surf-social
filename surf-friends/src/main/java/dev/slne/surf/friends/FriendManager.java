@@ -169,7 +169,7 @@ public class FriendManager {
   }
 
   public FriendData queryFriendData(UUID player) {
-    if(cache.get(player) == null) {
+    if (cache.get(player) == null) {
       return newFriendData(player);
     }
 
@@ -178,14 +178,11 @@ public class FriendManager {
 
   public static FriendData loadFriendData(UUID player) {
     Database.getFriendData(player).thenApply(friendData -> {
-
-      if(friendData == null) {
+      if (friendData == null) {
         return newFriendData(player);
       }
-
       return friendData;
     });
-
     return null;
   }
 
