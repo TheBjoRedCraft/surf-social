@@ -33,7 +33,7 @@ public class FriendRemoveConfirmMenu extends FriendMenu {
 
     mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(Component.text("Möchtest du " + name + " wirklich enfernen?")).setSkullOwner(offlinePlayer.getName())));
 
-    left.addItem(build(new ItemBuilder(Material.GREEN_WOOL).setName(Component.text("Bestätigen").color(PluginColor.LIGHT_GREEN)), event -> {
+    left.addItem(build(new ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen").color(PluginColor.LIGHT_GREEN)), event -> {
       FriendManager.instance().removeFriend(event.getWhoClicked().getUniqueId(), offlinePlayer.getUniqueId());
       FriendManager.instance().removeFriend(offlinePlayer.getUniqueId(), event.getWhoClicked().getUniqueId());
 

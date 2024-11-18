@@ -47,7 +47,7 @@ public class FriendFriendsMenu extends FriendMenu {
       new FriendSingleMenu(meta.getDisplayName()).show(event.getWhoClicked());
     });
 
-    navigation.addItem(build(new ItemBuilder(Material.RED_WOOL).setName(Component.text("Vorherige Seite").color(PluginColor.RED)), event -> {
+    navigation.addItem(build(new ItemBuilder(Material.RED_DYE).setName(Component.text("Vorherige Seite").color(PluginColor.RED)), event -> {
       if (pages.getPage() > 0) {
         pages.setPage(pages.getPage() - 1);
 
@@ -55,7 +55,7 @@ public class FriendFriendsMenu extends FriendMenu {
       }
     }), 0, 0);
 
-    navigation.addItem(build(new ItemBuilder(Material.GREEN_WOOL).setName(Component.text("Nächste Seite").color(PluginColor.LIGHT_GREEN)), event -> {
+    navigation.addItem(build(new ItemBuilder(Material.LIME_DYE).setName(Component.text("Nächste Seite").color(PluginColor.LIGHT_GREEN)), event -> {
       if (pages.getPage() < pages.getPages() - 1) {
         pages.setPage(pages.getPage() + 1);
         update();

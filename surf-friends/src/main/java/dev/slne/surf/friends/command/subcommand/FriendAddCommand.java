@@ -23,12 +23,16 @@ public class FriendAddCommand extends CommandAPICommand {
                 throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.");
             }
 
-            if(FriendManager.instance().hasFriendRequest(player.getUniqueId(), target.getUniqueId())){
+            if(FriendManager.instance().hasFriendRequest(player.getUniqueId(), target.getUniqueId())) {
                 throw CommandAPI.failWithString("Du hast bereits Freundschaftsanfrage von " + target.getName());
             }
 
-            if(FriendManager.instance().hasFriendRequest(target.getUniqueId(), player.getUniqueId())){
+            if(FriendManager.instance().hasFriendRequest(target.getUniqueId(), player.getUniqueId())) {
                 throw CommandAPI.failWithString("Du hast bereits eine Freundschaftsanfrage an " + target.getName() + " gesendet.");
+            }
+
+            if(target.equals(player)) {
+                throw CommandAPI.failWithString("Du kannst nicht mit dir selbst befreundet sein.");
             }
 
             FriendManager.instance().sendFriendRequest(player.getUniqueId(), target.getUniqueId());

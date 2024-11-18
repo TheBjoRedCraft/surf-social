@@ -25,16 +25,22 @@ public class FriendMainMenu extends FriendMenu {
     ItemStack friendList = new ItemBuilder(Material.ENDER_PEARL)
         .setName(Component.text("Freunde").color(PluginColor.BLUE_LIGHT))
         .addLoreLine(Component.text("Freundesliste", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false))
-        .addLoreLine(Component.text("Hier findest du eine Auflistung aller Freunde von dir.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
         .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
-        .addLoreLine(Component.text("Du kannst diesen hier nachjoinen oder sie entfernen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text("Hier findest du eine Auflistung aller", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text("Freunde von dir.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text("Du kannst diesen hier nachjoinen", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text("oder sie entfernen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
         .build();
     ItemStack friendRequests = new ItemBuilder(Material.PAPER)
         .setName(Component.text("Freundschaftsanfragen").color(PluginColor.BLUE_LIGHT))
         .addLoreLine(Component.text("Freundschaftsanfragen", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false))
-        .addLoreLine(Component.text("Hier findest du eine Auflistung aller offenen Freundschaftsanfragen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
         .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
-        .addLoreLine(Component.text("Du kannst diese direkt hier annehmen oder akzeptieren.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text("Hier findest du eine Auflistung", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text("aller offenen Freundschaftsanfragen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text("Du kannst diese direkt hier", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addLoreLine(Component.text("annehmen oder akzeptieren.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
         .build();
 
     header.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
