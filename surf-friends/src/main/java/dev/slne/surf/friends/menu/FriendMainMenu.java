@@ -4,7 +4,6 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import dev.slne.surf.friends.menu.sub.friend.FriendFriendsMenu;
 import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu;
-import dev.slne.surf.friends.menu.sub.settings.FriendSettingsMenu;
 import dev.slne.surf.friends.util.ItemBuilder;
 import dev.slne.surf.friends.util.PluginColor;
 import net.kyori.adventure.text.Component;
@@ -20,8 +19,8 @@ public class FriendMainMenu extends FriendMenu {
     OutlinePane footer = new OutlinePane(0, 4, 9, 1, Priority.LOW);
 
     OutlinePane settingPane = new OutlinePane(1, 2, 1, 1);
-    OutlinePane flPane = new OutlinePane(4, 2, 1, 1);
-    OutlinePane frPane = new OutlinePane(7, 2, 1, 1);
+    OutlinePane flPane = new OutlinePane(2, 2, 1, 1);
+    OutlinePane frPane = new OutlinePane(6, 2, 1, 1);
 
     ItemStack settings = new ItemBuilder(Material.DIAMOND_PICKAXE).setName(Component.text("Einstellungen").color(PluginColor.BLUE_LIGHT)).build();
     ItemStack friendList = new ItemBuilder(Material.ENDER_PEARL).setName(Component.text("Freunde").color(PluginColor.BLUE_LIGHT)).build();
@@ -32,10 +31,13 @@ public class FriendMainMenu extends FriendMenu {
 
     footer.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
     footer.setRepeat(true);
+    /*
 
     settingPane.addItem(build(settings, event -> {
       new FriendSettingsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     }));
+
+     */
 
     flPane.addItem(build(friendList, event -> {
       new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
@@ -48,7 +50,7 @@ public class FriendMainMenu extends FriendMenu {
 
     addPane(header);
     addPane(footer);
-    addPane(settingPane);
+    //addPane(settingPane);
     addPane(flPane);
     addPane(frPane);
 
