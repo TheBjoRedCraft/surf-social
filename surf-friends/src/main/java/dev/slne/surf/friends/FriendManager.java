@@ -9,6 +9,7 @@ import dev.slne.surf.friends.util.PluginColor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -20,6 +21,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
@@ -181,15 +183,21 @@ public class FriendManager {
       if (friendData == null) {
         return newFriendData(player);
       }
+
       return friendData;
     });
     return null;
   }
 
+  public static @NotNull CompletableFuture<FriendData> loadFriendDataAsync(UUID player) {
+    return Database.getFriendData(player).thenApply(friendData -> Objects.requireNonNullElseGet(friendData, () -> newFriendData(player)));
+  }
+
+
   public CompletableFuture<Void> saveFriendData(UUID player) {
     return CompletableFuture.runAsync(() -> {
       FriendData friendData = this.queryFriendData(player);
-      Database.saveFriendData(friendData);
+      Database.saveFriendData(friendData).join();
 
       cache.invalidate(player);
     });
