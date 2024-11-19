@@ -250,6 +250,18 @@ public class ItemBuilder {
   }
 
   /**
+   * Add item flags item builder.
+   *
+   * @param flags the flags
+   * @return the item builder
+   */
+  public ItemBuilder addItemFlag(ItemFlag... flags) {
+    itemStack.editMeta(meta -> meta.addItemFlags(flags));
+
+    return this;
+  }
+
+  /**
    * Add multiple enchants at once.
    *
    * @param enchantments The enchants to add.
