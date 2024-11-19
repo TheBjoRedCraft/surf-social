@@ -1,52 +1,51 @@
-package dev.slne.surf.friends;
+package dev.slne.surf.friends
 
-import dev.slne.surf.friends.command.FriendCommand;
-import dev.slne.surf.friends.command.subcommand.FriendAddCommand;
-import dev.slne.surf.friends.config.PluginConfig;
-import dev.slne.surf.friends.database.Database;
-import dev.slne.surf.friends.listener.PlayerJoinListener;
-import dev.slne.surf.friends.listener.PlayerQuitListener;
+import dev.slne.surf.friends.command.FriendCommand
+import dev.slne.surf.friends.command.subcommand.FriendAddCommand
+import dev.slne.surf.friends.config.PluginConfig
+import dev.slne.surf.friends.database.Database
+import dev.slne.surf.friends.listener.PlayerJoinListener
+import dev.slne.surf.friends.listener.PlayerQuitListener
+import dev.slne.surf.friends.listener.util.PluginColor
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Bukkit
+import org.bukkit.plugin.java.JavaPlugin
 
-import dev.slne.surf.friends.util.PluginColor;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+class SurfFriendsPlugin : JavaPlugin() {
+    override fun onEnable() {
+        this.registerCommands()
+        this.registerListener()
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
+        PluginConfig.createConfig()
+        Database.createConnection()
+    }
 
-public class SurfFriendsPlugin extends JavaPlugin {
+    override fun onDisable() {
+        FriendManager.instance.saveAll(true).join()
+    }
 
-  @Override
-  public void onEnable() {
-    this.registerCommands();
-    this.registerListener();
+    private fun registerCommands() {
+        FriendCommand("friend").register()
+        FriendAddCommand("fa").register()
+    }
 
-    PluginConfig.createConfig();
-    Database.createConnection();
-  }
+    private fun registerListener() {
+        Bukkit.getPluginManager().registerEvents(PlayerQuitListener(), this)
+        Bukkit.getPluginManager().registerEvents(PlayerJoinListener(), this)
+    }
 
-  @Override
-  public void onDisable() {
-    FriendManager.instance().saveAll(true).join();
-  }
+    companion object {
+        val prefix: Component
+            get() = Component.text(">> ").color(NamedTextColor.GRAY)
+                .append(
+                    Component.text("Friends").color(PluginColor.BLUE_LIGHT)
+                )
+                .append(
+                    Component.text(" | ").color(NamedTextColor.DARK_GRAY)
+                )
 
-  public static Component getPrefix() {
-    return Component.text(">> ").color(NamedTextColor.GRAY)
-        .append(Component.text("Friends").color(PluginColor.BLUE_LIGHT))
-        .append(Component.text(" | ").color(NamedTextColor.DARK_GRAY));
-  }
-
-  public static SurfFriendsPlugin getInstance() {
-    return getPlugin(SurfFriendsPlugin.class);
-  }
-
-  private void registerCommands() {
-    new FriendCommand("friend").register();
-    new FriendAddCommand("fa").register();
-  }
-
-  private void registerListener() {
-    Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
-    Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
-  }
+        val instance: SurfFriendsPlugin
+            get() = getPlugin<SurfFriendsPlugin>(SurfFriendsPlugin::class.java)
+    }
 }

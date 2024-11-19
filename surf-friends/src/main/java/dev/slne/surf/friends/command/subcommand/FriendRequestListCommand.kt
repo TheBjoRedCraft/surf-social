@@ -1,39 +1,45 @@
-package dev.slne.surf.friends.command.subcommand;
+package dev.slne.surf.friends.command.subcommand
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.slne.surf.friends.FriendManager;
-import dev.slne.surf.friends.SurfFriendsPlugin;
-import it.unimi.dsi.fastutil.objects.ObjectList;
-import java.util.UUID;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.SurfFriendsPlugin
+import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 
-public class FriendRequestListCommand extends CommandAPICommand {
-  public FriendRequestListCommand(String commandName) {
-    super(commandName);
+class FriendRequestListCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments? ->
+            var message = "Du hast keine Freunde."
+            val requests = FriendManager.instance.getFriendRequests(player.uniqueId)
+            val builder =
+                StringBuilder("Du hast aktuell <yellow>" + (requests?.size) + "<white> Freundschaftsanfragen offen: ")
+            var current = 0
 
-    executesPlayer((player, args) -> {
-      String message = "Du hast keine Freunde.";
+            if (requests != null) {
+                for (uuid in requests) {
+                    current++
 
-      ObjectList<UUID> requests = FriendManager.instance().getFriendRequests(player.getUniqueId());
-      StringBuilder builder = new StringBuilder("Du hast aktuell <yellow>" + requests.size() + "<white> Freundschaftsanfragen offen: ");
-      int current = 0;
+                    if (current == requests.size) {
+                        builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid!!).name)
+                    } else {
+                        builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid!!).name)
+                            .append("<gray>, ")
+                    }
+                }
+            }
 
-      for (UUID uuid : requests) {
-        current ++;
-
-        if(current == requests.size()) {
-          builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName());
-        }else{
-          builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid).getName()).append("<gray>, ");
-        }
-      }
-
-      if(!requests.isEmpty()) {
-        message = builder.toString();
-      }
-
-      player.sendMessage(SurfFriendsPlugin.getPrefix().append(MiniMessage.miniMessage().deserialize(message)));
-    });
-  }
+            if (requests != null) {
+                if (!requests.isEmpty()) {
+                    message = builder.toString()
+                }
+            }
+            player.sendMessage(
+                SurfFriendsPlugin.prefix
+                    .append(MiniMessage.miniMessage().deserialize(message))
+            )
+        })
+    }
 }

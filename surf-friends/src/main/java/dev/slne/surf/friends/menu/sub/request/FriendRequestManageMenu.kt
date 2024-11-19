@@ -1,89 +1,143 @@
-package dev.slne.surf.friends.menu.sub.request;
+package dev.slne.surf.friends.menu.sub.request
 
-import com.github.stefvanschie.inventoryframework.font.util.Font;
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
-import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
-import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-import com.github.stefvanschie.inventoryframework.pane.component.Label;
-import dev.slne.surf.friends.FriendManager;
-import dev.slne.surf.friends.menu.FriendMenu;
-import dev.slne.surf.friends.util.ItemBuilder;
-import dev.slne.surf.friends.util.PluginColor;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import com.github.stefvanschie.inventoryframework.font.util.Font
+import com.github.stefvanschie.inventoryframework.gui.GuiItem
+import com.github.stefvanschie.inventoryframework.pane.OutlinePane
+import com.github.stefvanschie.inventoryframework.pane.Pane
+import com.github.stefvanschie.inventoryframework.pane.StaticPane
+import com.github.stefvanschie.inventoryframework.pane.component.Label
+import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.listener.util.ItemBuilder
+import dev.slne.surf.friends.listener.util.PluginColor
+import dev.slne.surf.friends.menu.FriendMenu
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryDragEvent
+import org.bukkit.inventory.ItemStack
 
-public class FriendRequestManageMenu extends FriendMenu {
-  public FriendRequestManageMenu(String name) {
-    super(5, "Anfrage von " + name);
+class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name") {
+    init {
+        val header = OutlinePane(0, 0, 9, 1, Pane.Priority.LOW)
+        val footer = OutlinePane(0, 4, 9, 1, Pane.Priority.LOW)
+        val midPane = OutlinePane(4, 2, 1, 1)
+        val back = StaticPane(0, 4, 9, 1, Pane.Priority.HIGH)
 
-    OutlinePane header = new OutlinePane(0, 0, 9, 1, Priority.LOW);
-    OutlinePane footer = new OutlinePane(0, 4, 9, 1, Priority.LOW);
-    OutlinePane midPane = new OutlinePane(4, 2, 1, 1);
-    StaticPane back = new StaticPane(0, 4, 9, 1, Priority.HIGH);
+        val accept = Label(1, 2, 1, 1, Pane.Priority.NORMAL, Font.OAK_PLANKS)
+        val deny = Label(7, 2, 1, 1, Pane.Priority.NORMAL, Font.OAK_PLANKS)
 
-    Label accept = new Label(1, 2, 1, 1, Priority.NORMAL, Font.OAK_PLANKS);
-    Label deny = new Label(7, 2, 1, 1, Priority.NORMAL, Font.OAK_PLANKS);
+        val target = ItemBuilder(Material.PLAYER_HEAD).setSkullOwner(name)
+            .setName(Component.text(name).color(PluginColor.BLUE_LIGHT)).build()
 
-    ItemStack target = new ItemBuilder(Material.PLAYER_HEAD).setSkullOwner(name).setName(Component.text(name).color(PluginColor.BLUE_LIGHT)).build();
+        header.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
+        header.setRepeat(true)
 
-    header.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
-    header.setRepeat(true);
+        footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
+        footer.setRepeat(true)
 
-    footer.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
-    footer.setRepeat(true);
+        accept.setText("+") { c: Char?, stack: ItemStack ->
+            val builder = ItemBuilder(stack)
+            builder.setName(Component.text("Akzeptieren"))
+            builder.addLoreLine(
+                Component.text(
+                    "Freundschaftsanfrage akzeptieren",
+                    PluginColor.DARK_GRAY
+                ).decoration(TextDecoration.ITALIC, false)
+            )
+            builder.addLoreLine(
+                Component.text(" ", PluginColor.LIGHT_GRAY)
+                    .decoration(TextDecoration.ITALIC, false)
+            )
+            builder.addLoreLine(
+                Component.text(
+                    "Hier kannst du diese",
+                    PluginColor.LIGHT_GRAY
+                ).decoration(TextDecoration.ITALIC, false)
+            )
+            builder.addLoreLine(
+                Component.text(
+                    "Freundschaftsanfrage akzeptieren.",
+                    PluginColor.LIGHT_GRAY
+                ).decoration(TextDecoration.ITALIC, false)
+            )
+            this.build(builder)
+        }
 
-    accept.setText("+", (c, stack) -> {
-      ItemBuilder builder = new ItemBuilder(stack);
+        deny.setText("X") { c: Char?, stack: ItemStack ->
+            val builder = ItemBuilder(stack)
+            builder.setName(Component.text("Ablehnen"))
+            builder.addLoreLine(
+                Component.text(
+                    "Freundschaftsanfrage ablehnen",
+                    PluginColor.DARK_GRAY
+                ).decoration(TextDecoration.ITALIC, false)
+            )
+            builder.addLoreLine(
+                Component.text(" ", PluginColor.LIGHT_GRAY)
+                    .decoration(TextDecoration.ITALIC, false)
+            )
+            builder.addLoreLine(
+                Component.text(
+                    "Hier kannst du diese",
+                    PluginColor.LIGHT_GRAY
+                ).decoration(TextDecoration.ITALIC, false)
+            )
+            builder.addLoreLine(
+                Component.text(
+                    "Freundschaftsanfrage ablehnen.",
+                    PluginColor.LIGHT_GRAY
+                ).decoration(TextDecoration.ITALIC, false)
+            )
+            this.build(builder)
+        }
 
-      builder.setName(Component.text("Akzeptieren"));
-      builder.addLoreLine(Component.text("Freundschaftsanfrage akzeptieren", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
-      builder.addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
-      builder.addLoreLine(Component.text("Hier kannst du diese", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
-      builder.addLoreLine(Component.text("Freundschaftsanfrage akzeptieren.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
+        accept.setOnClick { event: InventoryClickEvent ->
+            FriendManager.instance.acceptFriendRequests(
+                event.whoClicked.uniqueId,
+                Bukkit.getOfflinePlayer(name).uniqueId
+            )
+            FriendRequestsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+        }
 
-      return this.build(builder);
-    });
+        deny.setOnClick { event: InventoryClickEvent ->
+            FriendManager.instance.denyFriendRequest(
+                event.whoClicked.uniqueId,
+                Bukkit.getOfflinePlayer(name).uniqueId
+            )
+            FriendRequestsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+        }
 
-    deny.setText("X", (c, stack) -> {
-      ItemBuilder builder = new ItemBuilder(stack);
+        midPane.addItem(GuiItem(target!!))
 
-      builder.setName(Component.text("Ablehnen"));
-      builder.addLoreLine(Component.text("Freundschaftsanfrage ablehnen", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
-      builder.addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
-      builder.addLoreLine(Component.text("Hier kannst du diese", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
-      builder.addLoreLine(Component.text("Freundschaftsanfrage ablehnen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
+        back.addItem(
+            build(
+                ItemBuilder(Material.BARRIER).setName(
+                    Component.text("Zurück").color(PluginColor.RED)
+                )
+            ) { event: InventoryClickEvent? ->
+                FriendRequestsMenu(
+                    event!!.whoClicked.uniqueId
+                ).show(event.whoClicked)
+            }, 4, 0
+        )
 
-      return this.build(builder);
-    });
-
-    accept.setOnClick(event -> {
-      FriendManager.instance().acceptFriendRequests(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
-      new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
-    });
-
-    deny.setOnClick(event -> {
-      FriendManager.instance().denyFriendRequest(event.getWhoClicked().getUniqueId(), Bukkit.getOfflinePlayer(name).getUniqueId());
-      new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
-    });
-
-    midPane.addItem(new GuiItem(target));
-
-    back.addItem(build(new ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED)), event -> new FriendRequestsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked())), 4, 0);
-
-    addPane(header);
-    addPane(footer);
-    addPane(accept);
-    addPane(midPane);
-    addPane(deny);
-    addPane(back);
+        addPane(header)
+        addPane(footer)
+        addPane(accept)
+        addPane(midPane)
+        addPane(deny)
+        addPane(back)
 
 
-    setOnGlobalClick(event -> event.setCancelled(true));
-    setOnGlobalDrag(event -> event.setCancelled(true));
-  }
+        setOnGlobalClick { event: InventoryClickEvent ->
+            event.isCancelled =
+                true
+        }
+        setOnGlobalDrag { event: InventoryDragEvent ->
+            event.isCancelled =
+                true
+        }
+    }
 }

@@ -1,61 +1,86 @@
-package dev.slne.surf.friends.menu.sub.friend;
+package dev.slne.surf.friends.menu.sub.friend
 
-import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
-import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
-import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-import dev.slne.surf.friends.FriendManager;
-import dev.slne.surf.friends.menu.FriendMenu;
-import dev.slne.surf.friends.util.ItemBuilder;
-import dev.slne.surf.friends.util.PluginColor;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import com.github.stefvanschie.inventoryframework.pane.OutlinePane
+import com.github.stefvanschie.inventoryframework.pane.Pane
+import com.github.stefvanschie.inventoryframework.pane.StaticPane
+import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.listener.util.ItemBuilder
+import dev.slne.surf.friends.listener.util.PluginColor
+import dev.slne.surf.friends.menu.FriendMenu
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 
-public class FriendRemoveConfirmMenu extends FriendMenu {
+class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.") {
+    init {
+        val header = OutlinePane(0, 0, 9, 1, Pane.Priority.LOW)
+        val footer = OutlinePane(0, 4, 9, 1, Pane.Priority.LOW)
+        val navigation = StaticPane(0, 4, 9, 1, Pane.Priority.HIGH)
+        val left = OutlinePane(1, 2, 1, 1)
+        val mid = OutlinePane(4, 2, 1, 1)
 
-  public FriendRemoveConfirmMenu(String name) {
-    super(5, "Bitte bestätige.");
+        val offlinePlayer = Bukkit.getOfflinePlayer(name)
 
-    OutlinePane header = new OutlinePane(0, 0, 9, 1, Priority.LOW);
-    OutlinePane footer = new OutlinePane(0, 4, 9, 1, Priority.LOW);
-    StaticPane navigation = new StaticPane(0, 4, 9, 1, Priority.HIGH);
-    OutlinePane left = new OutlinePane(1, 2, 1, 1);
-    OutlinePane mid = new OutlinePane(4, 2, 1, 1);
+        header.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
+        header.setRepeat(true)
 
-    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+        footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
+        footer.setRepeat(true)
 
-    header.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
-    header.setRepeat(true);
+        mid.addItem(
+            build(
+                ItemBuilder(Material.PLAYER_HEAD).setName(
+                    Component.text(
+                        "Möchtest du $name wirklich enfernen?"
+                    )
+                ).setSkullOwner(offlinePlayer.name)
+            )
+        )
 
-    footer.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
-    footer.setRepeat(true);
+        left.addItem(
+            build(
+                ItemBuilder(Material.LIME_DYE).setName(
+                    Component.text(
+                        "Bestätigen",
+                        PluginColor.LIGHT_GREEN
+                    )
+                )
+            ) { event: InventoryClickEvent? ->
+                FriendManager.instance
+                    .removeFriend(event!!.whoClicked.uniqueId, offlinePlayer.uniqueId)
+                FriendManager.instance
+                    .removeFriend(offlinePlayer.uniqueId, event.whoClicked.uniqueId)
+                FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+            })
 
-    mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(Component.text("Möchtest du " + name + " wirklich enfernen?")).setSkullOwner(offlinePlayer.getName())));
-
-    left.addItem(build(new ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen", PluginColor.LIGHT_GREEN)), event -> {
-      FriendManager.instance().removeFriend(event.getWhoClicked().getUniqueId(), offlinePlayer.getUniqueId());
-      FriendManager.instance().removeFriend(offlinePlayer.getUniqueId(), event.getWhoClicked().getUniqueId());
-
-      new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
-    }));
-
-    navigation.addItem(build(new ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED)), event -> {
-      if(offlinePlayer.getName() == null) {
-        new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
-      } else {
-        new FriendSingleMenu(offlinePlayer.getName()).show(event.getWhoClicked());
-      }
-    }), 4, 0);
+        navigation.addItem(
+            build(
+                ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED))
+            ) { event: InventoryClickEvent? ->
+                if (offlinePlayer.name == null) {
+                    FriendFriendsMenu(event!!.whoClicked.uniqueId).show(event.whoClicked)
+                } else {
+                    FriendSingleMenu(offlinePlayer.name!!).show(event!!.whoClicked)
+                }
+            }, 4, 0
+        )
 
 
-    addPane(header);
-    addPane(footer);
-    addPane(navigation);
-    addPane(mid);
-    addPane(left);
+        addPane(header)
+        addPane(footer)
+        addPane(navigation)
+        addPane(mid)
+        addPane(left)
 
-    setOnGlobalClick(event -> event.setCancelled(true));
-    setOnGlobalDrag(event -> event.setCancelled(true));
-  }
+        setOnGlobalClick { event: InventoryClickEvent ->
+            event.isCancelled =
+                true
+        }
+        setOnGlobalDrag { event: InventoryDragEvent ->
+            event.isCancelled =
+                true
+        }
+    }
 }

@@ -1,34 +1,29 @@
-package dev.slne.surf.friends.command;
+package dev.slne.surf.friends.command
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.slne.surf.friends.command.subcommand.FriendAcceptCommand;
-import dev.slne.surf.friends.command.subcommand.FriendAddCommand;
-import dev.slne.surf.friends.command.subcommand.FriendDenyCommand;
-import dev.slne.surf.friends.command.subcommand.FriendJumpCommand;
-import dev.slne.surf.friends.command.subcommand.FriendListCommand;
-import dev.slne.surf.friends.command.subcommand.FriendRemoveCommand;
-import dev.slne.surf.friends.command.subcommand.FriendRequestListCommand;
-import dev.slne.surf.friends.command.subcommand.FriendToggleCommand;
-import dev.slne.surf.friends.menu.FriendMainMenu;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.friends.command.subcommand.*
+import dev.slne.surf.friends.menu.FriendMainMenu
+import org.bukkit.entity.Player
 
-public class FriendCommand extends CommandAPICommand {
+class FriendCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withPermission("surf.friends.command.friend")
 
-  public FriendCommand(String commandName) {
-    super(commandName);
+        withSubcommand(FriendAcceptCommand("accept"))
+        withSubcommand(FriendAddCommand("add"))
+        withSubcommand(FriendDenyCommand("deny"))
+        withSubcommand(FriendRemoveCommand("remove"))
+        withSubcommand(FriendToggleCommand("toggle"))
+        withSubcommand(FriendJumpCommand("jump"))
+        withSubcommand(FriendListCommand("list"))
+        withSubcommand(FriendRequestListCommand("requests"))
 
-    withPermission("surf.friends.command.friend");
-
-    withSubcommand(new FriendAcceptCommand("accept"));
-    withSubcommand(new FriendAddCommand("add"));
-    withSubcommand(new FriendDenyCommand("deny"));
-    withSubcommand(new FriendRemoveCommand("remove"));
-    withSubcommand(new FriendToggleCommand("toggle"));
-    withSubcommand(new FriendJumpCommand("jump"));
-    withSubcommand(new FriendListCommand("list"));
-    withSubcommand(new FriendRequestListCommand("requests"));
-
-    executesPlayer((player, args) -> {
-      new FriendMainMenu().show(player);
-    });
-  }
+        executesPlayer(PlayerCommandExecutor { player: Player?, args: CommandArguments? ->
+            FriendMainMenu().show(
+                player!!
+            )
+        })
+    }
 }

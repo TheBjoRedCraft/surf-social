@@ -1,19 +1,22 @@
-package dev.slne.surf.friends;
+package dev.slne.surf.friends
 
-import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectList
+import lombok.AllArgsConstructor
+import lombok.Getter
+import lombok.Setter
+import java.util.*
 
-import java.util.UUID;
-
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-@Builder
 @Setter
 @Getter
-public class FriendData {
-  private UUID player;
-  private ObjectList<UUID> friends;
-  private ObjectList<UUID> friendRequests;
-  private Boolean allowRequests;
+@AllArgsConstructor
+
+class FriendData(
+    val player: UUID,
+    friendsList: ObjectList<UUID>,
+    friendRequestsList: ObjectList<UUID>,
+    allowRequests: Boolean,
+) {
+    var friends: ObjectList<UUID>? = friendsList;
+    var friendRequests: ObjectList<UUID>? = friendRequestsList;
+    var allowRequests: Boolean? = allowRequests;
 }

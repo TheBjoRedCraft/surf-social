@@ -1,256 +1,275 @@
-package dev.slne.surf.friends;
+package dev.slne.surf.friends
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
+import dev.slne.surf.friends.listener.util.PluginColor
 
-import dev.slne.surf.friends.database.Database;
-import dev.slne.surf.friends.util.PluginColor;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
-
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
-import lombok.Getter;
-import lombok.experimental.Accessors;
-
-import net.kyori.adventure.text.Component;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
+import dev.slne.surf.friends.database.Database
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import it.unimi.dsi.fastutil.objects.ObjectList
+import lombok.Getter
+import lombok.experimental.Accessors
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
 @Getter
 @Accessors(fluent = true)
-public class FriendManager {
-  @Getter
-  private static final FriendManager instance = new FriendManager();
-  private final LoadingCache<UUID, FriendData> cache = Caffeine.newBuilder().build(FriendManager::loadFriendData);
+class FriendManager {
+    val cache: LoadingCache<UUID, FriendData> =
+        Caffeine.newBuilder().build { player: UUID ->
+            loadFriendData(player)
+        }
 
-  /* Friend Management */
+    /* Friend Management */
+    fun addFriend(player: UUID, target: UUID) {
+        val playerData = this.queryFriendData(player)
+        val targetData = this.queryFriendData(target)
 
-  public void addFriend(UUID player, UUID target) {
-    FriendData playerData = this.queryFriendData(player);
-    FriendData targetData = this.queryFriendData(target);
+        if (playerData.friends?.contains(target) == true) {
+            return
+        }
 
-    if(playerData.getFriends().contains(target)) {
-      return;
+        if (targetData.friends?.contains(player) == true) {
+            return
+        }
+
+        playerData.friends?.add(target)
+        cache.put(player, playerData)
+
+        targetData.friends?.add(player)
+        cache.put(target, targetData)
+
+        this.sendMessage(
+            player, Component.text("Du bist nun mit ")
+                .append(Component.text(this.getName(target), PluginColor.GOLD))
+                .append(Component.text(" befreundet."))
+        )
+        this.sendMessage(
+            target, Component.text("Du bist nun mit ")
+                .append(Component.text(this.getName(player), PluginColor.GOLD))
+                .append(Component.text(" befreundet."))
+        )
     }
 
-    if(targetData.getFriends().contains(player)) {
-      return;
+    fun removeFriend(player: UUID, target: UUID) {
+        val playerData = this.queryFriendData(player)
+        val targetData = this.queryFriendData(target)
+
+        if (!playerData.friends?.contains(target)!!) {
+            return
+        }
+
+        if (!targetData.friends?.contains(player)!!) {
+            return
+        }
+
+
+        playerData.friends?.remove(target)
+        cache.put(player, playerData)
+
+        targetData.friends?.remove(player)
+        cache.put(target, targetData)
+
+        this.sendMessage(
+            player, Component.text("Du hast ")
+                .append(Component.text(this.getName(target), PluginColor.GOLD))
+                .append(Component.text(" als Freund entfernt."))
+        )
+        this.sendMessage(
+            target, Component.text("Du wurdest von ")
+                .append(Component.text(this.getName(player), PluginColor.GOLD))
+                .append(Component.text(" als Freund entfernt."))
+        )
     }
 
-    playerData.getFriends().add(target);
-    cache.put(player, playerData);
+    fun sendFriendRequest(player: UUID, target: UUID) {
+        val targetData = this.queryFriendData(target)
 
-    targetData.getFriends().add(player);
-    cache.put(target, targetData);
+        if (targetData.friendRequests?.contains(player) == true) {
+            return
+        }
 
-    this.sendMessage(player, Component.text("Du bist nun mit ")
-        .append(Component.text(this.getName(target), PluginColor.GOLD))
-        .append(Component.text(" befreundet.")));
-    this.sendMessage(target, Component.text("Du bist nun mit ")
-        .append(Component.text(this.getName(player), PluginColor.GOLD))
-        .append(Component.text(" befreundet.")));
+        targetData.friendRequests?.add(player)
+        cache.put(target, targetData)
 
-  }
+        this.sendMessage(
+            player, Component.text("Du hast eine Freundschaftsanfrage an ")
+                .append(Component.text(this.getName(target), PluginColor.GOLD))
+                .append(Component.text(" gesendet."))
+        )
 
-  public void removeFriend(UUID player, UUID target) {
-    FriendData playerData = this.queryFriendData(player);
-    FriendData targetData = this.queryFriendData(target);
-
-    if(!playerData.getFriends().contains(target)) {
-      return;
+        if (targetData.allowRequests == true) {
+            this.sendMessage(
+                target, Component.text("Du hast eine Freundschaftsanfrage von ")
+                    .append(Component.text(this.getName(player), PluginColor.GOLD))
+                    .append(Component.text(" erhalten."))
+            )
+        }
     }
 
-    if(!targetData.getFriends().contains(player)) {
-      return;
+    fun acceptFriendRequests(player: UUID, target: UUID) {
+        val playerData = this.queryFriendData(player)
+        if (!playerData.friendRequests?.contains(target)!!) {
+            return
+        }
+
+        playerData.friendRequests?.remove(target)
+        cache.put(player, playerData)
+
+        this.addFriend(player, target)
+
+        this.sendMessage(
+            player, Component.text("Du hast die Freundschaftsanfrage von ")
+                .append(Component.text(this.getName(target), PluginColor.GOLD))
+                .append(Component.text(" akzeptiert."))
+        )
+        this.sendMessage(
+            target, Component.text("Die Freundschaftsanfrage an ")
+                .append(Component.text(this.getName(player), PluginColor.GOLD))
+                .append(Component.text(" wurde akzeptiert."))
+        )
+    }
+
+    fun denyFriendRequest(player: UUID, target: UUID) {
+        val playerData = this.queryFriendData(player)
+
+        playerData.friendRequests?.remove(target)
+        cache.put(player, playerData)
+
+        this.sendMessage(
+            player, Component.text("Du hast die Freundschaftsanfrage von ")
+                .append(Component.text(this.getName(target), PluginColor.GOLD))
+                .append(Component.text(" abgelehnt."))
+        )
+        this.sendMessage(
+            target, Component.text("Die Freundschaftsanfrage an ")
+                .append(Component.text(this.getName(player), PluginColor.GOLD))
+                .append(Component.text(" wurde abgelehnt."))
+        )
+    }
+
+    fun hasFriendRequest(player: UUID, target: UUID?): Boolean {
+        return queryFriendData(player).friendRequests?.contains(target) == true
+    }
+
+    fun getFriendRequests(player: UUID): ObjectList<UUID>? {
+        return queryFriendData(player).friendRequests
+    }
+
+    fun toggle(player: UUID): Boolean? {
+        val playerData = this.queryFriendData(player)
+
+        playerData.allowRequests = !playerData.allowRequests!!
+        cache.put(player, playerData)
+
+        return playerData.allowRequests
+    }
+
+    fun isAllowingRequests(player: UUID): Boolean? {
+        return queryFriendData(player).allowRequests
+    }
+
+    fun queryFriendData(player: UUID): FriendData {
+        if (cache[player] == null) {
+            return newFriendData(player)
+        }
+
+        return cache[player]
+    }
+
+    fun saveFriendData(player: UUID): CompletableFuture<Void> {
+        return CompletableFuture.runAsync {
+            val friendData = this.queryFriendData(player)
+            Database.saveFriendData(friendData).join()
+            cache.invalidate(player)
+        }
+    }
+
+    fun saveAll(closeConnection: Boolean): CompletableFuture<Void> {
+        val futures: ObjectList<CompletableFuture<Void>> = ObjectArrayList()
+
+        for (player in cache.asMap().keys) {
+            val future = this.saveFriendData(player)
+            futures.add(future)
+        }
+
+        val allSaves = CompletableFuture.allOf(*futures.toTypedArray<CompletableFuture<*>>())
+
+        return if (closeConnection) {
+            allSaves.thenCompose { v: Void? ->
+                CompletableFuture.runAsync {
+                    Database.closeConnection()
+                }
+            }
+        } else {
+            allSaves
+        }
     }
 
 
-    playerData.getFriends().remove(target);
-    cache.put(player, playerData);
-
-    targetData.getFriends().remove(player);
-    cache.put(target, targetData);
-
-    this.sendMessage(player, Component.text("Du hast ")
-        .append(Component.text(this.getName(target), PluginColor.GOLD))
-        .append(Component.text(" als Freund entfernt.")));
-    this.sendMessage(target, Component.text("Du wurdest von ")
-        .append(Component.text(this.getName(player), PluginColor.GOLD))
-        .append(Component.text(" als Freund entfernt.")));
-
-  }
-
-  public void sendFriendRequest(UUID player, UUID target) {
-    FriendData targetData = this.queryFriendData(target);
-
-    if (targetData.getFriendRequests().contains(player)) {
-      return;
+    fun sendPlayer(player: UUID?, target: UUID?) {
+        // TODO: Send to Server
     }
 
-    targetData.getFriendRequests().add(player);
-    cache.put(target, targetData);
-
-    this.sendMessage(player, Component.text("Du hast eine Freundschaftsanfrage an ")
-        .append(Component.text(this.getName(target), PluginColor.GOLD))
-        .append(Component.text(" gesendet.")));
-
-    if(targetData.getAllowRequests()){
-      this.sendMessage(target, Component.text("Du hast eine Freundschaftsanfrage von ")
-          .append(Component.text(this.getName(player), PluginColor.GOLD))
-          .append(Component.text(" erhalten.")));
-    }
-  }
-
-  public void acceptFriendRequests(UUID player, UUID target) {
-    FriendData playerData = this.queryFriendData(player);
-    if (!playerData.getFriendRequests().contains(target)) {
-      return;
+    private fun sendMessage(uuid: UUID, message: Component) {
+        val player = Bukkit.getPlayer(uuid)
+        player?.sendMessage(SurfFriendsPlugin.prefix.append(message))
     }
 
-    playerData.getFriendRequests().remove(target);
-    cache.put(player, playerData);
+    private fun getName(uuid: UUID): String {
+        val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
 
-    this.addFriend(player, target);
-
-    this.sendMessage(player, Component.text("Du hast die Freundschaftsanfrage von ")
-        .append(Component.text(this.getName(target), PluginColor.GOLD))
-        .append(Component.text(" akzeptiert.")));
-    this.sendMessage(target, Component.text("Die Freundschaftsanfrage an ")
-        .append(Component.text(this.getName(player), PluginColor.GOLD))
-        .append(Component.text(" wurde akzeptiert.")));
-  }
-
-  public void denyFriendRequest(UUID player, UUID target) {
-    FriendData playerData = this.queryFriendData(player);
-
-    playerData.getFriendRequests().remove(target);
-    cache.put(player, playerData);
-
-    this.sendMessage(player, Component.text("Du hast die Freundschaftsanfrage von ")
-        .append(Component.text(this.getName(target), PluginColor.GOLD))
-        .append(Component.text(" abgelehnt.")));
-    this.sendMessage(target, Component.text("Die Freundschaftsanfrage an ")
-        .append(Component.text(this.getName(player), PluginColor.GOLD))
-        .append(Component.text(" wurde abgelehnt.")));
-  }
-
-  public boolean areFriends(UUID player, UUID target) {
-    return this.queryFriendData(player).getFriends().contains(target);
-  }
-
-  public boolean hasFriendRequest(UUID player, UUID target) {
-    return this.queryFriendData(player).getFriendRequests().contains(target);
-  }
-
-  public ObjectList<UUID> getFriends(UUID player) {
-    return this.queryFriendData(player).getFriends();
-  }
-
-  public ObjectList<UUID> getFriendRequests(UUID player) {
-    return this.queryFriendData(player).getFriendRequests();
-  }
-
-  public boolean toggle(UUID player) {
-    FriendData playerData = this.queryFriendData(player);
-
-    playerData.setAllowRequests(!playerData.getAllowRequests());
-    cache.put(player, playerData);
-
-    return playerData.getAllowRequests();
-  }
-
-  public boolean isAllowingRequests(UUID player) {
-    return this.queryFriendData(player).getAllowRequests();
-  }
-
-  public FriendData queryFriendData(UUID player) {
-    if (cache.get(player) == null) {
-      return newFriendData(player);
+        return if (offlinePlayer.name == null) "Unbekannt" else offlinePlayer.name!!
     }
 
-    return cache.get(player);
-  }
+    fun getOnlinefriends(player: UUID?): ObjectList<Player>? {
+        //TODO: Cloud implementation
 
-  public static FriendData loadFriendData(UUID player) {
-    Database.getFriendData(player).thenApply(friendData -> {
-      if (friendData == null) {
-        return newFriendData(player);
-      }
-
-      return friendData;
-    });
-    return null;
-  }
-
-  public static @NotNull CompletableFuture<FriendData> loadFriendDataAsync(UUID player) {
-    return Database.getFriendData(player).thenApply(friendData -> Objects.requireNonNullElseGet(friendData, () -> newFriendData(player)));
-  }
-
-
-  public CompletableFuture<Void> saveFriendData(UUID player) {
-    return CompletableFuture.runAsync(() -> {
-      FriendData friendData = this.queryFriendData(player);
-      Database.saveFriendData(friendData).join();
-
-      cache.invalidate(player);
-    });
-  }
-
-  public CompletableFuture<Void> saveAll(boolean closeConnection) {
-    ObjectList<CompletableFuture<Void>> futures = new ObjectArrayList<>();
-
-    for (UUID player : cache.asMap().keySet()) {
-      CompletableFuture<Void> future = this.saveFriendData(player);
-      futures.add(future);
+        return null
     }
 
-    CompletableFuture<Void> allSaves = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+    fun getServer(player: UUID?): String {
+        //TODO: Cloud implementation
 
-    if (closeConnection) {
-      return allSaves.thenCompose(v -> CompletableFuture.runAsync(Database::closeConnection));
-    } else {
-      return allSaves;
+        return "???"
     }
-  }
 
-
-  public void sendPlayer(UUID player, UUID target) {
-    // TODO: Send to Server
-  }
-
-  private void sendMessage(UUID uuid, Component message) {
-    Player player = Bukkit.getPlayer(uuid);
-    if (player != null) {
-      player.sendMessage(SurfFriendsPlugin.getPrefix().append(message));
+    fun getFriends(player: UUID): ObjectList<UUID>? {
+        return queryFriendData(player).friends;
     }
-  }
-  
-  private String getName(UUID uuid) {
-    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-    
-    return offlinePlayer.getName() == null ? "Unbekannt" : offlinePlayer.getName();
-  }
 
-  public static FriendData newFriendData(UUID player){
-    return new FriendData(player, new ObjectArrayList<>(), new ObjectArrayList<>(), true);
-  }
+    fun areFriends(player: UUID, target: UUID): Boolean? {
+        return queryFriendData(player).friends!!.contains(target)
+    }
 
-  public ObjectList<Player> getOnlineFriends(UUID player) {
-    //TODO: Cloud implementation
+    companion object {
+        @Getter
+        val instance: FriendManager = FriendManager()
+        fun loadFriendData(player: UUID): FriendData? {
+            Database.getFriendData(player).thenApply { friendData: FriendData? ->
+                if (friendData == null) {
+                    return@thenApply newFriendData(player)
+                }
+                friendData
+            }
+            return null
+        }
 
-    return null;
-  }
+        fun loadFriendDataAsync(player: UUID): CompletableFuture<FriendData?> {
+            return Database.getFriendData(player).thenApply { friendData: FriendData? ->
+                Objects.requireNonNullElseGet(
+                    friendData
+                ) { newFriendData(player) }
+            }
+        }
 
-  public String getServer(UUID player) {
-    //TODO: Cloud implementation
 
-    return "???";
-  }
+        fun newFriendData(player: UUID?): FriendData {
+            return FriendData(player!!, ObjectArrayList(), ObjectArrayList(), true)
+        }
+    }
 }

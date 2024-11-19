@@ -1,17 +1,17 @@
-package dev.slne.surf.friends.listener;
+package dev.slne.surf.friends.listener
 
-import dev.slne.surf.friends.FriendManager;
+import dev.slne.surf.friends.FriendManager
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerQuitEvent
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+class PlayerQuitListener : Listener {
+    @EventHandler
+    fun onQuit(event: PlayerQuitEvent) {
+        val player = event.player
 
-public class PlayerQuitListener implements Listener {
-  @EventHandler
-  public void onQuit(PlayerQuitEvent event) {
-    Player player = event.getPlayer();
-
-    FriendManager.instance().saveFriendData(player.getUniqueId()).thenRun(() -> FriendManager.instance().cache().invalidate(player.getUniqueId())).join();
-  }
+        FriendManager.instance.saveFriendData(player.uniqueId).thenRun {
+            FriendManager.instance.cache.invalidate(player.uniqueId)
+        }.join()
+    }
 }

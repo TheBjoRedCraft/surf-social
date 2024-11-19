@@ -1,15 +1,14 @@
-package dev.slne.surf.friends.config;
+package dev.slne.surf.friends.config
 
-import dev.slne.surf.friends.SurfFriendsPlugin;
+import dev.slne.surf.friends.SurfFriendsPlugin
+import org.bukkit.configuration.file.FileConfiguration
 
-import org.bukkit.configuration.file.FileConfiguration;
+object PluginConfig {
+    fun config(): FileConfiguration {
+        return SurfFriendsPlugin.instance.getConfig()
+    }
 
-public class PluginConfig {
-  public static FileConfiguration config() {
-    return SurfFriendsPlugin.getInstance().getConfig();
-  }
-
-  public static void createConfig() {
-    SurfFriendsPlugin.getInstance().saveDefaultConfig();
-  }
+    fun createConfig() {
+        SurfFriendsPlugin.instance.saveDefaultConfig()
+    }
 }

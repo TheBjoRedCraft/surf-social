@@ -2,10 +2,27 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     id("java")
-    id("dev.slne.java-common")
-    id("dev.slne.java-shadow")
+    id("com.gradleup.shadow")
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
+    id("io.freefair.lombok")
+
+    `kotlin-dsl`
 }
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
+
+    maven {
+        url = uri("https://repo.codemc.org/repository/maven-public/")
+    }
+}
+
 
 dependencies {
     compileOnlyApi(libs.paper.api)
@@ -13,8 +30,9 @@ dependencies {
     implementation(libs.inventory.framework)
 
     implementation ("com.zaxxer:HikariCP:5.0.1")
-    implementation ("mysql:mysql-connector-java:8.0.33")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 paper {
@@ -38,4 +56,7 @@ tasks.shadowJar {
     archiveClassifier.set("")
     archiveVersion.set("3.0.0-SNAPSHOT")
     archiveBaseName.set("surf-friends")
+}
+kotlin {
+    jvmToolchain(21)
 }

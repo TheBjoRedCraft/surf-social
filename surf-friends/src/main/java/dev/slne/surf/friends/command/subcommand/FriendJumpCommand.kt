@@ -1,43 +1,51 @@
-package dev.slne.surf.friends.command.subcommand;
+package dev.slne.surf.friends.command.subcommand
 
-import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
-import dev.jorel.commandapi.arguments.SafeSuggestions;
-import dev.slne.surf.friends.FriendManager;
+import dev.jorel.commandapi.CommandAPI
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.SuggestionInfo
+import dev.jorel.commandapi.arguments.OfflinePlayerArgument
+import dev.jorel.commandapi.arguments.SafeSuggestions
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.SurfFriendsPlugin
+import dev.slne.surf.friends.listener.util.PluginColor
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import java.util.function.Function
 
-import dev.slne.surf.friends.SurfFriendsPlugin;
-import dev.slne.surf.friends.util.PluginColor;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
+class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withArguments(
+            OfflinePlayerArgument("target").replaceSafeSuggestions(
+                SafeSuggestions.suggest<OfflinePlayer, CommandSender?> { info: SuggestionInfo<CommandSender?>? ->
+                  Bukkit.getOnlinePlayers().toTypedArray<Player>()
+                }
+            )
+        )
 
-public class FriendJumpCommand extends CommandAPICommand {
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val target = args.getUnchecked<OfflinePlayer>("target")
+                ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
+            if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)!!) {
+                throw CommandAPI.failWithString("Du bist nicht mit " + target.name + " befreundet.")
+            }
 
-  public FriendJumpCommand(String commandName) {
-    super(commandName);
+            player.sendMessage(
+                SurfFriendsPlugin.prefix
+                    .append(Component.text("Du wirst mit dem Server von " + target.name + " verbunden."))
+            )
 
-    withArguments(new OfflinePlayerArgument("target").replaceSafeSuggestions(SafeSuggestions.suggest(info -> Bukkit.getOnlinePlayers().toArray(new Player[0]))));
-
-    executesPlayer((player, args)-> {
-      OfflinePlayer target = args.getUnchecked("target");
-
-      if (target == null) {
-        throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.");
-      }
-
-      if(!FriendManager.instance().areFriends(player.getUniqueId(), target.getUniqueId())){
-        throw CommandAPI.failWithString("Du bist nicht mit " + target.getName() + " befreundet.");
-      }
-
-      player.sendMessage(SurfFriendsPlugin.getPrefix().append(Component.text("Du wirst mit dem Server von " + target.getName() + " verbunden.")));
-
-      //TODO: Cloud implementation: send player
-
-      player.sendMessage(SurfFriendsPlugin.getPrefix().append(Component.text("Du wurdest erfolgreich mit dem Server von " + target.getName() + " verbunden.").color(PluginColor.LIGHT_GREEN)));
-
-      //TODO: Cloud implementation
-    });
-  }
+            //TODO: Cloud implementation: send player
+            player.sendMessage(
+                SurfFriendsPlugin.prefix.append(
+                    Component.text("Du wurdest erfolgreich mit dem Server von " + target.name + " verbunden.")
+                        .color(PluginColor.LIGHT_GREEN)
+                )
+            )
+        })
+    }
 }
