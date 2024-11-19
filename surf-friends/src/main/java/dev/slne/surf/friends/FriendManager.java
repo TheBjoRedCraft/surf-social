@@ -241,4 +241,10 @@ public class FriendManager {
   public static FriendData newFriendData(UUID player){
     return new FriendData(player, new ObjectArrayList<>(), new ObjectArrayList<>(), true);
   }
+
+  public ObjectList<Player> getOnlineFriends(UUID player) {
+    //TODO: Cloud implementation
+
+    return null;
+  }
 }
