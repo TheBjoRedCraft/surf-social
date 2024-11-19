@@ -9,6 +9,7 @@ import dev.slne.surf.friends.util.PluginColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 public class FriendMainMenu extends FriendMenu {
@@ -31,6 +32,7 @@ public class FriendMainMenu extends FriendMenu {
         .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
         .addLoreLine(Component.text("Du kannst diesen hier nachjoinen", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
         .addLoreLine(Component.text("oder sie entfernen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addItemFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ATTRIBUTES)
         .build();
     ItemStack friendRequests = new ItemBuilder(Material.PAPER)
         .setName(Component.text("Freundschaftsanfragen").color(PluginColor.BLUE_LIGHT))
@@ -41,6 +43,7 @@ public class FriendMainMenu extends FriendMenu {
         .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
         .addLoreLine(Component.text("Du kannst diese direkt hier", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
         .addLoreLine(Component.text("annehmen oder akzeptieren.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+        .addItemFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ATTRIBUTES)
         .build();
 
     header.addItem(build(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")));
