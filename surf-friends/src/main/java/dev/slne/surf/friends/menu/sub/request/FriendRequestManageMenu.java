@@ -11,6 +11,7 @@ import dev.slne.surf.friends.menu.FriendMenu;
 import dev.slne.surf.friends.util.ItemBuilder;
 import dev.slne.surf.friends.util.PluginColor;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -37,21 +38,27 @@ public class FriendRequestManageMenu extends FriendMenu {
     footer.setRepeat(true);
 
     accept.setText("+", (c, stack) -> {
-      ItemMeta meta = stack.getItemMeta();
+      ItemBuilder builder = new ItemBuilder(stack);
 
-      meta.displayName(Component.text("Akzeptieren").color(PluginColor.LIGHT_GREEN));
-      stack.setItemMeta(meta);
+      builder.setName(Component.text("Akzeptieren"));
+      builder.addLoreLine(Component.text("Freundschaftsanfrage akzeptieren", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text("Hier kannst du diese", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text("Freundschaftsanfrage akzeptieren.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
 
-      return new GuiItem(stack);
+      return this.build(builder);
     });
 
     deny.setText("X", (c, stack) -> {
-      ItemMeta meta = stack.getItemMeta();
+      ItemBuilder builder = new ItemBuilder(stack);
 
-      meta.displayName(Component.text("Ablehnen").color(PluginColor.RED));
-      stack.setItemMeta(meta);
+      builder.setName(Component.text("Ablehnen"));
+      builder.addLoreLine(Component.text("Freundschaftsanfrage ablehnen", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text("Hier kannst du diese", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text("Freundschaftsanfrage ablehnen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
 
-      return new GuiItem(stack);
+      return this.build(builder);
     });
 
     accept.setOnClick(event -> {

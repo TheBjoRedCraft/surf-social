@@ -33,22 +33,29 @@ public class FriendRemoveConfirmMenu extends FriendMenu {
 
     mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(Component.text("Möchtest du " + name + " wirklich enfernen?")).setSkullOwner(offlinePlayer.getName())));
 
-    left.addItem(build(new ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen").color(PluginColor.LIGHT_GREEN)), event -> {
+    left.addItem(build(new ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen", PluginColor.LIGHT_GREEN)), event -> {
       FriendManager.instance().removeFriend(event.getWhoClicked().getUniqueId(), offlinePlayer.getUniqueId());
       FriendManager.instance().removeFriend(offlinePlayer.getUniqueId(), event.getWhoClicked().getUniqueId());
 
       new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
     }));
 
-    navigation.addItem(build(new ItemBuilder(Material.BARRIER)
-        .setName(Component.text("Zurück")
-            .color(PluginColor.RED)), event ->
-        new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked())), 4, 0);
+    navigation.addItem(build(new ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED)), event -> {
+      if(offlinePlayer.getName() == null) {
+        new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked());
+      } else {
+        new FriendSingleMenu(offlinePlayer.getName()).show(event.getWhoClicked());
+      }
+    }), 4, 0);
 
 
     addPane(header);
     addPane(footer);
+    addPane(navigation);
     addPane(mid);
     addPane(left);
+
+    setOnGlobalClick(event -> event.setCancelled(true));
+    setOnGlobalDrag(event -> event.setCancelled(true));
   }
 }

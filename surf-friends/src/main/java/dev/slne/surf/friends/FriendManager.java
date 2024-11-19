@@ -247,4 +247,10 @@ public class FriendManager {
 
     return null;
   }
+
+  public String getServer(UUID player) {
+    //TODO: Cloud implementation
+
+    return "???";
+  }
 }

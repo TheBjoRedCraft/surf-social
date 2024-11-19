@@ -6,6 +6,7 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane.Priority;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.Label;
+import dev.slne.surf.friends.FriendManager;
 import dev.slne.surf.friends.menu.FriendMenu;
 import dev.slne.surf.friends.util.ItemBuilder;
 import dev.slne.surf.friends.util.PluginColor;
@@ -17,6 +18,7 @@ import net.kyori.adventure.text.format.TextDecoration.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 
 
@@ -44,27 +46,47 @@ public class FriendSingleMenu extends FriendMenu {
     footer.setRepeat(true);
 
     navigation.addItem(build(new ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED)), event -> new FriendFriendsMenu(event.getWhoClicked().getUniqueId()).show(event.getWhoClicked())), 4, 0);
-    mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD).setName(name).setSkullOwner(offlinePlayer.getName())));
+    mid.addItem(build(new ItemBuilder(Material.PLAYER_HEAD)
+        .setName(Component.text(name, PluginColor.BLUE_LIGHT))
+        .setSkullOwner(offlinePlayer.getName())));
 
     remove.setText("-", (c, stack) -> {
-      ItemMeta meta = stack.getItemMeta();
+      ItemBuilder builder = new ItemBuilder(stack);
 
-      meta.displayName(Component.text("Entfernen").color(PluginColor.RED));
-      stack.setItemMeta(meta);
+      builder.setName(Component.text("Entfernen"));
+      builder.addLoreLine(Component.text("Freund/in entfernen", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text("Hier kannst du diesen Spieler", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
+      builder.addLoreLine(Component.text("aus deiner Freundesliste entfernen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false));
 
-      return new GuiItem(stack);
+      return this.build(builder);
     });
       if (offlinePlayer.isOnline()) {
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
             .setName(Component.text("Nachspringen").color(PluginColor.BLUE_LIGHT))
-            .addLoreLine(Component.text("Server: N/A").decoration(TextDecoration.ITALIC, State.FALSE))
+            .addLoreLine(Component.text("Nachspringen", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text("Hier kannst du diesem", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text("Spieler nachjoinen.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text("Er ist aktuell auf ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text(FriendManager.instance().getServer(offlinePlayer.getUniqueId()), PluginColor.GOLD).decoration(TextDecoration.ITALIC, false)
+                .append(Component.text(" online.", PluginColor.LIGHT_GRAY)).decoration(TextDecoration.ITALIC, false))
+            .addItemFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ATTRIBUTES)
             .setSkullOwner(name)));
 
       }else{
         right.addItem(build(new ItemBuilder(Material.ENDER_PEARL)
-            .setName(Component.text("Der Spieler ist offline.").color(PluginColor.BLUE_LIGHT))
-            .addLoreLine(Component.text("Zuletzt gesehen: " + dateFormat.format(date))
-                .decoration(TextDecoration.ITALIC, State.FALSE))
+            .setName(Component.text("Nachspringen").color(PluginColor.BLUE_LIGHT))
+            .addLoreLine(Component.text("Nachspringen", PluginColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text("Dieser Spieler ist aktuell offline.", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text("Du kannst ihm nicht nachspringen!", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text(" ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text("Er war zuletzt am ", PluginColor.LIGHT_GRAY).decoration(TextDecoration.ITALIC, false))
+            .addLoreLine(Component.text(dateFormat.format(date), PluginColor.GOLD).decoration(TextDecoration.ITALIC, false)
+                .append(Component.text(" online.", PluginColor.LIGHT_GRAY)).decoration(TextDecoration.ITALIC, false))
+            .addItemFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ATTRIBUTES)
             .setSkullOwner(name)));
       }
 
