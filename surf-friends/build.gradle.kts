@@ -36,6 +36,6 @@ tasks.shadowJar {
     relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.inventoryframework")
 
     archiveClassifier.set("")
-    archiveVersion.set("1.0.0-SNAPSHOT")
+    archiveVersion.set("3.0.0-SNAPSHOT")
     archiveBaseName.set("surf-friends")
 }
