@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 
 class FriendToggleCommand(name: String) : CommandAPICommand(name) {
     init {
-        executesPlayer(PlayerCommandExecutor { player: Player, info: CommandArguments? ->
+        executesPlayer(PlayerCommandExecutor { player: Player, _: CommandArguments? ->
 
             SurfFriendsPlugin.instance.launch {
                 if (FriendManager.toggle(player.uniqueId)) {

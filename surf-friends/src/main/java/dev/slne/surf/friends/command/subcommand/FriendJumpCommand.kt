@@ -11,22 +11,17 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.PluginColor
-import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.function.Function
 
 class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withArguments(
-            OfflinePlayerArgument("target").replaceSafeSuggestions(
-                SafeSuggestions.suggest {
-                    Bukkit.getOnlinePlayers().toTypedArray<Player>()
-                }
-            )
+        OfflinePlayerArgument("target").replaceSafeSuggestions(
+            SafeSuggestions.suggest {
+                Bukkit.getOnlinePlayers().toTypedArray<Player>()
+            }
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->

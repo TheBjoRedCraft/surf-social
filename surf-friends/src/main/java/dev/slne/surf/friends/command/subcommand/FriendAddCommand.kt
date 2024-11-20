@@ -21,12 +21,10 @@ import java.util.function.Function
 
 class FriendAddCommand(name: String) : CommandAPICommand(name) {
     init {
-        withArguments(
-            OfflinePlayerArgument("target").replaceSafeSuggestions(
-                SafeSuggestions.suggest<OfflinePlayer, CommandSender?> { info: SuggestionInfo<CommandSender?>? ->
-                    Bukkit.getOnlinePlayers().toTypedArray<Player>()
-                }
-            )
+        OfflinePlayerArgument("target").replaceSafeSuggestions(
+            SafeSuggestions.suggest<OfflinePlayer, CommandSender?> { info: SuggestionInfo<CommandSender?>? ->
+                Bukkit.getOnlinePlayers().toTypedArray<Player>()
+            }
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->

@@ -10,7 +10,7 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.SurfFriendsPlugin
-import kotlinx.coroutines.launch
+
 
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -18,13 +18,7 @@ import org.bukkit.entity.Player
 
 class FriendAcceptCommand(name: String) : CommandAPICommand(name) {
     init {
-        withArguments(
-            OfflinePlayerArgument("target").replaceSafeSuggestions(
-                SafeSuggestions.suggest {
-                    Bukkit.getOnlinePlayers().toTypedArray<Player>()
-                }
-            )
-        )
+        OfflinePlayerArgument("target").replaceSafeSuggestions(SafeSuggestions.suggest { Bukkit.getOnlinePlayers().toTypedArray<Player>() })
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
