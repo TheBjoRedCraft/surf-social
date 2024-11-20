@@ -15,11 +15,8 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-class FriendManager {
-    val cache: CoroutineLoadingCache<UUID, FriendData> =
-        Caffeine.newBuilder().buildCoroutine() { player: UUID ->
-            loadFriendData(player)
-        }
+object FriendManager {
+    val cache: CoroutineLoadingCache<UUID, FriendData> = Caffeine.newBuilder().buildCoroutine() { player: UUID -> loadFriendData(player) }
 
     /* Friend Management */
     suspend fun addFriend(player: UUID, target: UUID) {
@@ -213,14 +210,10 @@ class FriendManager {
         return queryFriendData(player).friends.contains(target)
     }
 
-    companion object {
-        val instance: FriendManager = FriendManager()
-
-        suspend fun loadFriendData(player: UUID): FriendData {
-            return Database.getFriendData(player)
-        }
-
-
-        fun newFriendData(player: UUID): FriendData { return FriendData(player, ObjectArrayList(), ObjectArrayList(), true) }
+    suspend fun loadFriendData(player: UUID): FriendData {
+        return Database.getFriendData(player)
     }
+
+
+    fun newFriendData(player: UUID): FriendData { return FriendData(player, ObjectArrayList(), ObjectArrayList(), true) }
 }
