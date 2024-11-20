@@ -324,9 +324,11 @@ class ItemBuilder {
     fun removeLoreLine(line: Component): ItemBuilder {
         val im = itemStack.itemMeta
         val lore: MutableList<Component> = ArrayList(im.lore())
+
         if (!lore.contains(line)) {
             return this
         }
+
         lore.remove(line)
         im.lore(lore)
         itemStack.setItemMeta(im)

@@ -23,14 +23,15 @@ object FriendManager {
         val playerData = queryFriendData(player)
         val targetData = queryFriendData(target)
 
-        if (playerData.friends.contains(target) || targetData.friends.contains(player)) {
+        if(!playerData.friends.add(target)) {
             return
         }
 
-        playerData.friends.add(target)
-        cache.put(player, playerData)
+        if(!targetData.friends.add(player)) {
+            return
+        }
 
-        targetData.friends.add(player)
+        cache.put(player, playerData)
         cache.put(target, targetData)
 
         sendMessage(
@@ -49,19 +50,15 @@ object FriendManager {
         val playerData = queryFriendData(player)
         val targetData = queryFriendData(target)
 
-        if (!playerData.friends.contains(target)) {
+        if(!playerData.friends.remove(target)) {
             return
         }
 
-        if (!targetData.friends.contains(player)) {
-
+        if(!targetData.friends.remove(player)) {
             return
         }
 
-        playerData.friends.remove(target)
         cache.put(player, playerData)
-
-        targetData.friends.remove(player)
         cache.put(target, targetData)
 
         sendMessage(
@@ -79,11 +76,10 @@ object FriendManager {
     suspend fun sendFriendRequest(player: UUID, target: UUID) {
         val targetData = queryFriendData(target)
 
-        if (targetData.friendRequests.contains(player)) {
+        if(!targetData.friendRequests.add(player)) {
             return
         }
 
-        targetData.friendRequests.add(player)
         cache.put(target, targetData)
 
         sendMessage(
@@ -103,11 +99,10 @@ object FriendManager {
 
     suspend fun acceptFriendRequest(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
-        if (!playerData.friendRequests.contains(target)) {
+
+        if(!playerData.friendRequests.remove(target)) {
             return
         }
-
-        playerData.friendRequests.remove(target)
         cache.put(player, playerData)
 
         addFriend(player, target)
