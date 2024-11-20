@@ -10,6 +10,8 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.PluginColor
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -28,24 +30,26 @@ class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val target = args.getUnchecked<OfflinePlayer>("target")
-                ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
-            if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)) {
-                throw CommandAPI.failWithString("Du bist nicht mit " + target.name + " befreundet.")
-            }
+            val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
-            player.sendMessage(
-                SurfFriendsPlugin.prefix
-                    .append(Component.text("Du wirst mit dem Server von " + target.name + " verbunden."))
-            )
+            GlobalScope.launch {
+                if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)) {
+                    throw CommandAPI.failWithString("Du bist nicht mit " + target.name + " befreundet.")
+                }
 
-            //TODO: Cloud implementation: send player
-            player.sendMessage(
-                SurfFriendsPlugin.prefix.append(
-                    Component.text("Du wurdest erfolgreich mit dem Server von " + target.name + " verbunden.")
-                        .color(PluginColor.LIGHT_GREEN)
+                player.sendMessage(
+                    SurfFriendsPlugin.prefix
+                        .append(Component.text("Du wirst mit dem Server von " + target.name + " verbunden."))
                 )
-            )
+
+                //TODO: Cloud implementation: send player
+                player.sendMessage(
+                    SurfFriendsPlugin.prefix.append(
+                        Component.text("Du wurdest erfolgreich mit dem Server von " + target.name + " verbunden.")
+                            .color(PluginColor.LIGHT_GREEN)
+                    )
+                )
+            }
         })
     }
 }

@@ -11,6 +11,8 @@ import dev.slne.surf.friends.menu.FriendMainMenu
 import dev.slne.surf.friends.menu.FriendMenu
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -21,106 +23,100 @@ import java.util.*
 
 class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") {
     init {
-        val header = OutlinePane(0, 0, 9, 1, Pane.Priority.LOW)
-        val footer = OutlinePane(0, 4, 9, 1, Pane.Priority.LOW)
-        val pages = PaginatedPane(1, 1, 9, 3, Pane.Priority.HIGH)
-        val navigation = StaticPane(0, 4, 9, 1, Pane.Priority.HIGH)
 
-        header.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
-        header.setRepeat(true)
+        GlobalScope.launch {
+            val header = OutlinePane(0, 0, 9, 1, Pane.Priority.LOW)
+            val footer = OutlinePane(0, 4, 9, 1, Pane.Priority.LOW)
+            val pages = PaginatedPane(1, 1, 9, 3, Pane.Priority.HIGH)
+            val navigation = StaticPane(0, 4, 9, 1, Pane.Priority.HIGH)
 
-        footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
-        footer.setRepeat(true)
+            header.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
+            header.setRepeat(true)
 
-        pages.populateWithItemStacks(this.getFriendRequestsItems(player))
+            footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
+            footer.setRepeat(true)
 
-        pages.setOnClick { event: InventoryClickEvent ->
-            if (event.currentItem == null) {
-                return@setOnClick
+            pages.populateWithItemStacks(getFriendRequestsItems(player))
+
+            pages.setOnClick { event: InventoryClickEvent ->
+                if (event.currentItem == null) {
+                    return@setOnClick
+                }
+
+                val item = event.currentItem ?: return@setOnClick
+
+                if(item.itemMeta == null) {
+                    return@setOnClick
+                }
+
+                val meta = item.itemMeta
+                FriendRequestManageMenu(meta.displayName).show(event.whoClicked)
             }
 
-            val item = event.currentItem ?: return@setOnClick
+            navigation.addItem(
+                build(
+                    ItemBuilder(Material.RED_DYE).setName(
+                        Component.text("Vorherige Seite").color(PluginColor.RED)
+                    )
+                ) {
+                    if (pages.page > 0) {
+                        pages.page -= 1
 
-            if(item.itemMeta == null) {
-                return@setOnClick
+                        update()
+                    }
+                }, 0, 0
+            )
+
+            navigation.addItem(
+                build(
+                    ItemBuilder(Material.LIME_DYE).setName(
+                        Component.text("Nächste Seite").color(PluginColor.LIGHT_GREEN)
+                    )
+                ) {
+                    if (pages.page < pages.pages - 1) {
+                        pages.page += 1
+                        update()
+                    }
+                }, 8, 0
+            )
+
+            navigation.addItem(
+                build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED))) { event: InventoryClickEvent? ->
+                    if(event == null) {
+                        return@build
+                    }
+
+                    FriendMainMenu().show(event.whoClicked)
+                }, 4, 0
+            )
+
+
+            addPane(header)
+            addPane(footer)
+            addPane(navigation)
+            addPane(pages)
+
+
+            setOnGlobalClick { event: InventoryClickEvent ->
+                event.isCancelled =
+                    true
             }
-
-            val meta = item.itemMeta
-            FriendRequestManageMenu(meta.displayName).show(event.whoClicked)
-        }
-
-        navigation.addItem(
-            build(
-                ItemBuilder(Material.RED_DYE).setName(
-                    Component.text("Vorherige Seite").color(PluginColor.RED)
-                )
-            ) {
-                if (pages.page > 0) {
-                    pages.page -= 1
-
-                    update()
-                }
-            }, 0, 0
-        )
-
-        navigation.addItem(
-            build(
-                ItemBuilder(Material.LIME_DYE).setName(
-                    Component.text("Nächste Seite").color(PluginColor.LIGHT_GREEN)
-                )
-            ) {
-                if (pages.page < pages.pages - 1) {
-                    pages.page += 1
-                    update()
-                }
-            }, 8, 0
-        )
-
-        navigation.addItem(
-            build(
-                ItemBuilder(Material.BARRIER).setName(
-                    Component.text("Zurück").color(PluginColor.RED)
-                )
-            ) { event: InventoryClickEvent? ->
-                if(event == null) {
-                    return@build
-                }
-
-                FriendMainMenu().show(
-                    event.whoClicked
-                )
-            }, 4, 0
-        )
-
-
-        addPane(header)
-        addPane(footer)
-        addPane(navigation)
-        addPane(pages)
-
-
-        setOnGlobalClick { event: InventoryClickEvent ->
-            event.isCancelled =
-                true
-        }
-        setOnGlobalDrag { event: InventoryDragEvent ->
-            event.isCancelled =
-                true
+            setOnGlobalDrag { event: InventoryDragEvent ->
+                event.isCancelled =
+                    true
+            }
         }
     }
 
 
-    private fun getFriendRequestsItems(player: UUID): ObjectList<ItemStack?> {
+    private suspend fun getFriendRequestsItems(player: UUID): ObjectList<ItemStack?> {
         val stacks: ObjectList<ItemStack?> = ObjectArrayList()
         val requests = FriendManager.instance.getFriendRequests(player)
 
         for (request in requests) {
             val offlinePlayer = Bukkit.getOfflinePlayer(request)
 
-            stacks.add(
-                ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.name ?: "Unbekannt")
-                    .setSkullOwner(offlinePlayer.name).build()
-            )
+            stacks.add(ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.name ?: "Unbekannt").setSkullOwner(offlinePlayer.name).build())
         }
 
         return stacks

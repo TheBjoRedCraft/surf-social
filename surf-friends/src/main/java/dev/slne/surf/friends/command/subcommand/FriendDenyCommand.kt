@@ -8,6 +8,8 @@ import dev.jorel.commandapi.arguments.SafeSuggestions
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -25,12 +27,14 @@ class FriendDenyCommand(name: String) : CommandAPICommand(name) {
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val target = args.getUnchecked<OfflinePlayer>("target")
-                ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
-            if (!FriendManager.instance.hasFriendRequest(player.uniqueId, target.uniqueId)) {
-                throw CommandAPI.failWithString("Du hast keine Freundschaftsanfrage von " + target.name)
+            val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
+
+            GlobalScope.launch {
+                if (!FriendManager.instance.hasFriendRequest(player.uniqueId, target.uniqueId)) {
+                    throw CommandAPI.failWithString("Du hast keine Freundschaftsanfrage von " + target.name)
+                }
+                FriendManager.instance.denyFriendRequest(player.uniqueId, target.uniqueId)
             }
-            FriendManager.instance.denyFriendRequest(player.uniqueId, target.uniqueId)
         })
     }
 }

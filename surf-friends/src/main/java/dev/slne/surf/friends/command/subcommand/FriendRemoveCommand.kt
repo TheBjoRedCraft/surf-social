@@ -8,6 +8,8 @@ import dev.jorel.commandapi.arguments.SafeSuggestions
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -27,17 +29,19 @@ class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
-            if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)) {
-                throw CommandAPI.failWithString(
-                    String.format(
-                        "Du bist nicht mit %s befreundet.",
-                        target.name
+            GlobalScope.launch {
+                if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)) {
+                    throw CommandAPI.failWithString(
+                        String.format(
+                            "Du bist nicht mit %s befreundet.",
+                            target.name
+                        )
                     )
-                )
-            }
+                }
 
-            FriendManager.instance.removeFriend(player.uniqueId, target.uniqueId)
-            FriendManager.instance.removeFriend(target.uniqueId, player.uniqueId)
+                FriendManager.instance.removeFriend(player.uniqueId, target.uniqueId)
+                FriendManager.instance.removeFriend(target.uniqueId, player.uniqueId)
+            }
         })
     }
 }

@@ -7,6 +7,8 @@ import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -40,29 +42,20 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
         )
 
         left.addItem(
-            build(
-                ItemBuilder(Material.LIME_DYE).setName(
-                    Component.text(
-                        "Bestätigen",
-                        PluginColor.LIGHT_GREEN
-                    )
-                )
-            ) { event: InventoryClickEvent? ->
+            build(ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen", PluginColor.LIGHT_GREEN))) { event: InventoryClickEvent? ->
                 if(event == null) {
                     return@build
                 }
 
-                FriendManager.instance
-                    .removeFriend(event.whoClicked.uniqueId, offlinePlayer.uniqueId)
-                FriendManager.instance
-                    .removeFriend(offlinePlayer.uniqueId, event.whoClicked.uniqueId)
+                GlobalScope.launch {
+                    FriendManager.instance.removeFriend(event.whoClicked.uniqueId, offlinePlayer.uniqueId)
+                    FriendManager.instance.removeFriend(offlinePlayer.uniqueId, event.whoClicked.uniqueId)
+                }
+
                 FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
             })
 
-        navigation.addItem(
-            build(
-                ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED))
-            ) { event: InventoryClickEvent? ->
+        navigation.addItem(build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED))) { event: InventoryClickEvent? ->
                 if(event == null) {
                     return@build
                 }

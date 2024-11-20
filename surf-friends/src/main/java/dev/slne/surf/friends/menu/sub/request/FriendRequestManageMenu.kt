@@ -10,6 +10,8 @@ import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
@@ -94,18 +96,24 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
         }
 
         accept.setOnClick { event: InventoryClickEvent ->
-            FriendManager.instance.acceptFriendRequest(
-                event.whoClicked.uniqueId,
-                Bukkit.getOfflinePlayer(name).uniqueId
-            )
+            GlobalScope.launch {
+                FriendManager.instance.acceptFriendRequest(
+                    event.whoClicked.uniqueId,
+                    Bukkit.getOfflinePlayer(name).uniqueId
+                )
+            }
+
             FriendRequestsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
         }
 
         deny.setOnClick { event: InventoryClickEvent ->
-            FriendManager.instance.denyFriendRequest(
-                event.whoClicked.uniqueId,
-                Bukkit.getOfflinePlayer(name).uniqueId
-            )
+            GlobalScope.launch {
+                FriendManager.instance.denyFriendRequest(
+                    event.whoClicked.uniqueId,
+                    Bukkit.getOfflinePlayer(name).uniqueId
+                )
+            }
+
             FriendRequestsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
         }
 

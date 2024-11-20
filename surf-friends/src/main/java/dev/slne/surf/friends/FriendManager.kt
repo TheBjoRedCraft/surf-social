@@ -4,7 +4,8 @@ package dev.slne.surf.friends
 
 import dev.slne.surf.friends.listener.util.PluginColor
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.benmanes.caffeine.cache.LoadingCache
+import dev.hsbrysk.caffeine.CoroutineLoadingCache
+import dev.hsbrysk.caffeine.buildCoroutine
 import dev.slne.surf.friends.database.Database
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -15,13 +16,13 @@ import org.bukkit.entity.Player
 import java.util.*
 
 class FriendManager {
-    val cache: LoadingCache<UUID, FriendData> =
-        Caffeine.newBuilder().build { player: UUID ->
+    val cache: CoroutineLoadingCache<UUID, FriendData> =
+        Caffeine.newBuilder().buildCoroutine() { player: UUID ->
             loadFriendData(player)
         }
 
     /* Friend Management */
-    fun addFriend(player: UUID, target: UUID) {
+    suspend fun addFriend(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
         val targetData = queryFriendData(target)
 
@@ -47,7 +48,7 @@ class FriendManager {
         )
     }
 
-    fun removeFriend(player: UUID, target: UUID) {
+    suspend fun removeFriend(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
         val targetData = queryFriendData(target)
 
@@ -78,7 +79,7 @@ class FriendManager {
         )
     }
 
-    fun sendFriendRequest(player: UUID, target: UUID) {
+    suspend fun sendFriendRequest(player: UUID, target: UUID) {
         val targetData = queryFriendData(target)
 
         if (targetData.friendRequests.contains(player)) {
@@ -103,7 +104,7 @@ class FriendManager {
         }
     }
 
-    fun acceptFriendRequest(player: UUID, target: UUID) {
+    suspend fun acceptFriendRequest(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
         if (!playerData.friendRequests.contains(target)) {
             return
@@ -126,7 +127,7 @@ class FriendManager {
         )
     }
 
-    fun denyFriendRequest(player: UUID, target: UUID) {
+    suspend fun denyFriendRequest(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
 
         playerData.friendRequests.remove(target)
@@ -144,15 +145,15 @@ class FriendManager {
         )
     }
 
-    fun hasFriendRequest(player: UUID, target: UUID): Boolean {
+    suspend fun hasFriendRequest(player: UUID, target: UUID): Boolean {
         return queryFriendData(player).friendRequests.contains(target)
     }
 
-    fun getFriendRequests(player: UUID): ObjectList<UUID> {
+    suspend fun getFriendRequests(player: UUID): ObjectList<UUID> {
         return queryFriendData(player).friendRequests
     }
 
-    fun toggle(player: UUID): Boolean {
+    suspend fun toggle(player: UUID): Boolean {
         val playerData = queryFriendData(player)
 
         playerData.allowRequests = !(playerData.allowRequests)
@@ -161,22 +162,21 @@ class FriendManager {
         return playerData.allowRequests
     }
 
-    fun isAllowingRequests(player: UUID): Boolean {
+    suspend fun isAllowingRequests(player: UUID): Boolean {
         return queryFriendData(player).allowRequests
     }
 
-    fun queryFriendData(player: UUID): FriendData {
-        return cache.get(player) { loadFriendData(player) }
+    suspend fun queryFriendData(player: UUID): FriendData {
+        return cache.get(player) ?: newFriendData(player)
     }
 
     suspend fun saveFriendData(player: UUID) {
         val friendData = queryFriendData(player)
         Database.saveFriendData(friendData)
-        cache.invalidate(player)
     }
 
     suspend fun saveAll(closeConnection: Boolean) {
-        cache.asMap().keys.map { player -> saveFriendData(player) }
+        cache.synchronous().asMap().map { player -> saveFriendData(player.key) }
 
         if (closeConnection) {
             withContext(Dispatchers.IO) {
@@ -195,35 +195,29 @@ class FriendManager {
         return offlinePlayer.name?: "Unbekannt"
     }
 
-    fun getOnlineFriends(player: UUID): ObjectList<Player> {
+    suspend fun getOnlineFriends(player: UUID): ObjectList<Player> {
         // TODO: Cloud implementation
         return ObjectArrayList()
     }
 
-    fun getServer(player: UUID): String {
+    suspend fun getServer(player: UUID): String {
         // TODO: Cloud implementation
         return ""
     }
 
-    fun getFriends(player: UUID): ObjectList<UUID> {
+    suspend fun getFriends(player: UUID): ObjectList<UUID> {
         return queryFriendData(player).friends
     }
 
-    fun areFriends(player: UUID, target: UUID): Boolean {
+    suspend fun areFriends(player: UUID, target: UUID): Boolean {
         return queryFriendData(player).friends.contains(target)
     }
 
     companion object {
         val instance: FriendManager = FriendManager()
 
-        fun loadFriendData(player: UUID): FriendData {
-            val deferred = GlobalScope.async {
-                val friendData = Database.getFriendData(player)
-
-                friendData
-            }
-            
-            return runBlocking { deferred.await() }
+        suspend fun loadFriendData(player: UUID): FriendData {
+            return Database.getFriendData(player)
         }
 
 

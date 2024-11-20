@@ -15,7 +15,6 @@ class PlayerQuitListener : Listener {
 
         GlobalScope.launch {
             FriendManager.instance.saveFriendData(player.uniqueId)
-            FriendManager.instance.cache.invalidate(player.uniqueId)
         }
     }
 }

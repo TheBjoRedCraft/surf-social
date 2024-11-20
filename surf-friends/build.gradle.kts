@@ -33,6 +33,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
 
     implementation(kotlin("stdlib-jdk8"))
+    implementation("dev.hsbrysk:caffeine-coroutines:1.2.0")
 }
 
 paper {

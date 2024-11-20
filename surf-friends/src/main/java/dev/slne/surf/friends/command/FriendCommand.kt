@@ -21,9 +21,7 @@ class FriendCommand(commandName: String) : CommandAPICommand(commandName) {
         withSubcommand(FriendRequestListCommand("requests"))
 
         executesPlayer(PlayerCommandExecutor { player: Player, _: CommandArguments? ->
-            FriendMainMenu().show(
-                player
-            )
+            FriendMainMenu().show(player)
         })
     }
 }
