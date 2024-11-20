@@ -39,19 +39,19 @@ class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") 
 
             pages.populateWithItemStacks(getFriendRequestsItems(player))
 
-            pages.setOnClick { event: InventoryClickEvent ->
-                if (event.currentItem == null) {
+            pages.setOnClick {
+                if (it.currentItem == null) {
                     return@setOnClick
                 }
 
-                val item = event.currentItem ?: return@setOnClick
+                val item = it.currentItem ?: return@setOnClick
 
                 if(item.itemMeta == null) {
                     return@setOnClick
                 }
 
                 val meta = item.itemMeta
-                FriendRequestManageMenu(meta.displayName).show(event.whoClicked)
+                FriendRequestManageMenu(meta.displayName).show(it.whoClicked)
             }
 
             navigation.addItem(
@@ -98,12 +98,12 @@ class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") 
             addPane(pages)
 
 
-            setOnGlobalClick { event: InventoryClickEvent ->
-                event.isCancelled =
+            setOnGlobalClick {
+                it.isCancelled =
                     true
             }
-            setOnGlobalDrag { event: InventoryDragEvent ->
-                event.isCancelled =
+            setOnGlobalDrag {
+                it.isCancelled =
                     true
             }
         }

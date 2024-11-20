@@ -169,8 +169,8 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
             )
         }
 
-        remove.setOnClick { event: InventoryClickEvent ->
-            FriendRemoveConfirmMenu(name).show(event.whoClicked)
+        remove.setOnClick {
+            FriendRemoveConfirmMenu(name).show(it.whoClicked)
         }
 
         addPane(header)
@@ -181,12 +181,12 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
         addPane(right)
         addPane(mid)
 
-        setOnGlobalClick { event: InventoryClickEvent ->
-            event.isCancelled =
+        setOnGlobalClick {
+            it.isCancelled =
                 true
         }
-        setOnGlobalDrag { event: InventoryDragEvent ->
-            event.isCancelled =
+        setOnGlobalDrag {
+            it.isCancelled =
                 true
         }
     }

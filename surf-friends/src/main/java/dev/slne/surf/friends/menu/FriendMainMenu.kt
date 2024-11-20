@@ -91,25 +91,24 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
         footer.setRepeat(true)
 
         flPane.addItem(
-            build(
-                friendList
-            ) { event: InventoryClickEvent? ->
-                if(event == null) {
+            build(friendList) {
+                if(it == null) {
                     return@build
                 }
 
-                FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
-            })
+                FriendFriendsMenu(it.whoClicked.uniqueId).show(it.whoClicked)
+            }
+        )
 
         frPane.addItem(
             build(
                 friendRequests
-            ) { event: InventoryClickEvent? ->
-                if(event == null) {
+            ) {
+                if(it == null) {
                     return@build
                 }
 
-                FriendRequestsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+                FriendRequestsMenu(it.whoClicked.uniqueId).show(it.whoClicked)
             })
 
 
@@ -119,11 +118,11 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
         addPane(frPane)
 
 
-        setOnGlobalClick { event: InventoryClickEvent ->
-            event.isCancelled = true
+        setOnGlobalClick {
+            it.isCancelled = true
         }
-        setOnGlobalDrag { event: InventoryDragEvent ->
-            event.isCancelled = true
+        setOnGlobalDrag {
+            it.isCancelled = true
         }
     }
 }

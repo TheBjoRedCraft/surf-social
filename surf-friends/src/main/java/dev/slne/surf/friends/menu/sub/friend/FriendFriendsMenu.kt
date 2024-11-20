@@ -39,12 +39,12 @@ class FriendFriendsMenu(player: UUID) : FriendMenu(5, "Deine Freunde") {
 
             pages.populateWithItemStacks(getFriendItems(player))
 
-            pages.setOnClick { event: InventoryClickEvent ->
-                if (event.currentItem == null) {
+            pages.setOnClick {
+                if (it.currentItem == null) {
                     return@setOnClick
                 }
 
-                val item = event.currentItem ?: return@setOnClick
+                val item = it.currentItem ?: return@setOnClick
 
                 if(item.itemMeta == null) {
                     return@setOnClick
@@ -52,7 +52,7 @@ class FriendFriendsMenu(player: UUID) : FriendMenu(5, "Deine Freunde") {
 
                 val meta = item.itemMeta
 
-                FriendSingleMenu(meta.displayName).show(event.whoClicked)
+                FriendSingleMenu(meta.displayName).show(it.whoClicked)
             }
 
             navigation.addItem(
@@ -105,12 +105,12 @@ class FriendFriendsMenu(player: UUID) : FriendMenu(5, "Deine Freunde") {
             addPane(pages)
 
 
-            setOnGlobalClick { event: InventoryClickEvent ->
-                event.isCancelled =
+            setOnGlobalClick {
+                it.isCancelled =
                     true
             }
-            setOnGlobalDrag { event: InventoryDragEvent ->
-                event.isCancelled =
+            setOnGlobalDrag {
+                it.isCancelled =
                     true
             }
         }

@@ -96,26 +96,26 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
             this.build(builder)
         }
 
-        accept.setOnClick { event: InventoryClickEvent ->
+        accept.setOnClick {
             SurfFriendsPlugin.instance.launch {
                 FriendManager.acceptFriendRequest(
-                    event.whoClicked.uniqueId,
+                    it.whoClicked.uniqueId,
                     Bukkit.getOfflinePlayer(name).uniqueId
                 )
             }
 
-            FriendRequestsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+            FriendRequestsMenu(it.whoClicked.uniqueId).show(it.whoClicked)
         }
 
-        deny.setOnClick { event: InventoryClickEvent ->
+        deny.setOnClick {
             SurfFriendsPlugin.instance.launch {
                 FriendManager.denyFriendRequest(
-                    event.whoClicked.uniqueId,
+                    it.whoClicked.uniqueId,
                     Bukkit.getOfflinePlayer(name).uniqueId
                 )
             }
 
-            FriendRequestsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+            FriendRequestsMenu(it.whoClicked.uniqueId).show(it.whoClicked)
         }
 
         midPane.addItem(GuiItem(target))
@@ -144,12 +144,12 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
         addPane(back)
 
 
-        setOnGlobalClick { event: InventoryClickEvent ->
-            event.isCancelled =
+        setOnGlobalClick {
+            it.isCancelled =
                 true
         }
-        setOnGlobalDrag { event: InventoryDragEvent ->
-            event.isCancelled =
+        setOnGlobalDrag {
+            it.isCancelled =
                 true
         }
     }

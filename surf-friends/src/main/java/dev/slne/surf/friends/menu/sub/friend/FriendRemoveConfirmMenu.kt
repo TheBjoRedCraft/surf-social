@@ -76,12 +76,12 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
         addPane(mid)
         addPane(left)
 
-        setOnGlobalClick { event: InventoryClickEvent ->
-            event.isCancelled =
+        setOnGlobalClick {
+            it.isCancelled =
                 true
         }
-        setOnGlobalDrag { event: InventoryDragEvent ->
-            event.isCancelled =
+        setOnGlobalDrag {
+            it.isCancelled =
                 true
         }
     }
