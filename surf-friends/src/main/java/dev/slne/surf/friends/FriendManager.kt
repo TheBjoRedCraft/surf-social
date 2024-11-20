@@ -137,13 +137,9 @@ object FriendManager {
         )
     }
 
-    suspend fun hasFriendRequest(player: UUID, target: UUID): Boolean {
-        return queryFriendData(player).friendRequests.contains(target)
-    }
+    suspend fun hasFriendRequest(player: UUID, target: UUID): Boolean = queryFriendData(player).friendRequests.contains(target)
 
-    suspend fun getFriendRequests(player: UUID): ObjectList<UUID> {
-        return queryFriendData(player).friendRequests
-    }
+    suspend fun getFriendRequests(player: UUID): ObjectList<UUID> = queryFriendData(player).friendRequests
 
     suspend fun toggle(player: UUID): Boolean {
         val playerData = queryFriendData(player)
@@ -154,18 +150,11 @@ object FriendManager {
         return playerData.allowRequests
     }
 
-    suspend fun isAllowingRequests(player: UUID): Boolean {
-        return queryFriendData(player).allowRequests
-    }
+    suspend fun isAllowingRequests(player: UUID): Boolean = queryFriendData(player).allowRequests
 
-    suspend fun queryFriendData(player: UUID): FriendData {
-        return cache.get(player) ?: newFriendData(player)
-    }
+    suspend fun queryFriendData(player: UUID): FriendData = cache.get(player) ?: newFriendData(player)
 
-    suspend fun saveFriendData(player: UUID) {
-        val friendData = queryFriendData(player)
-        Database.saveFriendData(friendData)
-    }
+    suspend fun saveFriendData(player: UUID) = Database.saveFriendData(queryFriendData(player))
 
     suspend fun saveAll(closeConnection: Boolean) {
         cache.synchronous().asMap().map { player -> saveFriendData(player.key) }
@@ -197,18 +186,12 @@ object FriendManager {
         return ""
     }
 
-    suspend fun getFriends(player: UUID): ObjectList<UUID> {
-        return queryFriendData(player).friends
-    }
+    suspend fun getFriends(player: UUID): ObjectList<UUID> = queryFriendData(player).friends
 
-    suspend fun areFriends(player: UUID, target: UUID): Boolean {
-        return queryFriendData(player).friends.contains(target)
-    }
+    suspend fun areFriends(player: UUID, target: UUID): Boolean = queryFriendData(player).friends.contains(target)
 
-    suspend fun loadFriendData(player: UUID): FriendData {
-        return Database.getFriendData(player)
-    }
+    suspend fun loadFriendData(player: UUID): FriendData = Database.getFriendData(player)
 
 
-    fun newFriendData(player: UUID): FriendData { return FriendData(player, ObjectArrayList(), ObjectArrayList(), true) }
+    fun newFriendData(player: UUID): FriendData = FriendData(player, ObjectArrayList(), ObjectArrayList(), true)
 }
