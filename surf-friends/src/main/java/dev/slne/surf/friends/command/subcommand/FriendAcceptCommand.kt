@@ -29,10 +29,10 @@ class FriendAcceptCommand(name: String) : CommandAPICommand(name) {
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
             GlobalScope.launch {
-                if (!FriendManager.instance.hasFriendRequest(player.uniqueId, target.uniqueId)) {
+                if (!FriendManager.hasFriendRequest(player.uniqueId, target.uniqueId)) {
                     throw CommandAPI.failWithString("Du hast keine Freundschaftsanfrage von " + target.name)
                 }
-                FriendManager.instance.acceptFriendRequest(player.uniqueId, target.uniqueId)
+                FriendManager.acceptFriendRequest(player.uniqueId, target.uniqueId)
             }
         })
     }

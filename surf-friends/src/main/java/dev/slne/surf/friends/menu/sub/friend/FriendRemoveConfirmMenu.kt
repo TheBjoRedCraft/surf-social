@@ -48,8 +48,8 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
                 }
 
                 GlobalScope.launch {
-                    FriendManager.instance.removeFriend(event.whoClicked.uniqueId, offlinePlayer.uniqueId)
-                    FriendManager.instance.removeFriend(offlinePlayer.uniqueId, event.whoClicked.uniqueId)
+                    FriendManager.removeFriend(event.whoClicked.uniqueId, offlinePlayer.uniqueId)
+                    FriendManager.removeFriend(offlinePlayer.uniqueId, event.whoClicked.uniqueId)
                 }
 
                 FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)

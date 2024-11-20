@@ -15,7 +15,7 @@ class FriendToggleCommand(name: String) : CommandAPICommand(name) {
         executesPlayer(PlayerCommandExecutor { player: Player, info: CommandArguments? ->
 
             GlobalScope.launch {
-                if (FriendManager.instance.toggle(player.uniqueId)) {
+                if (FriendManager.toggle(player.uniqueId)) {
                     player.sendMessage(SurfFriendsPlugin.prefix.append(Component.text("Du hast Freundschaftsanfragen nun aktiviert.")))
                 } else {
                     player.sendMessage(SurfFriendsPlugin.prefix.append(Component.text("Du hast Freundschaftsanfragen nun deaktiviert.")))

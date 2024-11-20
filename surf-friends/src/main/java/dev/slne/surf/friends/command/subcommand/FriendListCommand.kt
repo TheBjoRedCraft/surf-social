@@ -16,7 +16,7 @@ class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments? ->
             GlobalScope.launch {
                 var message = "Du hast keine Freunde."
-                val friends = FriendManager.instance.getFriends(player.uniqueId)
+                val friends = FriendManager.getFriends(player.uniqueId)
                 val builder = StringBuilder("Momentan hast du <yellow>" + (friends?.size) + "<white> Freunde: ")
                 var current = 0
 

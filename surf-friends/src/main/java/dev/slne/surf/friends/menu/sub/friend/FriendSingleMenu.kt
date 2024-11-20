@@ -114,7 +114,7 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
                             )
                             .addLoreLine(
                                 Component.text(
-                                    FriendManager.instance.getServer(offlinePlayer.uniqueId),
+                                    FriendManager.getServer(offlinePlayer.uniqueId),
                                     PluginColor.GOLD
                                 ).decoration(TextDecoration.ITALIC, false)
                                     .append(Component.text(" online.", PluginColor.LIGHT_GRAY))

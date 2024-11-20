@@ -33,7 +33,7 @@ class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
             GlobalScope.launch {
-                if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)) {
+                if (!FriendManager.areFriends(player.uniqueId, target.uniqueId)) {
                     throw CommandAPI.failWithString("Du bist nicht mit " + target.name + " befreundet.")
                 }
 

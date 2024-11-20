@@ -111,7 +111,7 @@ class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") 
 
     private suspend fun getFriendRequestsItems(player: UUID): ObjectList<ItemStack?> {
         val stacks: ObjectList<ItemStack?> = ObjectArrayList()
-        val requests = FriendManager.instance.getFriendRequests(player)
+        val requests = FriendManager.getFriendRequests(player)
 
         for (request in requests) {
             val offlinePlayer = Bukkit.getOfflinePlayer(request)

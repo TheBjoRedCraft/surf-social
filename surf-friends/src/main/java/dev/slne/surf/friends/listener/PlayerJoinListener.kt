@@ -19,7 +19,7 @@ class PlayerJoinListener : Listener {
         GlobalScope.launch {
             val friendData = FriendManager.loadFriendData(player.uniqueId)
 
-            FriendManager.instance.cache.put(player.uniqueId, friendData)
+            FriendManager.cache.put(player.uniqueId, friendData)
 
             player.sendMessage(
                 SurfFriendsPlugin.prefix

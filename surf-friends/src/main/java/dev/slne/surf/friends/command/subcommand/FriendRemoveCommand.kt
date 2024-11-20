@@ -30,7 +30,7 @@ class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
             GlobalScope.launch {
-                if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)) {
+                if (!FriendManager.areFriends(player.uniqueId, target.uniqueId)) {
                     throw CommandAPI.failWithString(
                         String.format(
                             "Du bist nicht mit %s befreundet.",
@@ -39,8 +39,8 @@ class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
                     )
                 }
 
-                FriendManager.instance.removeFriend(player.uniqueId, target.uniqueId)
-                FriendManager.instance.removeFriend(target.uniqueId, player.uniqueId)
+                FriendManager.removeFriend(player.uniqueId, target.uniqueId)
+                FriendManager.removeFriend(target.uniqueId, player.uniqueId)
             }
         })
     }

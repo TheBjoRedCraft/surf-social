@@ -14,7 +14,7 @@ class PlayerQuitListener : Listener {
         val player = event.player
 
         GlobalScope.launch {
-            FriendManager.instance.saveFriendData(player.uniqueId)
+            FriendManager.saveFriendData(player.uniqueId)
         }
     }
 }

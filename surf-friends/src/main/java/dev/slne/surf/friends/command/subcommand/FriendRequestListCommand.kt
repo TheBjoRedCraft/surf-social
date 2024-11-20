@@ -17,7 +17,7 @@ class FriendRequestListCommand(commandName: String) : CommandAPICommand(commandN
 
             GlobalScope.launch {
                 var message = "Du hast keine Freunde."
-                val requests = FriendManager.instance.getFriendRequests(player.uniqueId)
+                val requests = FriendManager.getFriendRequests(player.uniqueId)
                 val builder = StringBuilder("Du hast aktuell <yellow>" + (requests.size) + "<white> Freundschaftsanfragen offen: ")
                 var current = 0
 

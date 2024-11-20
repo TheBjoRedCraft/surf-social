@@ -177,7 +177,7 @@ object FriendManager {
         }
     }
 
-    private fun sendMessage(uuid: UUID, message: Component) {
+    fun sendMessage(uuid: UUID, message: Component) {
         val player = Bukkit.getPlayer(uuid)
         player?.sendMessage(SurfFriendsPlugin.prefix.append(message))
     }

@@ -8,8 +8,10 @@ import dev.jorel.commandapi.arguments.SafeSuggestions
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.listener.util.PluginColor
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -30,18 +32,23 @@ class FriendAddCommand(name: String) : CommandAPICommand(name) {
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
             GlobalScope.launch {
-                if (FriendManager.instance.hasFriendRequest(player.uniqueId, target.uniqueId)) {
+                if (FriendManager.hasFriendRequest(player.uniqueId, target.uniqueId)) {
                     throw CommandAPI.failWithString("Du hast bereits Freundschaftsanfrage von " + target.name)
                 }
 
-                if (FriendManager.instance.hasFriendRequest(target.uniqueId, player.uniqueId)) {
+                if (FriendManager.hasFriendRequest(target.uniqueId, player.uniqueId)) {
                     throw CommandAPI.failWithString("Du hast bereits eine Freundschaftsanfrage an " + target.name + " gesendet.")
                 }
 
                 if (target == player) {
                     throw CommandAPI.failWithString("Du kannst nicht mit dir selbst befreundet sein.")
                 }
-                FriendManager.instance.sendFriendRequest(player.uniqueId, target.uniqueId)
+
+                if(!FriendManager.isAllowingRequests(target.uniqueId)) {
+                    FriendManager.sendMessage(player.uniqueId, Component.text("${target.name} hat Freundschaftsanfragen deaktiviert. Sie wurde trotzdem geschickt, der Spieler hat aber keine Benachrichtigung bekommen!", PluginColor.RED))
+                }
+
+                FriendManager.sendFriendRequest(player.uniqueId, target.uniqueId)
             }
         })
     }

@@ -97,7 +97,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
 
         accept.setOnClick { event: InventoryClickEvent ->
             GlobalScope.launch {
-                FriendManager.instance.acceptFriendRequest(
+                FriendManager.acceptFriendRequest(
                     event.whoClicked.uniqueId,
                     Bukkit.getOfflinePlayer(name).uniqueId
                 )
@@ -108,7 +108,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
 
         deny.setOnClick { event: InventoryClickEvent ->
             GlobalScope.launch {
-                FriendManager.instance.denyFriendRequest(
+                FriendManager.denyFriendRequest(
                     event.whoClicked.uniqueId,
                     Bukkit.getOfflinePlayer(name).uniqueId
                 )

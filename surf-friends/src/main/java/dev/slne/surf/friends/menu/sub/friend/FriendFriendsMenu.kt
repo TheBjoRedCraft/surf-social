@@ -119,7 +119,7 @@ class FriendFriendsMenu(player: UUID) : FriendMenu(5, "Deine Freunde") {
 
     private suspend fun getFriendItems(player: UUID): ObjectList<ItemStack?> {
         val stacks: ObjectList<ItemStack?> = ObjectArrayList()
-        val friends = FriendManager.instance.getFriends(player)
+        val friends = FriendManager.getFriends(player)
 
         for (friend in friends) {
             val offlinePlayer = Bukkit.getOfflinePlayer(friend)
