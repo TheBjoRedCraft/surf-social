@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.menu.sub.friend
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane
 import com.github.stefvanschie.inventoryframework.pane.Pane
@@ -12,7 +13,6 @@ import dev.slne.surf.friends.menu.FriendMainMenu
 import dev.slne.surf.friends.menu.FriendMenu
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -24,7 +24,7 @@ import java.util.*
 
 class FriendFriendsMenu(player: UUID) : FriendMenu(5, "Deine Freunde") {
     init {
-        GlobalScope.launch {
+        SurfFriendsPlugin.instance.launch {
 
             val header = OutlinePane(0, 0, 9, 1, Pane.Priority.LOW)
             val footer = OutlinePane(0, 4, 9, 1, Pane.Priority.LOW)

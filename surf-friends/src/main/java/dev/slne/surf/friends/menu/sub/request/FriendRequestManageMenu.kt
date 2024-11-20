@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.menu.sub.request
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.stefvanschie.inventoryframework.font.util.Font
 import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
@@ -7,10 +8,10 @@ import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import com.github.stefvanschie.inventoryframework.pane.component.Label
 import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
@@ -96,7 +97,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
         }
 
         accept.setOnClick { event: InventoryClickEvent ->
-            GlobalScope.launch {
+            SurfFriendsPlugin.instance.launch {
                 FriendManager.acceptFriendRequest(
                     event.whoClicked.uniqueId,
                     Bukkit.getOfflinePlayer(name).uniqueId
@@ -107,7 +108,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
         }
 
         deny.setOnClick { event: InventoryClickEvent ->
-            GlobalScope.launch {
+            SurfFriendsPlugin.instance.launch {
                 FriendManager.denyFriendRequest(
                     event.whoClicked.uniqueId,
                     Bukkit.getOfflinePlayer(name).uniqueId

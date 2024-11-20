@@ -1,15 +1,16 @@
 package dev.slne.surf.friends.menu.sub.friend
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.stefvanschie.inventoryframework.font.util.Font
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import com.github.stefvanschie.inventoryframework.pane.component.Label
 import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
@@ -83,7 +84,7 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
         }
         if (offlinePlayer.isOnline) {
 
-            GlobalScope.launch {
+            SurfFriendsPlugin.instance.launch {
                 right.addItem(
                     build(
                         ItemBuilder(Material.ENDER_PEARL)

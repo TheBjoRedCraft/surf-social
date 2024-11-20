@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.command.subcommand
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.SuggestionInfo
@@ -8,8 +9,8 @@ import dev.jorel.commandapi.arguments.SafeSuggestions
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.PluginColor
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -31,7 +32,7 @@ class FriendAddCommand(name: String) : CommandAPICommand(name) {
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
-            GlobalScope.launch {
+            SurfFriendsPlugin.instance.launch {
                 if (FriendManager.hasFriendRequest(player.uniqueId, target.uniqueId)) {
                     throw CommandAPI.failWithString("Du hast bereits Freundschaftsanfrage von " + target.name)
                 }

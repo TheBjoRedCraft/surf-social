@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.command.subcommand
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.SuggestionInfo
@@ -10,7 +11,6 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.PluginColor
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -32,7 +32,7 @@ class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
-            GlobalScope.launch {
+            SurfFriendsPlugin.instance.launch {
                 if (!FriendManager.areFriends(player.uniqueId, target.uniqueId)) {
                     throw CommandAPI.failWithString("Du bist nicht mit " + target.name + " befreundet.")
                 }

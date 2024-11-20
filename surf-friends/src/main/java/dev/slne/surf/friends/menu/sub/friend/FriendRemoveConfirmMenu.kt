@@ -1,13 +1,14 @@
 package dev.slne.surf.friends.menu.sub.friend
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -47,7 +48,7 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
                     return@build
                 }
 
-                GlobalScope.launch {
+                SurfFriendsPlugin.instance.launch {
                     FriendManager.removeFriend(event.whoClicked.uniqueId, offlinePlayer.uniqueId)
                     FriendManager.removeFriend(offlinePlayer.uniqueId, event.whoClicked.uniqueId)
                 }

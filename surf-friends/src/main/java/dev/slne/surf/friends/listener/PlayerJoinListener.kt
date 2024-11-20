@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.listener
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.PluginColor
@@ -16,7 +17,7 @@ class PlayerJoinListener : Listener {
     fun onJoin(event: PlayerJoinEvent) {
         val player = event.player
 
-        GlobalScope.launch {
+        SurfFriendsPlugin.instance.launch {
             val friendData = FriendManager.loadFriendData(player.uniqueId)
 
             FriendManager.cache.put(player.uniqueId, friendData)
