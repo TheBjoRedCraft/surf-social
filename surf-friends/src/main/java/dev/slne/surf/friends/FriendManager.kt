@@ -156,7 +156,7 @@ object FriendManager {
 
     suspend fun saveFriendData(player: UUID) = Database.saveFriendData(queryFriendData(player))
 
-    suspend fun saveAll(closeConnection: Boolean) {
+    suspend fun saveAll(closeConnection: Boolean = true) {
         cache.synchronous().asMap().map { player -> saveFriendData(player.key) }
 
         if (closeConnection) {
@@ -166,9 +166,10 @@ object FriendManager {
         }
     }
 
-    fun sendMessage(uuid: UUID, message: Component) {
-        val player = Bukkit.getPlayer(uuid)
-        player?.sendMessage(SurfFriendsPlugin.prefix.append(message))
+    fun sendMessage(uuid: UUID, message: Component = Component.text("???")) {
+        val player = Bukkit.getPlayer(uuid) ?: return
+
+        player.sendMessage(SurfFriendsPlugin.prefix.append(message))
     }
 
     private fun getName(uuid: UUID): String {
