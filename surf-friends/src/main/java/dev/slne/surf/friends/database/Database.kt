@@ -13,11 +13,10 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import java.sql.SQLException
 import java.util.*
-import javax.xml.crypto.Data
 
 
 object Database {
-    private var dataSource: HikariDataSource? = null
+    private lateinit var dataSource: HikariDataSource
 
     fun createConnection() {
         val config = HikariConfig()
@@ -47,11 +46,8 @@ object Database {
             """.trimIndent()
 
         try {
-            if(dataSource == null) {
-                return
-            }
 
-            val source = dataSource ?: return;
+            val source = dataSource;
 
             source.connection.use { connection ->
                 connection.createStatement().use { statement ->
@@ -74,11 +70,8 @@ object Database {
 
         return withContext(Dispatchers.IO) {
             try {
-                if(dataSource == null) {
-                    return@withContext FriendManager.newFriendData(player)
-                }
 
-                val source = dataSource ?: return@withContext FriendManager.newFriendData(player);
+                val source = dataSource;
 
                 source.connection.use { connection ->
                     connection.prepareStatement(query).use { statement ->
@@ -135,11 +128,7 @@ object Database {
 
         withContext(Dispatchers.IO) {
             try {
-                if(dataSource == null) {
-                    return@withContext FriendManager.newFriendData(friendData.player)
-                }
-
-                val source = dataSource ?: return@withContext FriendManager.newFriendData(friendData.player);
+                val source = dataSource;
 
                 source.connection.use { connection ->
                     connection.prepareStatement(query).use { statement ->
@@ -159,12 +148,10 @@ object Database {
 
 
     fun closeConnection() {
-        if (dataSource != null) {
-            val source = dataSource ?: return
+        val source = dataSource
 
-            if (!source.isClosed) {
-                source.close()
-            }
+        if (!source.isClosed) {
+            source.close()
         }
     }
 }
