@@ -21,8 +21,8 @@ class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withArguments(
             OfflinePlayerArgument("target").replaceSafeSuggestions(
-                SafeSuggestions.suggest<OfflinePlayer, CommandSender?> { info: SuggestionInfo<CommandSender?>? ->
-                  Bukkit.getOnlinePlayers().toTypedArray<Player>()
+                SafeSuggestions.suggest {
+                    Bukkit.getOnlinePlayers().toTypedArray<Player>()
                 }
             )
         )
@@ -30,7 +30,7 @@ class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
             val target = args.getUnchecked<OfflinePlayer>("target")
                 ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
-            if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)!!) {
+            if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)) {
                 throw CommandAPI.failWithString("Du bist nicht mit " + target.name + " befreundet.")
             }
 

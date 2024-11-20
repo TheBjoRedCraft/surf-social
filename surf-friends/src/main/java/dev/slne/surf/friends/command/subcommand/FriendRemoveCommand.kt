@@ -18,16 +18,16 @@ class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
     init {
         withArguments(
             OfflinePlayerArgument("target").replaceSafeSuggestions(
-                SafeSuggestions.suggest<OfflinePlayer, CommandSender?> { info: SuggestionInfo<CommandSender?>? ->
+                SafeSuggestions.suggest {
                     Bukkit.getOnlinePlayers().toTypedArray<Player>()
                 }
             )
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val target = args.getUnchecked<OfflinePlayer>("target")
-                ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
-            if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)!!) {
+            val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
+
+            if (!FriendManager.instance.areFriends(player.uniqueId, target.uniqueId)) {
                 throw CommandAPI.failWithString(
                     String.format(
                         "Du bist nicht mit %s befreundet.",

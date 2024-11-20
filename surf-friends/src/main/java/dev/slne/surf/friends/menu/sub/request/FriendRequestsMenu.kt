@@ -38,7 +38,14 @@ class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") 
             if (event.currentItem == null) {
                 return@setOnClick
             }
-            val meta = event.currentItem!!.itemMeta
+
+            val item = event.currentItem ?: return@setOnClick
+
+            if(item.itemMeta == null) {
+                return@setOnClick
+            }
+
+            val meta = item.itemMeta
             FriendRequestManageMenu(meta.displayName).show(event.whoClicked)
         }
 
@@ -47,9 +54,9 @@ class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") 
                 ItemBuilder(Material.RED_DYE).setName(
                     Component.text("Vorherige Seite").color(PluginColor.RED)
                 )
-            ) { event: InventoryClickEvent? ->
+            ) {
                 if (pages.page > 0) {
-                    pages.page = pages.page - 1
+                    pages.page -= 1
 
                     update()
                 }
@@ -61,9 +68,9 @@ class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") 
                 ItemBuilder(Material.LIME_DYE).setName(
                     Component.text("Nächste Seite").color(PluginColor.LIGHT_GREEN)
                 )
-            ) { event: InventoryClickEvent? ->
+            ) {
                 if (pages.page < pages.pages - 1) {
-                    pages.page = pages.page + 1
+                    pages.page += 1
                     update()
                 }
             }, 8, 0
@@ -75,8 +82,12 @@ class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") 
                     Component.text("Zurück").color(PluginColor.RED)
                 )
             ) { event: InventoryClickEvent? ->
+                if(event == null) {
+                    return@build
+                }
+
                 FriendMainMenu().show(
-                    event!!.whoClicked
+                    event.whoClicked
                 )
             }, 4, 0
         )
@@ -103,15 +114,13 @@ class FriendRequestsMenu(player: UUID) : FriendMenu(5, "Freundschaftsanfragen") 
         val stacks: ObjectList<ItemStack?> = ObjectArrayList()
         val requests = FriendManager.instance.getFriendRequests(player)
 
-        if (requests != null) {
-            for (request in requests) {
-                val offlinePlayer = Bukkit.getOfflinePlayer(request)
+        for (request in requests) {
+            val offlinePlayer = Bukkit.getOfflinePlayer(request)
 
-                stacks.add(
-                    ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.name!!)
-                        .setSkullOwner(offlinePlayer.name).build()
-                )
-            }
+            stacks.add(
+                ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.name ?: "Unbekannt")
+                    .setSkullOwner(offlinePlayer.name).build()
+            )
         }
 
         return stacks

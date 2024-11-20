@@ -2,23 +2,22 @@ package dev.slne.surf.friends.command.subcommand
 
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.SuggestionInfo
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.arguments.SafeSuggestions
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
+
 import dev.slne.surf.friends.FriendManager
+
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.function.Function
 
 class FriendAcceptCommand(name: String) : CommandAPICommand(name) {
     init {
         withArguments(
             OfflinePlayerArgument("target").replaceSafeSuggestions(
-                SafeSuggestions.suggest<OfflinePlayer, CommandSender?> { info: SuggestionInfo<CommandSender?>? ->
+                SafeSuggestions.suggest {
                     Bukkit.getOnlinePlayers().toTypedArray<Player>()
                 }
             )
@@ -30,7 +29,7 @@ class FriendAcceptCommand(name: String) : CommandAPICommand(name) {
             if (!FriendManager.instance.hasFriendRequest(player.uniqueId, target.uniqueId)) {
                 throw CommandAPI.failWithString("Du hast keine Freundschaftsanfrage von " + target.name)
             }
-            FriendManager.instance.acceptFriendRequests(player.uniqueId, target.uniqueId)
+            FriendManager.instance.acceptFriendRequest(player.uniqueId, target.uniqueId)
         })
     }
 }

@@ -94,7 +94,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
         }
 
         accept.setOnClick { event: InventoryClickEvent ->
-            FriendManager.instance.acceptFriendRequests(
+            FriendManager.instance.acceptFriendRequest(
                 event.whoClicked.uniqueId,
                 Bukkit.getOfflinePlayer(name).uniqueId
             )
@@ -109,7 +109,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
             FriendRequestsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
         }
 
-        midPane.addItem(GuiItem(target!!))
+        midPane.addItem(GuiItem(target))
 
         back.addItem(
             build(
@@ -117,8 +117,12 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
                     Component.text("Zurück").color(PluginColor.RED)
                 )
             ) { event: InventoryClickEvent? ->
+                if(event == null) {
+                    return@build
+                }
+
                 FriendRequestsMenu(
-                    event!!.whoClicked.uniqueId
+                    event.whoClicked.uniqueId
                 ).show(event.whoClicked)
             }, 4, 0
         )

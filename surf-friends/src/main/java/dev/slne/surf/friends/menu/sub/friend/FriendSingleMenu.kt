@@ -47,8 +47,12 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
                     Component.text("Zurück").color(PluginColor.RED)
                 )
             ) { event: InventoryClickEvent? ->
+                if(event == null) {
+                    return@build
+                }
+
                 FriendFriendsMenu(
-                    event!!.whoClicked.uniqueId
+                    event.whoClicked.uniqueId
                 ).show(event.whoClicked)
             }, 4, 0
         )

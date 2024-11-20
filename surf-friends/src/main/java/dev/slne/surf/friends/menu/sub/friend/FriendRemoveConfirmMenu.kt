@@ -48,8 +48,12 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
                     )
                 )
             ) { event: InventoryClickEvent? ->
+                if(event == null) {
+                    return@build
+                }
+
                 FriendManager.instance
-                    .removeFriend(event!!.whoClicked.uniqueId, offlinePlayer.uniqueId)
+                    .removeFriend(event.whoClicked.uniqueId, offlinePlayer.uniqueId)
                 FriendManager.instance
                     .removeFriend(offlinePlayer.uniqueId, event.whoClicked.uniqueId)
                 FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
@@ -59,10 +63,14 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
             build(
                 ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED))
             ) { event: InventoryClickEvent? ->
+                if(event == null) {
+                    return@build
+                }
+
                 if (offlinePlayer.name == null) {
-                    FriendFriendsMenu(event!!.whoClicked.uniqueId).show(event.whoClicked)
+                    FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
                 } else {
-                    FriendSingleMenu(offlinePlayer.name!!).show(event!!.whoClicked)
+                    FriendSingleMenu(offlinePlayer.name ?: "Unbekannt").show(event.whoClicked)
                 }
             }, 4, 0
         )

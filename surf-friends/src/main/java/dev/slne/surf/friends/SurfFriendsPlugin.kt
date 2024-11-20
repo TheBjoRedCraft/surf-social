@@ -2,11 +2,14 @@ package dev.slne.surf.friends
 
 import dev.slne.surf.friends.command.FriendCommand
 import dev.slne.surf.friends.command.subcommand.FriendAddCommand
+import dev.slne.surf.friends.command.subcommand.FriendListCommand
 import dev.slne.surf.friends.config.PluginConfig
 import dev.slne.surf.friends.database.Database
 import dev.slne.surf.friends.listener.PlayerJoinListener
 import dev.slne.surf.friends.listener.PlayerQuitListener
 import dev.slne.surf.friends.listener.util.PluginColor
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.future.await
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -22,12 +25,15 @@ class SurfFriendsPlugin : JavaPlugin() {
     }
 
     override fun onDisable() {
-        FriendManager.instance.saveAll(true).join()
+        runBlocking {
+            FriendManager.instance.saveAll(true)
+        }
     }
 
     private fun registerCommands() {
         FriendCommand("friend").register()
         FriendAddCommand("fa").register()
+        FriendListCommand("fl").register()
     }
 
     private fun registerListener() {
@@ -45,7 +51,6 @@ class SurfFriendsPlugin : JavaPlugin() {
                     Component.text(" | ").color(NamedTextColor.DARK_GRAY)
                 )
 
-        val instance: SurfFriendsPlugin
-            get() = getPlugin<SurfFriendsPlugin>(SurfFriendsPlugin::class.java)
+        val instance: SurfFriendsPlugin get() = getPlugin(SurfFriendsPlugin::class.java)
     }
 }

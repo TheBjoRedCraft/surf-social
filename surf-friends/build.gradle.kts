@@ -4,7 +4,6 @@ plugins {
     id("java")
     id("com.gradleup.shadow")
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
-    id("io.freefair.lombok")
 
     `kotlin-dsl`
 }
@@ -31,6 +30,7 @@ dependencies {
 
     implementation ("com.zaxxer:HikariCP:5.0.1")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
 
     implementation(kotlin("stdlib-jdk8"))
 }
@@ -41,6 +41,7 @@ paper {
     authors = listOf("TheBjoRedCraft", "SLNE Development")
     prefix = "SurfSocial/SurfFriends"
     name = "SurfFriends"
+    version = "3.1.0-SNAPSHOT"
 
     serverDependencies {
         register("CommandAPI") {
@@ -54,7 +55,7 @@ tasks.shadowJar {
     relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.inventoryframework")
 
     archiveClassifier.set("")
-    archiveVersion.set("3.0.0-SNAPSHOT")
+    archiveVersion.set("3.1.0-SNAPSHOT")
     archiveBaseName.set("surf-friends")
 }
 kotlin {
