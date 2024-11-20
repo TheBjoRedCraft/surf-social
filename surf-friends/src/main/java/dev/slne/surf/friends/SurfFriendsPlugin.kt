@@ -1,5 +1,7 @@
 package dev.slne.surf.friends
 
+import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.bukkit.SuspendingPlugin
 import dev.slne.surf.friends.command.FriendCommand
 import dev.slne.surf.friends.command.subcommand.FriendAddCommand
 import dev.slne.surf.friends.command.subcommand.FriendListCommand
@@ -13,9 +15,8 @@ import kotlinx.coroutines.future.await
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
-import org.bukkit.plugin.java.JavaPlugin
 
-class SurfFriendsPlugin : JavaPlugin() {
+class SurfFriendsPlugin : SuspendingJavaPlugin() {
     override fun onEnable() {
         this.registerCommands()
         this.registerListener()
@@ -26,7 +27,7 @@ class SurfFriendsPlugin : JavaPlugin() {
 
     override fun onDisable() {
         runBlocking {
-            FriendManager.instance.saveAll(true)
+            FriendManager.saveAll(true)
         }
     }
 

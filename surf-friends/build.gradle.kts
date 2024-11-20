@@ -34,6 +34,8 @@ dependencies {
 
     implementation(kotlin("stdlib-jdk8"))
     implementation("dev.hsbrysk:caffeine-coroutines:1.2.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.20.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.20.0")
 }
 
 paper {
