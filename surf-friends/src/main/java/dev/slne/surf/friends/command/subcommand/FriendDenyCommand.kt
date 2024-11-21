@@ -14,12 +14,12 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 class FriendDenyCommand(name: String) : CommandAPICommand(name) {
-    
+
     init {
-        OfflinePlayerArgument("target").replaceSafeSuggestions(
+        withArguments(OfflinePlayerArgument("target").replaceSafeSuggestions(
             SafeSuggestions.suggest {
                 Bukkit.getOnlinePlayers().toTypedArray<Player>()
-            }
+            })
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->

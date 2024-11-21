@@ -10,7 +10,6 @@ import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
-import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
@@ -51,7 +50,7 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
                 }
 
                 plugin.launch {
-                    FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                    FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
                 }
             }, 4, 0
         )

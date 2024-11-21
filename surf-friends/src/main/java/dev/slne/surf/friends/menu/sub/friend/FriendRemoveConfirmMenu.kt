@@ -28,8 +28,7 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
         footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
         footer.setRepeat(true)
 
-        mid.addItem(
-            build(
+        mid.addItem(build(
                 ItemBuilder(Material.PLAYER_HEAD).setName(
                     Component.text(
                         "Möchtest du $name wirklich enfernen?"
@@ -96,12 +95,10 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
         addPane(left)
 
         setOnGlobalClick {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
         setOnGlobalDrag {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
     }
 }
