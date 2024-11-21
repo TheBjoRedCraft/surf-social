@@ -7,6 +7,7 @@ import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
+import dev.slne.surf.friends.menu.sub.friend.FriendFriendsMenu
 import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
@@ -51,6 +52,7 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
                     .decoration(TextDecoration.ITALIC, false)
             )
             .build()
+
         val friendRequests = ItemBuilder(Material.PAPER)
             .setName(Component.text("Freundschaftsanfragen").color(PluginColor.BLUE_LIGHT))
             .addLoreLine(
@@ -96,7 +98,7 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
                 }
 
                 SurfFriendsPlugin.instance.launch {
-                    FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                    FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
                 }
             }
         )

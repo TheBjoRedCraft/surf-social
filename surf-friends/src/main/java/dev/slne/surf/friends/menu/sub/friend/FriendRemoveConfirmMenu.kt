@@ -9,13 +9,9 @@ import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
-import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu
-import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryDragEvent
 
 class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.") {
     init {
@@ -33,8 +29,7 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
         footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
         footer.setRepeat(true)
 
-        mid.addItem(
-            build(
+        mid.addItem(build(
                 ItemBuilder(Material.PLAYER_HEAD).setName(
                     Component.text(
                         "Möchtest du $name wirklich enfernen?"
@@ -43,8 +38,7 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
             )
         )
 
-        left.addItem(
-            build(ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen", PluginColor.LIGHT_GREEN))) {
+        left.addItem(build(ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen", PluginColor.LIGHT_GREEN))) {
                 if(it == null) {
                     return@build
                 }
@@ -65,7 +59,9 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
                 }
 
                 if (offlinePlayer.name == null) {
-                    SurfFriendsPlugin.instance.launch { FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked) }
+                    SurfFriendsPlugin.instance.launch {
+                        FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                    }
                 } else {
                     FriendSingleMenu(offlinePlayer.name ?: "Unbekannt").show(it.whoClicked)
                 }
@@ -80,12 +76,10 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
         addPane(left)
 
         setOnGlobalClick {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
         setOnGlobalDrag {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
     }
 }

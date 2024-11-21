@@ -105,7 +105,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
             }
 
             SurfFriendsPlugin.instance.launch {
-                FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(it.whoClicked)
             }
         }
 
@@ -118,7 +118,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
             }
 
             SurfFriendsPlugin.instance.launch {
-                FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(it.whoClicked)
             }
         }
 
