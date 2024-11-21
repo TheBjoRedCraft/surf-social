@@ -9,6 +9,7 @@ import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
+import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -43,28 +44,30 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
         )
 
         left.addItem(
-            build(ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen", PluginColor.LIGHT_GREEN))) { event: InventoryClickEvent? ->
-                if(event == null) {
+            build(ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen", PluginColor.LIGHT_GREEN))) {
+                if(it == null) {
                     return@build
                 }
 
                 SurfFriendsPlugin.instance.launch {
-                    FriendManager.removeFriend(event.whoClicked.uniqueId, offlinePlayer.uniqueId)
-                    FriendManager.removeFriend(offlinePlayer.uniqueId, event.whoClicked.uniqueId)
+                    FriendManager.removeFriend(it.whoClicked.uniqueId, offlinePlayer.uniqueId)
+                    FriendManager.removeFriend(offlinePlayer.uniqueId, it.whoClicked.uniqueId)
                 }
 
-                FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+                SurfFriendsPlugin.instance.launch {
+                    FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                }
             })
 
-        navigation.addItem(build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED))) { event: InventoryClickEvent? ->
-                if(event == null) {
+        navigation.addItem(build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED))) {
+                if(it == null) {
                     return@build
                 }
 
                 if (offlinePlayer.name == null) {
-                    FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+                    SurfFriendsPlugin.instance.launch { FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked) }
                 } else {
-                    FriendSingleMenu(offlinePlayer.name ?: "Unbekannt").show(event.whoClicked)
+                    FriendSingleMenu(offlinePlayer.name ?: "Unbekannt").show(it.whoClicked)
                 }
             }, 4, 0
         )

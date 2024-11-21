@@ -104,7 +104,9 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
                 )
             }
 
-            FriendRequestsMenu(it.whoClicked.uniqueId).show(it.whoClicked)
+            SurfFriendsPlugin.instance.launch {
+                FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+            }
         }
 
         deny.setOnClick {
@@ -115,7 +117,9 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
                 )
             }
 
-            FriendRequestsMenu(it.whoClicked.uniqueId).show(it.whoClicked)
+            SurfFriendsPlugin.instance.launch {
+                FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+            }
         }
 
         midPane.addItem(GuiItem(target))
@@ -125,14 +129,14 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
                 ItemBuilder(Material.BARRIER).setName(
                     Component.text("Zurück").color(PluginColor.RED)
                 )
-            ) { event: InventoryClickEvent? ->
-                if(event == null) {
+            ) {
+                if(it == null) {
                     return@build
                 }
 
-                FriendRequestsMenu(
-                    event.whoClicked.uniqueId
-                ).show(event.whoClicked)
+                SurfFriendsPlugin.instance.launch {
+                    FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                }
             }, 4, 0
         )
 

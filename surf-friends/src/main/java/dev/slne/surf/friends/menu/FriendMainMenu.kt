@@ -1,17 +1,16 @@
 package dev.slne.surf.friends.menu
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.Pane
+import dev.slne.surf.friends.FriendManager
+import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
-import dev.slne.surf.friends.menu.sub.friend.FriendFriendsMenu
 import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryDragEvent
-import org.bukkit.inventory.ItemFlag
 
 class FriendMainMenu : FriendMenu(5, "Freunde") {
     init {
@@ -96,7 +95,9 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
                     return@build
                 }
 
-                FriendFriendsMenu(it.whoClicked.uniqueId).show(it.whoClicked)
+                SurfFriendsPlugin.instance.launch {
+                    FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                }
             }
         )
 
@@ -108,7 +109,9 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
                     return@build
                 }
 
-                FriendRequestsMenu(it.whoClicked.uniqueId).show(it.whoClicked)
+                SurfFriendsPlugin.instance.launch {
+                    FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(it.whoClicked)
+                }
             })
 
 

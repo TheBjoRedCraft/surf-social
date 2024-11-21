@@ -11,6 +11,7 @@ import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
+import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
@@ -45,17 +46,19 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
         footer.setRepeat(true)
 
         navigation.addItem(
-            build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED))) { event: InventoryClickEvent? ->
-                if(event == null) {
+            build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED))) {
+                if(it == null) {
                     return@build
                 }
 
-                FriendFriendsMenu(event.whoClicked.uniqueId).show(event.whoClicked)
+                SurfFriendsPlugin.instance.launch {
+                    FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                }
             }, 4, 0
         )
         mid.addItem(build(ItemBuilder(Material.PLAYER_HEAD).setName(Component.text(name, PluginColor.BLUE_LIGHT)).setSkullOwner(offlinePlayer.name)))
 
-        remove.setText("-") { c: Char?, stack: ItemStack ->
+        remove.setText("-") { _: Char?, stack: ItemStack ->
             val builder = ItemBuilder(stack)
             builder.setName(Component.text("Entfernen"))
             builder.addLoreLine(
