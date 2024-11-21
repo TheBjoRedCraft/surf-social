@@ -1,9 +1,12 @@
 package dev.slne.surf.friends.listener.util
 
+import com.github.stefvanschie.inventoryframework.gui.GuiItem
+import dev.slne.surf.friends.plugin
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.*
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.*
@@ -11,6 +14,12 @@ import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import java.util.*
+
+fun buildItem(material: Material, amount: Int = 1, consumer: ItemBuilder.() -> Unit) =
+    ItemBuilder(material, amount).apply(consumer).build()
+
+fun buildGuiItem(itemStack: ItemStack, consumer: (event: InventoryClickEvent) -> Unit) =
+    GuiItem(itemStack, plugin).apply { setAction { consumer(it) } }
 
 /**
  * The type Item builder.

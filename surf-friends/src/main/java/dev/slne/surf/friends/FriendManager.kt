@@ -2,32 +2,35 @@
 
 package dev.slne.surf.friends
 
-import dev.slne.surf.friends.listener.util.PluginColor
 import com.github.benmanes.caffeine.cache.Caffeine
 import dev.hsbrysk.caffeine.CoroutineLoadingCache
 import dev.hsbrysk.caffeine.buildCoroutine
 import dev.slne.surf.friends.database.Database
+import dev.slne.surf.friends.listener.util.PluginColor
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
 object FriendManager {
-    val cache: CoroutineLoadingCache<UUID, FriendData> = Caffeine.newBuilder().buildCoroutine() { player: UUID -> loadFriendData(player) }
+    val cache: CoroutineLoadingCache<UUID, FriendData> =
+        Caffeine.newBuilder().buildCoroutine { player: UUID -> loadFriendData(player) }
 
     /* Friend Management */
     suspend fun addFriend(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
         val targetData = queryFriendData(target)
 
-        if(!playerData.friends.add(target)) {
+        if (!playerData.friends.add(target)) {
             return
         }
 
-        if(!targetData.friends.add(player)) {
+        if (!targetData.friends.add(player)) {
             return
         }
 
@@ -39,6 +42,7 @@ object FriendManager {
                 .append(Component.text(getName(target), PluginColor.GOLD))
                 .append(Component.text(" befreundet."))
         )
+
         sendMessage(
             target, Component.text("Du bist nun mit ")
                 .append(Component.text(getName(player), PluginColor.GOLD))
@@ -50,11 +54,11 @@ object FriendManager {
         val playerData = queryFriendData(player)
         val targetData = queryFriendData(target)
 
-        if(!playerData.friends.remove(target)) {
+        if (!playerData.friends.remove(target)) {
             return
         }
 
-        if(!targetData.friends.remove(player)) {
+        if (!targetData.friends.remove(player)) {
             return
         }
 
@@ -66,6 +70,7 @@ object FriendManager {
                 .append(Component.text(getName(target), PluginColor.GOLD))
                 .append(Component.text(" als Freund entfernt."))
         )
+
         sendMessage(
             target, Component.text("Du wurdest von ")
                 .append(Component.text(getName(player), PluginColor.GOLD))
@@ -76,7 +81,7 @@ object FriendManager {
     suspend fun sendFriendRequest(player: UUID, target: UUID) {
         val targetData = queryFriendData(target)
 
-        if(!targetData.friendRequests.add(player)) {
+        if (!targetData.friendRequests.add(player)) {
             return
         }
 
@@ -95,12 +100,14 @@ object FriendManager {
                     .append(Component.text(" erhalten."))
             )
         }
+
+        TODO("What if the target doesnt allow requests?")
     }
 
     suspend fun acceptFriendRequest(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
 
-        if(!playerData.friendRequests.remove(target)) {
+        if (!playerData.friendRequests.remove(target)) {
             return
         }
         cache.put(player, playerData)
@@ -112,6 +119,7 @@ object FriendManager {
                 .append(Component.text(getName(target), PluginColor.GOLD))
                 .append(Component.text(" akzeptiert."))
         )
+
         sendMessage(
             target, Component.text("Die Freundschaftsanfrage an ")
                 .append(Component.text(getName(player), PluginColor.GOLD))
@@ -130,6 +138,7 @@ object FriendManager {
                 .append(Component.text(getName(target), PluginColor.GOLD))
                 .append(Component.text(" abgelehnt."))
         )
+
         sendMessage(
             target, Component.text("Die Freundschaftsanfrage an ")
                 .append(Component.text(getName(player), PluginColor.GOLD))
@@ -137,9 +146,11 @@ object FriendManager {
         )
     }
 
-    suspend fun hasFriendRequest(player: UUID, target: UUID): Boolean = queryFriendData(player).friendRequests.contains(target)
+    suspend fun hasFriendRequest(player: UUID, target: UUID): Boolean =
+        queryFriendData(player).friendRequests.contains(target)
 
-    suspend fun getFriendRequests(player: UUID): ObjectList<UUID> = queryFriendData(player).friendRequests
+    suspend fun getFriendRequests(player: UUID): ObjectList<UUID> =
+        queryFriendData(player).friendRequests
 
     suspend fun toggle(player: UUID): Boolean {
         val playerData = queryFriendData(player)
@@ -152,7 +163,8 @@ object FriendManager {
 
     suspend fun isAllowingRequests(player: UUID): Boolean = queryFriendData(player).allowRequests
 
-    suspend fun queryFriendData(player: UUID): FriendData = cache.get(player) ?: newFriendData(player)
+    private suspend fun queryFriendData(player: UUID): FriendData =
+        cache.get(player) ?: newFriendData(player)
 
     suspend fun saveFriendData(player: UUID) = Database.saveFriendData(queryFriendData(player))
 
@@ -169,13 +181,10 @@ object FriendManager {
     fun sendMessage(uuid: UUID, message: Component = Component.text("???")) {
         val player = Bukkit.getPlayer(uuid) ?: return
 
-        player.sendMessage(SurfFriendsPlugin.prefix.append(message))
+        player.sendMessage(prefix.append(message))
     }
 
-    private fun getName(uuid: UUID): String {
-        val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
-        return offlinePlayer.name?: "Unbekannt"
-    }
+    private fun getName(uuid: UUID) = Bukkit.getOfflinePlayer(uuid).name ?: "Unbekannt"
 
     suspend fun getOnlineFriends(player: UUID): ObjectList<Player> {
         // TODO: Cloud implementation
@@ -189,10 +198,10 @@ object FriendManager {
 
     suspend fun getFriends(player: UUID): ObjectList<UUID> = queryFriendData(player).friends
 
-    suspend fun areFriends(player: UUID, target: UUID): Boolean = queryFriendData(player).friends.contains(target)
+    suspend fun areFriends(player: UUID, target: UUID): Boolean =
+        queryFriendData(player).friends.contains(target)
 
     suspend fun loadFriendData(player: UUID): FriendData = Database.getFriendData(player)
-
-
+    
     fun newFriendData(player: UUID): FriendData = FriendData(player)
 }

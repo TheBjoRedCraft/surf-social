@@ -5,17 +5,12 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
-import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu
-import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryDragEvent
 
 class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.") {
     init {
@@ -44,28 +39,49 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
         )
 
         left.addItem(
-            build(ItemBuilder(Material.LIME_DYE).setName(Component.text("Bestätigen", PluginColor.LIGHT_GREEN))) {
-                if(it == null) {
+            build(
+                ItemBuilder(Material.LIME_DYE).setName(
+                    Component.text(
+                        "Bestätigen",
+                        PluginColor.LIGHT_GREEN
+                    )
+                )
+            ) {
+                if (it == null) {
                     return@build
                 }
 
-                SurfFriendsPlugin.instance.launch {
+                plugin.launch {
                     FriendManager.removeFriend(it.whoClicked.uniqueId, offlinePlayer.uniqueId)
                     FriendManager.removeFriend(offlinePlayer.uniqueId, it.whoClicked.uniqueId)
                 }
 
-                SurfFriendsPlugin.instance.launch {
+                plugin.launch {
                     FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
                 }
             })
 
-        navigation.addItem(build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück", PluginColor.RED))) {
-                if(it == null) {
+        navigation.addItem(
+            build(
+                ItemBuilder(Material.BARRIER).setName(
+                    Component.text(
+                        "Zurück",
+                        PluginColor.RED
+                    )
+                )
+            ) {
+                if (it == null) {
                     return@build
                 }
 
                 if (offlinePlayer.name == null) {
-                    SurfFriendsPlugin.instance.launch { FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked) }
+                    plugin.launch {
+                        FriendFriendsMenu(
+                            FriendManager.getFriends(
+                                it.whoClicked.uniqueId
+                            )
+                        ).show(it.whoClicked)
+                    }
                 } else {
                     FriendSingleMenu(offlinePlayer.name ?: "Unbekannt").show(it.whoClicked)
                 }

@@ -8,12 +8,13 @@ import dev.jorel.commandapi.arguments.SafeSuggestions
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
+import dev.slne.surf.friends.command.getOfflinePlayerOrFail
+import dev.slne.surf.friends.plugin
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
+    
     init {
         OfflinePlayerArgument("target").replaceSafeSuggestions(
             SafeSuggestions.suggest {
@@ -22,9 +23,9 @@ class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
+            val target = args.getOfflinePlayerOrFail("target")
 
-            SurfFriendsPlugin.instance.launch {
+            plugin.launch {
                 if (!FriendManager.areFriends(player.uniqueId, target.uniqueId)) {
                     throw CommandAPI.failWithString(
                         String.format(

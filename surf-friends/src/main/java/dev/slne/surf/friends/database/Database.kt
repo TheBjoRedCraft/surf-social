@@ -2,10 +2,7 @@ package dev.slne.surf.friends.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import dev.slne.surf.friends.FriendData
-import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
-import dev.slne.surf.friends.config.PluginConfig
+import dev.slne.surf.friends.*
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,9 +17,9 @@ object Database {
 
     fun createConnection() {
         val config = HikariConfig()
-        config.jdbcUrl = PluginConfig.config().getString("mysql.url")
-        config.username = PluginConfig.config().getString("mysql.user")
-        config.password = PluginConfig.config().getString("mysql.password")
+        config.jdbcUrl = plugin.config.getString("mysql.url")
+        config.username = plugin.config.getString("mysql.user")
+        config.password = plugin.config.getString("mysql.password")
 
         config.addDataSourceProperty("cachePrepStmts", "true")
         config.addDataSourceProperty("prepStmtCacheSize", "250")
@@ -56,7 +53,7 @@ object Database {
             }
         } catch (e: SQLException) {
             Bukkit.getConsoleSender().sendMessage(
-                SurfFriendsPlugin.prefix.append(
+                prefix.append(
                     Component.text(
                         e.message ?: "Unknown (SQL Exeption in Database: createTable)"
                     )
@@ -70,7 +67,6 @@ object Database {
 
         return withContext(Dispatchers.IO) {
             try {
-
                 val source = dataSource;
 
                 source.connection.use { connection ->
@@ -96,14 +92,19 @@ object Database {
                                         .map { UUID.fromString(it.trim()) })
                                 }
 
-                                return@withContext FriendData(player, friendsList, friendRequestsList, allowRequests)
+                                return@withContext FriendData(
+                                    player,
+                                    friendsList,
+                                    friendRequestsList,
+                                    allowRequests
+                                )
                             }
                         }
                     }
                 }
             } catch (e: SQLException) {
                 Bukkit.getConsoleSender().sendMessage(
-                    SurfFriendsPlugin.prefix.append(
+                    prefix.append(
                         Component.text(e.message ?: "Unknown SQL error")
                     )
                 )
@@ -140,7 +141,12 @@ object Database {
                     }
                 }
             } catch (e: SQLException) {
-                Bukkit.getConsoleSender().sendMessage(SurfFriendsPlugin.prefix.append(Component.text(e.message ?: "Unknown SQL error"))
+                Bukkit.getConsoleSender().sendMessage(
+                    prefix.append(
+                        Component.text(
+                            e.message ?: "Unknown SQL error"
+                        )
+                    )
                 )
             }
         }

@@ -1,17 +1,16 @@
 package dev.slne.surf.friends.listener
 
-import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.PluginColor
-import kotlinx.coroutines.*
+import dev.slne.surf.friends.prefix
+import kotlinx.coroutines.DelicateCoroutinesApi
+import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import net.kyori.adventure.text.Component
 
 @DelicateCoroutinesApi
-class PlayerJoinListener : Listener {
+object PlayerJoinListener : Listener {
 
     @EventHandler
     suspend fun onJoin(event: PlayerJoinEvent) {
@@ -21,11 +20,10 @@ class PlayerJoinListener : Listener {
         FriendManager.cache.put(player.uniqueId, friendData)
 
         player.sendMessage(
-            SurfFriendsPlugin.prefix
-                .append(Component.text("Willkommen zurück!"))
+            prefix.append(Component.text("Willkommen zurück!"))
         )
         player.sendMessage(
-            SurfFriendsPlugin.prefix.append(Component.text("Du hast noch "))
+            prefix.append(Component.text("Du hast noch "))
                 .append(Component.text(friendData.friendRequests.size, PluginColor.GOLD))
                 .append(Component.text(" Freundschaftsanfragen offen."))
         )

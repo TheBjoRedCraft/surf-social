@@ -5,37 +5,36 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
+import dev.slne.surf.friends.plugin
+import dev.slne.surf.friends.prefix
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 class FriendRequestListCommand(commandName: String) : CommandAPICommand(commandName) {
+
     init {
         executesPlayer(PlayerCommandExecutor { player: Player, _: CommandArguments? ->
-
-            SurfFriendsPlugin.instance.launch {
-                var message = "Du hast keine Freunde."
+            plugin.launch {
                 val requests = FriendManager.getFriendRequests(player.uniqueId)
-                val builder = StringBuilder("Du hast aktuell <yellow>" + (requests.size) + "<white> Freundschaftsanfragen offen: ")
-                var current = 0
 
-                for (uuid in requests) {
-                    current++
+                val message = buildString {
+                    append("Du hast aktuell <yellow>").append(requests.size)
+                        .append("<white> Freundschaftsanfragen offen: ")
 
-                    if (current == requests.size) {
-                        builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid).name)
-                    } else {
-                        builder.append("<white>").append(Bukkit.getOfflinePlayer(uuid).name)
-                            .append("<gray>, ")
+                    requests.forEachIndexed { index, uuid ->
+                        if (index == requests.size - 1) {
+                            append("<white>").append(Bukkit.getOfflinePlayer(uuid).name)
+                        } else {
+                            append("<white>").append(Bukkit.getOfflinePlayer(uuid).name)
+                                .append("<gray>, ")
+                        }
                     }
                 }
 
-                if (!requests.isEmpty()) {
-                    message = builder.toString()
-                }
-
-                player.sendMessage(SurfFriendsPlugin.prefix.append(MiniMessage.miniMessage().deserialize(message)))
+                player.sendMessage(
+                    prefix.append(MiniMessage.miniMessage().deserialize(message))
+                )
             }
         })
     }

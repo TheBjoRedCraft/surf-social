@@ -97,27 +97,27 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
         }
 
         accept.setOnClick {
-            SurfFriendsPlugin.instance.launch {
+            plugin.launch {
                 FriendManager.acceptFriendRequest(
                     it.whoClicked.uniqueId,
                     Bukkit.getOfflinePlayer(name).uniqueId
                 )
             }
 
-            SurfFriendsPlugin.instance.launch {
+            plugin.launch {
                 FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
             }
         }
 
         deny.setOnClick {
-            SurfFriendsPlugin.instance.launch {
+            plugin.launch {
                 FriendManager.denyFriendRequest(
                     it.whoClicked.uniqueId,
                     Bukkit.getOfflinePlayer(name).uniqueId
                 )
             }
 
-            SurfFriendsPlugin.instance.launch {
+            plugin.launch {
                 FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
             }
         }
@@ -130,11 +130,11 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
                     Component.text("Zurück").color(PluginColor.RED)
                 )
             ) {
-                if(it == null) {
+                if (it == null) {
                     return@build
                 }
 
-                SurfFriendsPlugin.instance.launch {
+                plugin.launch {
                     FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
                 }
             }, 4, 0

@@ -91,11 +91,11 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
 
         flPane.addItem(
             build(friendList) {
-                if(it == null) {
+                if (it == null) {
                     return@build
                 }
 
-                SurfFriendsPlugin.instance.launch {
+                plugin.launch {
                     FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
                 }
             }
@@ -105,12 +105,14 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
             build(
                 friendRequests
             ) {
-                if(it == null) {
+                if (it == null) {
                     return@build
                 }
 
-                SurfFriendsPlugin.instance.launch {
-                    FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(it.whoClicked)
+                plugin.launch {
+                    FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(
+                        it.whoClicked
+                    )
                 }
             })
 

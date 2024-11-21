@@ -7,19 +7,14 @@ import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import com.github.stefvanschie.inventoryframework.pane.component.Label
 import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.menu.FriendMenu
 import dev.slne.surf.friends.menu.sub.request.FriendRequestsMenu
-import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryDragEvent
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,17 +41,30 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
         footer.setRepeat(true)
 
         navigation.addItem(
-            build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED))) {
-                if(it == null) {
+            build(
+                ItemBuilder(Material.BARRIER).setName(
+                    Component.text("Zurück").color(PluginColor.RED)
+                )
+            ) {
+                if (it == null) {
                     return@build
                 }
 
-                SurfFriendsPlugin.instance.launch {
+                plugin.launch {
                     FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
                 }
             }, 4, 0
         )
-        mid.addItem(build(ItemBuilder(Material.PLAYER_HEAD).setName(Component.text(name, PluginColor.BLUE_LIGHT)).setSkullOwner(offlinePlayer.name)))
+        mid.addItem(
+            build(
+                ItemBuilder(Material.PLAYER_HEAD).setName(
+                    Component.text(
+                        name,
+                        PluginColor.BLUE_LIGHT
+                    )
+                ).setSkullOwner(offlinePlayer.name)
+            )
+        )
 
         remove.setText("-") { _: Char?, stack: ItemStack ->
             val builder = ItemBuilder(stack)
@@ -86,8 +94,7 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
             this.build(builder)
         }
         if (offlinePlayer.isOnline) {
-
-            SurfFriendsPlugin.instance.launch {
+            plugin.launch {
                 right.addItem(
                     build(
                         ItemBuilder(Material.ENDER_PEARL)

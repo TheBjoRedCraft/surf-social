@@ -1,13 +1,13 @@
 package dev.slne.surf.friends.listener
 
 import dev.slne.surf.friends.FriendManager
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 
 @DelicateCoroutinesApi
-class PlayerQuitListener : Listener {
+object PlayerQuitListener : Listener {
 
     @EventHandler
     suspend fun onQuit(event: PlayerQuitEvent) {
