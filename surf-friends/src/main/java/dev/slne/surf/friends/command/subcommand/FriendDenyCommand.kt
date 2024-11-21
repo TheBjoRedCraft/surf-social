@@ -19,10 +19,10 @@ import java.util.function.Function
 
 class FriendDenyCommand(name: String) : CommandAPICommand(name) {
     init {
-        OfflinePlayerArgument("target").replaceSafeSuggestions(
-            SafeSuggestions.suggest<OfflinePlayer, CommandSender?> { info: SuggestionInfo<CommandSender?>? ->
+        withArguments(OfflinePlayerArgument("target").replaceSafeSuggestions(
+            SafeSuggestions.suggest {
                 Bukkit.getOnlinePlayers().toTypedArray<Player>()
-            }
+            })
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->

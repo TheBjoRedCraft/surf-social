@@ -15,10 +15,10 @@ import org.bukkit.entity.Player
 
 class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
     init {
-        OfflinePlayerArgument("target").replaceSafeSuggestions(
+        withArguments(OfflinePlayerArgument("target").replaceSafeSuggestions(
             SafeSuggestions.suggest {
                 Bukkit.getOnlinePlayers().toTypedArray<Player>()
-            }
+            })
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->

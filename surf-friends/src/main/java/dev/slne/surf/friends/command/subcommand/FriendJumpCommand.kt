@@ -18,10 +18,10 @@ import org.bukkit.entity.Player
 
 class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        OfflinePlayerArgument("target").replaceSafeSuggestions(
+        withArguments(OfflinePlayerArgument("target").replaceSafeSuggestions(
             SafeSuggestions.suggest {
                 Bukkit.getOnlinePlayers().toTypedArray<Player>()
-            }
+            })
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->

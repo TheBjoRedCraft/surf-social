@@ -18,7 +18,11 @@ import org.bukkit.entity.Player
 
 class FriendAcceptCommand(name: String) : CommandAPICommand(name) {
     init {
-        OfflinePlayerArgument("target").replaceSafeSuggestions(SafeSuggestions.suggest { Bukkit.getOnlinePlayers().toTypedArray<Player>() })
+        withArguments(OfflinePlayerArgument("target").replaceSafeSuggestions(
+            SafeSuggestions.suggest {
+                Bukkit.getOnlinePlayers().toTypedArray<Player>()
+            })
+        )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
             val target = args.getUnchecked<OfflinePlayer>("target") ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")

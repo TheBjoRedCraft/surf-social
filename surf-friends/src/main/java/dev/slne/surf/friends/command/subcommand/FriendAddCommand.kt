@@ -11,20 +11,17 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.PluginColor
-import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.function.Function
 
 class FriendAddCommand(name: String) : CommandAPICommand(name) {
     init {
-        OfflinePlayerArgument("target").replaceSafeSuggestions(
-            SafeSuggestions.suggest<OfflinePlayer, CommandSender?> { info: SuggestionInfo<CommandSender?>? ->
+        withArguments(OfflinePlayerArgument("target").replaceSafeSuggestions(
+            SafeSuggestions.suggest {
                 Bukkit.getOnlinePlayers().toTypedArray<Player>()
-            }
+            })
         )
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
