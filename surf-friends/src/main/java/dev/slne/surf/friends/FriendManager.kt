@@ -194,5 +194,5 @@ object FriendManager {
     suspend fun loadFriendData(player: UUID): FriendData = Database.getFriendData(player)
 
 
-    fun newFriendData(player: UUID): FriendData = FriendData(player, ObjectArrayList(), ObjectArrayList(), true)
+    fun newFriendData(player: UUID): FriendData = FriendData(player)
 }
