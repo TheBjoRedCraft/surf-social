@@ -14,23 +14,20 @@ import net.kyori.adventure.text.Component
 class PlayerJoinListener : Listener {
 
     @EventHandler
-    fun onJoin(event: PlayerJoinEvent) {
+    suspend fun onJoin(event: PlayerJoinEvent) {
         val player = event.player
+        val friendData = FriendManager.loadFriendData(player.uniqueId)
 
-        SurfFriendsPlugin.instance.launch {
-            val friendData = FriendManager.loadFriendData(player.uniqueId)
+        FriendManager.cache.put(player.uniqueId, friendData)
 
-            FriendManager.cache.put(player.uniqueId, friendData)
-
-            player.sendMessage(
-                SurfFriendsPlugin.prefix
-                    .append(Component.text("Willkommen zurück!"))
-            )
-            player.sendMessage(
-                SurfFriendsPlugin.prefix.append(Component.text("Du hast noch "))
-                    .append(Component.text(friendData.friendRequests.size, PluginColor.GOLD))
-                    .append(Component.text(" Freundschaftsanfragen offen."))
-            )
-        }
+        player.sendMessage(
+            SurfFriendsPlugin.prefix
+                .append(Component.text("Willkommen zurück!"))
+        )
+        player.sendMessage(
+            SurfFriendsPlugin.prefix.append(Component.text("Du hast noch "))
+                .append(Component.text(friendData.friendRequests.size, PluginColor.GOLD))
+                .append(Component.text(" Freundschaftsanfragen offen."))
+        )
     }
 }
