@@ -2,6 +2,7 @@ package dev.slne.surf.friends
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.SuspendingPlugin
+import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import dev.slne.surf.friends.command.FriendCommand
 import dev.slne.surf.friends.command.subcommand.FriendAddCommand
 import dev.slne.surf.friends.command.subcommand.FriendListCommand
@@ -38,8 +39,8 @@ class SurfFriendsPlugin : SuspendingJavaPlugin() {
     }
 
     private fun registerListener() {
-        Bukkit.getPluginManager().registerEvents(PlayerQuitListener(), this)
-        Bukkit.getPluginManager().registerEvents(PlayerJoinListener(), this)
+        Bukkit.getPluginManager().registerSuspendingEvents(PlayerQuitListener(), this)
+        Bukkit.getPluginManager().registerSuspendingEvents(PlayerJoinListener(), this)
     }
 
     companion object {
