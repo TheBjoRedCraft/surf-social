@@ -29,7 +29,7 @@ class FriendAddCommand(name: String) : CommandAPICommand(name) {
 
             plugin.launch {
                 if (FriendManager.hasFriendRequest(player.uniqueId, target.uniqueId)) {
-                    player.sendMessage(Component.text("Du hast bereits Freundschaftsanfrage von $name", PluginColor.RED))
+                    player.sendMessage(Component.text("Du hast bereits eine Freundschaftsanfrage von ${target.name}", PluginColor.RED))
                     return@launch
                 }
 
