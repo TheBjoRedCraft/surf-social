@@ -9,7 +9,9 @@ import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.command.getOfflinePlayerOrFail
+import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.plugin
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -27,12 +29,8 @@ class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
 
             plugin.launch {
                 if (!FriendManager.areFriends(player.uniqueId, target.uniqueId)) {
-                    throw CommandAPI.failWithString(
-                        String.format(
-                            "Du bist nicht mit %s befreundet.",
-                            target.name
-                        )
-                    )
+                    player.sendMessage(Component.text("Du bist nicht mit ${target.name} befreundet.", PluginColor.RED))
+                    return@launch
                 }
 
                 FriendManager.removeFriend(player.uniqueId, target.uniqueId)

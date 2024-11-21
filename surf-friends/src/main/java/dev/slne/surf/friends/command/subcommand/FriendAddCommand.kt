@@ -29,25 +29,22 @@ class FriendAddCommand(name: String) : CommandAPICommand(name) {
 
             plugin.launch {
                 if (FriendManager.hasFriendRequest(player.uniqueId, target.uniqueId)) {
-                    throw CommandAPI.failWithString("Du hast bereits Freundschaftsanfrage von " + target.name)
+                    player.sendMessage(Component.text("Du hast bereits Freundschaftsanfrage von $name", PluginColor.RED))
+                    return@launch
                 }
 
                 if (FriendManager.hasFriendRequest(target.uniqueId, player.uniqueId)) {
-                    throw CommandAPI.failWithString("Du hast bereits eine Freundschaftsanfrage an " + target.name + " gesendet.")
+                    player.sendMessage(Component.text("Du hast bereits eine Freundschaftsanfrage an ${target.name} gesendet.", PluginColor.RED))
+                    return@launch
                 }
 
                 if (target == player) {
-                    throw CommandAPI.failWithString("Du kannst nicht mit dir selbst befreundet sein.")
+                    player.sendMessage(Component.text("Du kannst nicht mit dir selbst befreundet sein.", PluginColor.RED))
+                    return@launch
                 }
 
                 if (!FriendManager.isAllowingRequests(target.uniqueId)) {
-                    FriendManager.sendMessage(
-                        player.uniqueId,
-                        Component.text(
-                            "${target.name} hat Freundschaftsanfragen deaktiviert. Sie wurde trotzdem geschickt, der Spieler hat aber keine Benachrichtigung bekommen!",
-                            PluginColor.RED
-                        )
-                    )
+                    FriendManager.sendMessage(player.uniqueId, Component.text("${target.name} hat Freundschaftsanfragen deaktiviert. Sie wurde trotzdem geschickt, der Spieler hat aber keine Benachrichtigung bekommen!", PluginColor.RED))
                 }
 
                 FriendManager.sendFriendRequest(player.uniqueId, target.uniqueId)

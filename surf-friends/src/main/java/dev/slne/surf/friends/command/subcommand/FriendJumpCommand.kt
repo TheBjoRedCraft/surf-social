@@ -30,7 +30,8 @@ class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
 
             plugin.launch {
                 if (!FriendManager.areFriends(player.uniqueId, target.uniqueId)) {
-                    throw CommandAPI.failWithString("Du bist nicht mit " + target.name + " befreundet.")
+                    player.sendMessage(Component.text("Du bist nicht mit ${target.name} befreundet.", PluginColor.RED))
+                    return@launch
                 }
 
                 player.sendMessage(

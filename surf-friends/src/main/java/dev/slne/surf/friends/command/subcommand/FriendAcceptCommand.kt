@@ -10,7 +10,9 @@ import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.command.getOfflinePlayerOrFail
+import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.plugin
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -28,7 +30,8 @@ class FriendAcceptCommand(name: String) : CommandAPICommand(name) {
 
             plugin.launch {
                 if (!FriendManager.hasFriendRequest(player.uniqueId, target.uniqueId)) {
-                    throw CommandAPI.failWithString("Du hast keine Freundschaftsanfrage von " + target.name)
+                    player.sendMessage(Component.text("Du hast keine Freundschaftsanfrage von $name", PluginColor.RED))
+                    return@launch
                 }
                 FriendManager.acceptFriendRequest(player.uniqueId, target.uniqueId)
             }
