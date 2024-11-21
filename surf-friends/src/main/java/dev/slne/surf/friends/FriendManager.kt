@@ -100,8 +100,6 @@ object FriendManager {
                     .append(Component.text(" erhalten."))
             )
         }
-
-        TODO("What if the target doesnt allow requests?")
     }
 
     suspend fun acceptFriendRequest(player: UUID, target: UUID) {
