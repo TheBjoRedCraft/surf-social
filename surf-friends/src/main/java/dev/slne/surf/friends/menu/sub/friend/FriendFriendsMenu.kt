@@ -35,9 +35,7 @@ class FriendFriendsMenu(friends: ObjectList<UUID>) : FriendMenu(5, "Deine Freund
         pages.populateWithGuiItems(getFriendItems(friends))
 
         navigation.addItem(buildGuiItem(backItem) { event ->
-            FriendMainMenu().show(
-                event.whoClicked
-            )
+            FriendMainMenu().show(event.whoClicked)
         }, 4, 0)
 
         addPane(header)
@@ -58,8 +56,8 @@ class FriendFriendsMenu(friends: ObjectList<UUID>) : FriendMenu(5, "Deine Freund
     private fun getFriendItems(friends: ObjectList<UUID>): ObjectList<GuiItem> {
         val stacks: ObjectList<GuiItem> = ObjectArrayList()
 
-        friends.forEach { friend ->
-            stacks.add(FriendButton(Bukkit.getOfflinePlayer(friend)))
+        friends.forEach {
+            stacks.add(FriendButton(Bukkit.getOfflinePlayer(it)))
         }
 
         return stacks

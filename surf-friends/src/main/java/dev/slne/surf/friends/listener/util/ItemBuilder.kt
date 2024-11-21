@@ -152,7 +152,7 @@ class ItemBuilder {
      * @param value the value
      * @return the item builder
     </V></T> */
-    fun <T, V> addDataToPersistenceContainer(
+    fun <T, V : Any> addDataToPersistenceContainer(
         key: NamespacedKey, type: PersistentDataType<T, V>,
         value: V
     ): ItemBuilder {

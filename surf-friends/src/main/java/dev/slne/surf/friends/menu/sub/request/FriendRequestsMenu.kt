@@ -1,23 +1,21 @@
 package dev.slne.surf.friends.menu.sub.request
 
-import com.github.shynixn.mccoroutine.bukkit.launch
+import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane
 import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
-import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
-import dev.slne.surf.friends.listener.util.PluginColor
+import dev.slne.surf.friends.listener.util.buildGuiItem
 import dev.slne.surf.friends.menu.FriendMainMenu
 import dev.slne.surf.friends.menu.FriendMenu
+import dev.slne.surf.friends.menu.backItem
+import dev.slne.surf.friends.menu.buttons.RequestButton
+import dev.slne.surf.friends.menu.getPagesButtons
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.inventory.ItemStack
 import java.util.*
 
 class FriendRequestsMenu(requests: ObjectList<UUID>) : FriendMenu(5, "Freundschaftsanfragen") {
@@ -33,85 +31,34 @@ class FriendRequestsMenu(requests: ObjectList<UUID>) : FriendMenu(5, "Freundscha
         footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
         footer.setRepeat(true)
 
-        pages.populateWithItemStacks(getFriendRequestsItems(requests))
+        pages.populateWithGuiItems(getFriendRequestsItems(requests))
 
-        pages.setOnClick {
-            if (it.currentItem == null) {
-                return@setOnClick
-            }
-
-            val item = it.currentItem ?: return@setOnClick
-
-            if(item.itemMeta == null) {
-                return@setOnClick
-            }
-
-            val meta = item.itemMeta
-            FriendRequestManageMenu(meta.displayName).show(it.whoClicked)
-        }
-
-        navigation.addItem(
-            build(
-                ItemBuilder(Material.RED_DYE).setName(
-                    Component.text("Vorherige Seite").color(PluginColor.RED)
-                )
-            ) {
-                if (pages.page > 0) {
-                    pages.page -= 1
-
-                    update()
-                }
-            }, 0, 0
-        )
-
-        navigation.addItem(
-            build(
-                ItemBuilder(Material.LIME_DYE).setName(
-                    Component.text("Nächste Seite").color(PluginColor.LIGHT_GREEN)
-                )
-            ) {
-                if (pages.page < pages.pages - 1) {
-                    pages.page += 1
-                    update()
-                }
-            }, 8, 0
-        )
-
-        navigation.addItem(
-            build(ItemBuilder(Material.BARRIER).setName(Component.text("Zurück").color(PluginColor.RED))) { event: InventoryClickEvent? ->
-                if(event == null) {
-                    return@build
-                }
-
-                FriendMainMenu().show(event.whoClicked)
-            }, 4, 0
-        )
+        navigation.addItem(buildGuiItem(backItem) { event ->
+            FriendMainMenu().show(event.whoClicked)
+        }, 4, 0)
 
 
         addPane(header)
         addPane(footer)
         addPane(navigation)
         addPane(pages)
+        addPane(getPagesButtons(pages))
 
 
         setOnGlobalClick {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
         setOnGlobalDrag {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
     }
 
 
-    private fun getFriendRequestsItems(requests: ObjectList<UUID>): ObjectList<ItemStack?> {
-        val stacks: ObjectList<ItemStack?> = ObjectArrayList()
+    private fun getFriendRequestsItems(requests: ObjectList<UUID>): ObjectList<GuiItem> {
+        val stacks: ObjectList<GuiItem> = ObjectArrayList()
 
-        for (request in requests) {
-            val offlinePlayer = Bukkit.getOfflinePlayer(request)
-
-            stacks.add(ItemBuilder(Material.PLAYER_HEAD).setName(offlinePlayer.name ?: "Unbekannt").setSkullOwner(offlinePlayer.name).build())
+        requests.forEach {
+            stacks.add(RequestButton(Bukkit.getOfflinePlayer(it)))
         }
 
         return stacks

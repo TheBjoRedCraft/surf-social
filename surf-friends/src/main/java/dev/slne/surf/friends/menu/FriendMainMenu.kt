@@ -98,7 +98,7 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
                 }
 
                 plugin.launch {
-                    FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                    FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
                 }
             }
         )

@@ -8,17 +8,15 @@ import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import com.github.stefvanschie.inventoryframework.pane.component.Label
 import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
+import dev.slne.surf.friends.listener.util.buildGuiItem
 import dev.slne.surf.friends.menu.FriendMenu
-import kotlinx.coroutines.launch
+import dev.slne.surf.friends.menu.backItem
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 
 class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name") {
@@ -31,8 +29,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
         val accept = Label(1, 2, 1, 1, Pane.Priority.NORMAL, Font.OAK_PLANKS)
         val deny = Label(7, 2, 1, 1, Pane.Priority.NORMAL, Font.OAK_PLANKS)
 
-        val target = ItemBuilder(Material.PLAYER_HEAD).setSkullOwner(name)
-            .setName(Component.text(name).color(PluginColor.BLUE_LIGHT)).build()
+        val target = ItemBuilder(Material.PLAYER_HEAD).setSkullOwner(name).setName(Component.text(name).color(PluginColor.BLUE_LIGHT)).build()
 
         header.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
         header.setRepeat(true)
@@ -40,7 +37,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
         footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
         footer.setRepeat(true)
 
-        accept.setText("+") { c: Char?, stack: ItemStack ->
+        accept.setText("+") { _: Char?, stack: ItemStack ->
             val builder = ItemBuilder(stack)
             builder.setName(Component.text("Akzeptieren"))
             builder.addLoreLine(
@@ -68,7 +65,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
             this.build(builder)
         }
 
-        deny.setText("X") { c: Char?, stack: ItemStack ->
+        deny.setText("X") { _: Char?, stack: ItemStack ->
             val builder = ItemBuilder(stack)
             builder.setName(Component.text("Ablehnen"))
             builder.addLoreLine(
@@ -105,7 +102,7 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
             }
 
             plugin.launch {
-                FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(it.whoClicked)
             }
         }
 
@@ -118,27 +115,17 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
             }
 
             plugin.launch {
-                FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+                FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(it.whoClicked)
             }
         }
 
         midPane.addItem(GuiItem(target))
 
-        back.addItem(
-            build(
-                ItemBuilder(Material.BARRIER).setName(
-                    Component.text("Zurück").color(PluginColor.RED)
-                )
-            ) {
-                if (it == null) {
-                    return@build
-                }
-
-                plugin.launch {
-                    FriendRequestsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
-                }
-            }, 4, 0
-        )
+        back.addItem(buildGuiItem(backItem) {
+            plugin.launch {
+                FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(it.whoClicked)
+            }
+        }, 4, 0)
 
         addPane(header)
         addPane(footer)
@@ -149,12 +136,10 @@ class FriendRequestManageMenu(name: String) : FriendMenu(5, "Anfrage von $name")
 
 
         setOnGlobalClick {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
         setOnGlobalDrag {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
     }
 }

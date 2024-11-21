@@ -9,7 +9,10 @@ import com.github.stefvanschie.inventoryframework.pane.component.Label
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
+import dev.slne.surf.friends.listener.util.buildGuiItem
+import dev.slne.surf.friends.menu.FriendMainMenu
 import dev.slne.surf.friends.menu.FriendMenu
+import dev.slne.surf.friends.menu.backItem
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
@@ -39,21 +42,12 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
         footer.addItem(build(ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("")))
         footer.setRepeat(true)
 
-        navigation.addItem(
-            build(
-                ItemBuilder(Material.BARRIER).setName(
-                    Component.text("Zurück").color(PluginColor.RED)
-                )
-            ) {
-                if (it == null) {
-                    return@build
-                }
+        navigation.addItem(buildGuiItem(backItem) {
+            plugin.launch {
+                FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
+            }
+        }, 4, 0)
 
-                plugin.launch {
-                    FriendFriendsMenu(FriendManager.getFriends(it.whoClicked.uniqueId)).show(it.whoClicked)
-                }
-            }, 4, 0
-        )
         mid.addItem(
             build(
                 ItemBuilder(Material.PLAYER_HEAD).setName(
@@ -191,12 +185,10 @@ class FriendSingleMenu(name: String) : FriendMenu(5, name) {
         addPane(mid)
 
         setOnGlobalClick {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
         setOnGlobalDrag {
-            it.isCancelled =
-                true
+            it.isCancelled = true
         }
     }
 }

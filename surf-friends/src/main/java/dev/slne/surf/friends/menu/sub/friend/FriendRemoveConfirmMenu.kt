@@ -7,7 +7,11 @@ import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import dev.slne.surf.friends.FriendManager
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
+import dev.slne.surf.friends.listener.util.buildGuiItem
+import dev.slne.surf.friends.listener.util.buildItem
+import dev.slne.surf.friends.menu.FriendMainMenu
 import dev.slne.surf.friends.menu.FriendMenu
+import dev.slne.surf.friends.menu.backItem
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -37,8 +41,7 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
             )
         )
 
-        left.addItem(
-            build(
+        left.addItem(build(
                 ItemBuilder(Material.LIME_DYE).setName(
                     Component.text(
                         "Bestätigen",
@@ -60,32 +63,9 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
                 }
             })
 
-        navigation.addItem(
-            build(
-                ItemBuilder(Material.BARRIER).setName(
-                    Component.text(
-                        "Zurück",
-                        PluginColor.RED
-                    )
-                )
-            ) {
-                if (it == null) {
-                    return@build
-                }
-
-                if (offlinePlayer.name == null) {
-                    plugin.launch {
-                        FriendFriendsMenu(
-                            FriendManager.getFriends(
-                                it.whoClicked.uniqueId
-                            )
-                        ).show(it.whoClicked)
-                    }
-                } else {
-                    FriendSingleMenu(offlinePlayer.name ?: "Unbekannt").show(it.whoClicked)
-                }
-            }, 4, 0
-        )
+        navigation.addItem(buildGuiItem(backItem) { event ->
+            FriendSingleMenu(name).show(event.whoClicked)
+        }, 4, 0)
 
 
         addPane(header)
