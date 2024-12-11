@@ -1,9 +1,0 @@
-features--------------------------
-
-- frieds menu add friend via anvil gui
-
-
-bugs------------------------------
-
-- friends and friendrequest menu does not work -> players are not displayed
-- paper plugin does not get api
