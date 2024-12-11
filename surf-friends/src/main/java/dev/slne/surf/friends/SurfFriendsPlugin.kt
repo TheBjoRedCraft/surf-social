@@ -15,8 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
-val plugin: SurfFriendsPlugin
-    get() = JavaPlugin.getPlugin(SurfFriendsPlugin::class.java)
+val plugin: SurfFriendsPlugin get() = JavaPlugin.getPlugin(SurfFriendsPlugin::class.java)
 
 val prefix = Component.text(">> ", NamedTextColor.GRAY)
     .append(Component.text("Friends", PluginColor.BLUE_LIGHT))
@@ -47,3 +46,12 @@ class SurfFriendsPlugin : SuspendingJavaPlugin() {
         Bukkit.getPluginManager().registerSuspendingEvents(PlayerJoinListener, this)
     }
 }
+
+/*
+    *
+    * info friend on friend remove and add when on other server
+    * update friend on other server when removed or added
+    * use cloud for sending players to other servers when "jumping" to friend
+    * use cloud to get server from player and ignored message when server is "blocked" (to prevent spoiling to coming events etc.)
+    *
+ */

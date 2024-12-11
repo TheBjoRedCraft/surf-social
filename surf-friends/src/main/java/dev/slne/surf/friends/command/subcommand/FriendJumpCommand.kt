@@ -38,7 +38,6 @@ class FriendJumpCommand(commandName: String) : CommandAPICommand(commandName) {
                     prefix.append(Component.text("Du wirst mit dem Server von " + target.name + " verbunden."))
                 )
 
-                //TODO: Cloud implementation: send player
                 player.sendMessage(
                     prefix.append(
                         Component.text("Du wurdest erfolgreich mit dem Server von " + target.name + " verbunden.")
