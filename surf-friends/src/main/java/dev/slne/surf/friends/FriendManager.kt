@@ -65,13 +65,13 @@ object FriendManager {
         sendMessage(
             player, Component.text("Du hast ")
                 .append(Component.text(getName(target), PluginColor.GOLD))
-                .append(Component.text(" als Freund entfernt."))
+                .append(Component.text(" aus deiner Freundesliste entfernt."))
         )
 
         sendMessage(
             target, Component.text("Du wurdest von ")
                 .append(Component.text(getName(player), PluginColor.GOLD))
-                .append(Component.text(" als Freund entfernt."))
+                .append(Component.text("´s Freundesliste entfernt."))
         )
     }
 
@@ -122,7 +122,7 @@ object FriendManager {
         )
 
         sendMessage(
-            target, Component.text("Die Freundschaftsanfrage an ")
+            target, Component.text("Deine Freundschaftsanfrage an ")
                 .append(Component.text(getName(player), PluginColor.GOLD))
                 .append(Component.text(" wurde akzeptiert."))
         )
@@ -144,7 +144,7 @@ object FriendManager {
         )
 
         sendMessage(
-            target, Component.text("Die Freundschaftsanfrage an ")
+            target, Component.text("Deine Freundschaftsanfrage an ")
                 .append(Component.text(getName(player), PluginColor.GOLD))
                 .append(Component.text(" wurde abgelehnt."))
         )
