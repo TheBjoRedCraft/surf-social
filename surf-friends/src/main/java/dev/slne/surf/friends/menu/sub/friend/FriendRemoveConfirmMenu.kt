@@ -55,7 +55,6 @@ class FriendRemoveConfirmMenu(name: String) : FriendMenu(5, "Bitte bestätige.")
 
                 plugin.launch {
                     FriendManager.removeFriend(it.whoClicked.uniqueId, offlinePlayer.uniqueId)
-                    FriendManager.removeFriend(offlinePlayer.uniqueId, it.whoClicked.uniqueId)
                 }
 
                 plugin.launch {

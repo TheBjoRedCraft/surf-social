@@ -34,7 +34,6 @@ class FriendRemoveCommand(name: String) : CommandAPICommand(name) {
                 }
 
                 FriendManager.removeFriend(player.uniqueId, target.uniqueId)
-                FriendManager.removeFriend(target.uniqueId, player.uniqueId)
             }
         })
     }
