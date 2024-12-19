@@ -86,6 +86,10 @@ object FriendManager {
             return
         }
 
+        if(player == target) {
+            return
+        }
+
         cache.put(target, targetData)
 
         sendMessage(
