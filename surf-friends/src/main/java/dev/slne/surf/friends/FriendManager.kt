@@ -26,25 +26,22 @@ object FriendManager {
         val playerData = queryFriendData(player)
         val targetData = queryFriendData(target)
 
-        if (!playerData.friends.add(target)) {
+        if(this.areFriends(player, target)) {
             return
         }
 
-        if (!targetData.friends.add(player)) {
-            return
-        }
+        playerData.friends.add(target);
+        targetData.friends.add(player)
 
         cache.put(player, playerData)
         cache.put(target, targetData)
 
-        sendMessage(
-            player, Component.text("Du bist nun mit ")
+        sendMessage(player, Component.text("Du bist nun mit ")
                 .append(Component.text(getName(target), PluginColor.GOLD))
                 .append(Component.text(" befreundet."))
         )
 
-        sendMessage(
-            target, Component.text("Du bist nun mit ")
+        sendMessage(target, Component.text("Du bist nun mit ")
                 .append(Component.text(getName(player), PluginColor.GOLD))
                 .append(Component.text(" befreundet."))
         )
@@ -81,6 +78,10 @@ object FriendManager {
     suspend fun sendFriendRequest(player: UUID, target: UUID) {
         val targetData = queryFriendData(target)
 
+        if (targetData.friends.contains(player)) {
+            return
+        }
+
         if (!targetData.friendRequests.add(player)) {
             return
         }
@@ -104,11 +105,13 @@ object FriendManager {
 
     suspend fun acceptFriendRequest(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
+        val targetData = queryFriendData(target)
 
-        if (!playerData.friendRequests.remove(target)) {
-            return
-        }
+        playerData.friendRequests.remove(target);
+        targetData.friendRequests.remove(player)
+
         cache.put(player, playerData)
+        cache.put(target, targetData)
 
         addFriend(player, target)
 
@@ -127,9 +130,12 @@ object FriendManager {
 
     suspend fun denyFriendRequest(player: UUID, target: UUID) {
         val playerData = queryFriendData(player)
+        val targetData = queryFriendData(target)
 
         playerData.friendRequests.remove(target)
+        targetData.friendRequests.remove(player)
         cache.put(player, playerData)
+        cache.put(target, targetData)
 
         sendMessage(
             player, Component.text("Du hast die Freundschaftsanfrage von ")
@@ -191,7 +197,7 @@ object FriendManager {
 
     suspend fun getServer(player: UUID): String {
         // TODO: Cloud implementation
-        return ""
+        return "???"
     }
 
     suspend fun getFriends(player: UUID): ObjectList<UUID> = queryFriendData(player).friends

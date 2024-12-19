@@ -15,13 +15,11 @@ object PlayerJoinListener : Listener {
     @EventHandler
     suspend fun onJoin(event: PlayerJoinEvent) {
         val player = event.player
-        val friendData = FriendManager.loadFriendData(player.uniqueId)
+        val friendData = FriendManager.cache.get(player.uniqueId) ?: FriendManager.loadFriendData(player.uniqueId);
 
         FriendManager.cache.put(player.uniqueId, friendData)
 
-        player.sendMessage(
-            prefix.append(Component.text("Willkommen zurück!"))
-        )
+        player.sendMessage(prefix.append(Component.text("Willkommen zurück!")))
         player.sendMessage(
             prefix.append(Component.text("Du hast noch "))
                 .append(Component.text(friendData.friendRequests.size, PluginColor.GOLD))

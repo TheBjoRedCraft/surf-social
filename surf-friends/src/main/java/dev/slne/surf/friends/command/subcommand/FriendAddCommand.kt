@@ -38,6 +38,11 @@ class FriendAddCommand(name: String) : CommandAPICommand(name) {
                     return@launch
                 }
 
+                if (FriendManager.areFriends(target.uniqueId, player.uniqueId)) {
+                    player.sendMessage(Component.text("Du bist bereits mit ${target.name} befreundet.", PluginColor.RED))
+                    return@launch
+                }
+
                 if (target == player) {
                     player.sendMessage(Component.text("Du kannst nicht mit dir selbst befreundet sein.", PluginColor.RED))
                     return@launch
