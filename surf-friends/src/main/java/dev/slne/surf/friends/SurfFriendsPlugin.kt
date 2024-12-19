@@ -2,6 +2,7 @@ package dev.slne.surf.friends
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+
 import dev.slne.surf.friends.command.FriendCommand
 import dev.slne.surf.friends.command.subcommand.FriendAddCommand
 import dev.slne.surf.friends.command.subcommand.FriendListCommand
@@ -9,9 +10,12 @@ import dev.slne.surf.friends.database.Database
 import dev.slne.surf.friends.listener.PlayerJoinListener
 import dev.slne.surf.friends.listener.PlayerQuitListener
 import dev.slne.surf.friends.listener.util.PluginColor
+
 import kotlinx.coroutines.DelicateCoroutinesApi
+
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
