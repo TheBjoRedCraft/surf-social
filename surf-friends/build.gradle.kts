@@ -36,6 +36,8 @@ dependencies {
     implementation("dev.hsbrysk:caffeine-coroutines:1.2.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.20.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.20.0")
+
+    implementation("net.wesjd:anvilgui:1.10.3-SNAPSHOT")
 }
 
 paper {
@@ -60,6 +62,10 @@ tasks.shadowJar {
     archiveClassifier.set("")
     archiveVersion.set("3.1.0-SNAPSHOT")
     archiveBaseName.set("surf-friends")
+
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "spigot"
+    }
 }
 kotlin {
     jvmToolchain(21)
