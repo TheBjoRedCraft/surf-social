@@ -93,19 +93,17 @@ object FriendManager {
 
         cache.put(target, targetData)
 
-        sendMessage(
-            player, Component.text("Du hast eine Freundschaftsanfrage an ")
+        sendMessage(player, Component.text("Du hast eine Freundschaftsanfrage an ")
                 .append(Component.text(getName(target), PluginColor.GOLD))
                 .append(Component.text(" gesendet."))
         )
 
         if (targetData.allowRequests) {
-            sendMessage(
-                target, Component.text("Du hast eine Freundschaftsanfrage von ")
+            sendMessage(target, Component.text("Du hast eine Freundschaftsanfrage von ")
                     .append(Component.text(getName(player), PluginColor.GOLD))
                     .append(Component.text(" erhalten. "))
-                    .append(Component.text("[AKZEPTIEREN]", PluginColor.LIGHT_GREEN).clickEvent(ClickEvent.runCommand("/friend accept " + getName(player))))
-                    .append(Component.text(" [ABLEHNEN]", PluginColor.RED).clickEvent(ClickEvent.runCommand("/friend deny " + getName(player))))
+                    .append(Component.text("[AKZEPTIEREN]", PluginColor.LIGHT_GREEN).clickEvent(ClickEvent.runCommand("/friend accept " + getNameOrUUID(player))))
+                    .append(Component.text(" [ABLEHNEN]", PluginColor.RED).clickEvent(ClickEvent.runCommand("/friend deny " + getNameOrUUID(player))))
             )
         }
     }
@@ -196,6 +194,7 @@ object FriendManager {
     }
 
     private fun getName(uuid: UUID) = Bukkit.getOfflinePlayer(uuid).name ?: "Unbekannt"
+    private fun getNameOrUUID(uuid: UUID) = Bukkit.getOfflinePlayer(uuid).name ?: uuid
 
     suspend fun getOnlineFriends(player: UUID): ObjectList<Player> {
         // TODO: Cloud implementation
