@@ -34,5 +34,4 @@ fun <T> CommandArguments.getUncheckedOrFail(
     message: String? = "$nodeName not found"
 ): T = getUnchecked<T>(nodeName) ?: throw CommandAPI.failWithString(message)
 
-fun CommandArguments.getOfflinePlayerOrFail(nodeName: String): OfflinePlayer =
-    getUncheckedOrFail(nodeName, "Der Spieler wurde nicht gefunden.")
+fun CommandArguments.getOfflinePlayerOrFail(nodeName: String): OfflinePlayer = getUncheckedOrFail(nodeName, "Der Spieler wurde nicht gefunden.")
