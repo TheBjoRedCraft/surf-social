@@ -13,6 +13,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -102,7 +103,9 @@ object FriendManager {
             sendMessage(
                 target, Component.text("Du hast eine Freundschaftsanfrage von ")
                     .append(Component.text(getName(player), PluginColor.GOLD))
-                    .append(Component.text(" erhalten."))
+                    .append(Component.text(" erhalten. "))
+                    .append(Component.text("[AKZEPTIEREN]", PluginColor.LIGHT_GREEN).clickEvent(ClickEvent.runCommand("/friend accept " + getName(player))))
+                    .append(Component.text(" [ABLEHNEN]", PluginColor.RED).clickEvent(ClickEvent.runCommand("/friend deny " + getName(player))))
             )
         }
     }
