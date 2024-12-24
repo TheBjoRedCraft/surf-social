@@ -7,7 +7,7 @@ object PluginColor {
     val BLUE: TextColor? = TextColor.fromHexString("#40d1db")
     val BLUE_LIGHT: TextColor? = TextColor.fromHexString("#96cfe7")
     val BLUE_MID: TextColor? = TextColor.fromHexString("#4bb8f8")
-    val RED: TextColor? = TextColor.fromHexString("#e92a25")
+    val RED: TextColor? = TextColor.fromHexString("#FF5555")
     val GOLD: TextColor? = TextColor.fromHexString("#fba24e")
     val LIGHT_GRAY: TextColor? = TextColor.fromHexString("#d3d3d3")
     val DARK_GRAY: TextColor? = TextColor.fromHexString("#a9a9a9")
