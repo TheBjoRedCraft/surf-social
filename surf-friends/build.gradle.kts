@@ -46,7 +46,7 @@ paper {
     authors = listOf("TheBjoRedCraft", "SLNE Development")
     prefix = "SurfSocial/SurfFriends"
     name = "SurfFriends"
-    version = "3.1.0-SNAPSHOT"
+    version = "3.2.0-SNAPSHOT"
     foliaSupported = false
 
     serverDependencies {
