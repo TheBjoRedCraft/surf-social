@@ -57,5 +57,7 @@ class SurfFriendsPlugin : SuspendingJavaPlugin() {
     * update friend on other server when removed or added
     * use cloud for sending players to other servers when "jumping" to friend
     * use cloud to get server from player and ignored message when server is "blocked" (to prevent spoiling to coming events etc.)
+    * when player joins network notify friends
+    * when player leaves network notify friends
     *
  */
