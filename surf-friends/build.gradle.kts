@@ -47,6 +47,7 @@ paper {
     prefix = "SurfSocial/SurfFriends"
     name = "SurfFriends"
     version = "3.1.0-SNAPSHOT"
+    foliaSupported = false
 
     serverDependencies {
         register("CommandAPI") {
