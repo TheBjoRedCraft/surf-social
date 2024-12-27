@@ -3,7 +3,6 @@ package dev.slne.surf.friends.database
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.slne.surf.friends.*
-import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,6 +28,7 @@ object Database {
         config.maxLifetime = 600000
 
         dataSource = HikariDataSource(config)
+
         createTable()
     }
 
@@ -53,13 +53,7 @@ object Database {
                 }
             }
         } catch (e: SQLException) {
-            Bukkit.getConsoleSender().sendMessage(
-                prefix.append(
-                    Component.text(
-                        e.message ?: "Unknown (SQL Exeption in Database: createTable)"
-                    )
-                )
-            )
+            Bukkit.getConsoleSender().sendMessage(prefix.append(Component.text(e.message ?: "Unknown (SQL Exeption in Database: createTable)")))
         }
     }
 
@@ -142,13 +136,7 @@ object Database {
                     }
                 }
             } catch (e: SQLException) {
-                Bukkit.getConsoleSender().sendMessage(
-                    prefix.append(
-                        Component.text(
-                            e.message ?: "Unknown SQL error"
-                        )
-                    )
-                )
+                Bukkit.getConsoleSender().sendMessage(prefix.append(Component.text(e.message ?: "Unknown SQL error")))
             }
         }
     }

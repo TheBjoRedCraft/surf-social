@@ -5,7 +5,6 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import dev.slne.surf.friends.FriendManager
-import dev.slne.surf.friends.SurfFriendsPlugin
 import dev.slne.surf.friends.listener.util.ItemBuilder
 import dev.slne.surf.friends.listener.util.PluginColor
 import dev.slne.surf.friends.listener.util.buildGuiItem
@@ -68,9 +67,7 @@ class FriendMainMenu : FriendMenu(5, "Freunde") {
                 }
 
                 plugin.launch {
-                    FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(
-                        it.whoClicked
-                    )
+                    FriendRequestsMenu(FriendManager.getFriendRequests(it.whoClicked.uniqueId)).show(it.whoClicked)
                 }
             }
         )
