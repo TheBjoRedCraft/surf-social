@@ -40,6 +40,7 @@ class FriendAddMenu() : Builder() {
                 return@onClick listOf()
             }
 
+
             plugin.launch {
                 FriendManager.sendFriendRequest(state.player.uniqueId, Bukkit.getOfflinePlayer(state.text).uniqueId)
 

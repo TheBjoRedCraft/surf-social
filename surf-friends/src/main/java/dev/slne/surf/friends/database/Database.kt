@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.slne.surf.friends.*
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
@@ -79,16 +80,16 @@ object Database {
                                 val allowRequests: Boolean = resultSet.getBoolean("allowrequests")
 
                                 val friendsList = if (friends.isEmpty()) {
-                                    ObjectArrayList()
+                                    ObjectArraySet()
                                 } else {
-                                    ObjectArrayList(friends.split(",")
+                                    ObjectArraySet(friends.split(",")
                                         .map { UUID.fromString(it.trim()) })
                                 }
 
                                 val friendRequestsList = if (friendRequests.isEmpty()) {
-                                    ObjectArrayList()
+                                    ObjectArraySet()
                                 } else {
-                                    ObjectArrayList(friendRequests.split(",")
+                                    ObjectArraySet(friendRequests.split(",")
                                         .map { UUID.fromString(it.trim()) })
                                 }
 

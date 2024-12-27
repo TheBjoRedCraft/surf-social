@@ -17,6 +17,7 @@ import dev.slne.surf.friends.menu.buttons.FriendButton
 import dev.slne.surf.friends.menu.getPagesButtons
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
@@ -25,7 +26,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class FriendFriendsMenu(friends: ObjectList<UUID>) : FriendMenu(5, "Deine Freunde") {
+class FriendFriendsMenu(friends: ObjectSet<UUID>) : FriendMenu(5, "Deine Freunde") {
     init {
         val header = OutlinePane(0, 0, 9, 1, Pane.Priority.LOW)
         val footer = OutlinePane(0, 4, 9, 1, Pane.Priority.LOW)
@@ -77,7 +78,7 @@ class FriendFriendsMenu(friends: ObjectList<UUID>) : FriendMenu(5, "Deine Freund
         }
     }
 
-    private fun getFriendItems(friends: ObjectList<UUID>): ObjectList<GuiItem> {
+    private fun getFriendItems(friends: ObjectSet<UUID>): ObjectList<GuiItem> {
         val stacks: ObjectList<GuiItem> = ObjectArrayList()
 
         friends.forEach {

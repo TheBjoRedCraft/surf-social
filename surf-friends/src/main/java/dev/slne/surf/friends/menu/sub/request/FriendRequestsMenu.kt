@@ -14,11 +14,12 @@ import dev.slne.surf.friends.menu.buttons.RequestButton
 import dev.slne.surf.friends.menu.getPagesButtons
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import java.util.*
 
-class FriendRequestsMenu(requests: ObjectList<UUID>) : FriendMenu(5, "Freundschaftsanfragen") {
+class FriendRequestsMenu(requests: ObjectSet<UUID>) : FriendMenu(5, "Freundschaftsanfragen") {
     init {
         val header = OutlinePane(0, 0, 9, 1, Pane.Priority.LOW)
         val footer = OutlinePane(0, 4, 9, 1, Pane.Priority.LOW)
@@ -54,11 +55,10 @@ class FriendRequestsMenu(requests: ObjectList<UUID>) : FriendMenu(5, "Freundscha
     }
 
 
-    private fun getFriendRequestsItems(requests: ObjectList<UUID>): ObjectList<GuiItem> {
+    private fun getFriendRequestsItems(requests: ObjectSet<UUID>): ObjectList<GuiItem> {
         val stacks: ObjectList<GuiItem> = ObjectArrayList()
 
-        requests.forEach {
-            stacks.add(RequestButton(Bukkit.getOfflinePlayer(it)))
+        requests.forEach { stacks.add(RequestButton(Bukkit.getOfflinePlayer(it)))
         }
 
         return stacks

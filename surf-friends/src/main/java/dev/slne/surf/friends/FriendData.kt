@@ -1,12 +1,14 @@
 package dev.slne.surf.friends
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectList
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
 data class FriendData(
     val player: UUID,
-    val friends: ObjectList<UUID>  = ObjectArrayList(),
-    val friendRequests: ObjectList<UUID> = ObjectArrayList(),
+    val friends: ObjectSet<UUID>  = ObjectArraySet(),
+    val friendRequests: ObjectSet<UUID> = ObjectArraySet(),
     var allowRequests: Boolean = true
 )

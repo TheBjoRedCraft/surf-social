@@ -9,6 +9,7 @@ import dev.slne.surf.friends.database.Database
 import dev.slne.surf.friends.listener.util.PluginColor
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -83,11 +84,15 @@ object FriendManager {
             return
         }
 
-        if (!targetData.friendRequests.add(player)) {
+        if(targetData.friendRequests.contains(player)) {
             return
         }
 
         if(player == target) {
+            return
+        }
+
+        if (!targetData.friendRequests.add(player)) {
             return
         }
 
@@ -158,7 +163,7 @@ object FriendManager {
     suspend fun hasFriendRequest(player: UUID, target: UUID): Boolean =
         queryFriendData(player).friendRequests.contains(target)
 
-    suspend fun getFriendRequests(player: UUID): ObjectList<UUID> =
+    suspend fun getFriendRequests(player: UUID): ObjectSet<UUID> =
         queryFriendData(player).friendRequests
 
     suspend fun toggle(player: UUID): Boolean {
@@ -206,7 +211,7 @@ object FriendManager {
         return "???"
     }
 
-    suspend fun getFriends(player: UUID): ObjectList<UUID> = queryFriendData(player).friends
+    suspend fun getFriends(player: UUID): ObjectSet<UUID> = queryFriendData(player).friends
 
     suspend fun areFriends(player: UUID, target: UUID): Boolean =
         queryFriendData(player).friends.contains(target)
