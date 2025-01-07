@@ -1,7 +1,8 @@
 [versions]
 velocity-api = "3.4.0-SNAPSHOT"
+velocity-proxy = "3.4.0-SNAPSHOT"
 paper-api = "1.21.1-R0.1-SNAPSHOT"
-commandapi-velocity = "9.5.0-SNAPSHOT"
+commandapi-velocity = "9.7.1-SNAPSHOT"
 commandapi-bukkit = "9.5.2"
 inventory-framework = "0.10.18"
 fastutil = "8.5.9"
@@ -14,6 +15,7 @@ mccoroutine-folia = "2.20.0"
 
 [libraries]
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
+velocity-proxy = { module = "com.velocitypowered:velocity-proxy", version.ref = "velocity-proxy" }
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
 commandapi-velocity = { module = "dev.jorel:commandapi-velocity-shade", version.ref = "commandapi-velocity" }
 commandapi-bukkit = { module = "dev.jorel:commandapi-bukkit-core", version.ref = "commandapi-bukkit" }
