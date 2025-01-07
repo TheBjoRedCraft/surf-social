@@ -4,8 +4,10 @@ plugins {
     id("java")
     id("com.gradleup.shadow")
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
+    id("org.hibernate.build.maven-repo-auth") version "3.0.4"
 
     `kotlin-dsl`
+    `maven-publish`
 }
 
 repositories {
@@ -20,13 +22,22 @@ repositories {
     maven {
         url = uri("https://repo.codemc.org/repository/maven-public/")
     }
+
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
+
+    maven("https://repo.slne.dev/repository/maven-unsafe/") {
+        name = "maven-unsafe"
+    }
 }
 
 
 dependencies {
     compileOnlyApi(libs.paper.api)
+    compileOnlyApi(libs.packetuxui)
     compileOnly(libs.commandapi.bukkit)
+
     implementation(libs.inventory.framework)
+    implementation(libs.repo.auth)
 
     implementation ("com.zaxxer:HikariCP:5.0.1")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
@@ -61,13 +72,14 @@ tasks.shadowJar {
     relocate("com.github.stefvanschie.inventoryframework", "dev.slne.surf.friends.inventoryframework")
 
     archiveClassifier.set("")
-    archiveVersion.set("3.1.0-SNAPSHOT")
+    archiveVersion.set("3.2.0-SNAPSHOT")
     archiveBaseName.set("surf-friends")
 
     manifest {
         attributes["paperweight-mappings-namespace"] = "spigot"
     }
 }
+
 kotlin {
     jvmToolchain(21)
 }

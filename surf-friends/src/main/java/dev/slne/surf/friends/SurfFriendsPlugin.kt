@@ -41,7 +41,7 @@ class SurfFriendsPlugin : SuspendingJavaPlugin() {
     private fun registerCommands() {
         FriendCommand("friend").register()
         FriendAddCommand("fa").register()
-        FriendListCommand("fl").register()
+        FriendListCommand("friendlist").register()
     }
 
     @OptIn(DelicateCoroutinesApi::class)

@@ -8,6 +8,7 @@ import dev.hsbrysk.caffeine.buildCoroutine
 import dev.slne.surf.friends.database.Database
 import dev.slne.surf.friends.listener.util.PluginColor
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -201,9 +202,9 @@ object FriendManager {
     private fun getName(uuid: UUID) = Bukkit.getOfflinePlayer(uuid).name ?: "Unbekannt"
     private fun getNameOrUUID(uuid: UUID) = Bukkit.getOfflinePlayer(uuid).name ?: uuid
 
-    suspend fun getOnlineFriends(player: UUID): ObjectList<Player> {
+    suspend fun getOnlineFriends(player: UUID): ObjectSet<Player> {
         // TODO: Cloud implementation
-        return ObjectArrayList()
+        return ObjectArraySet()
     }
 
     suspend fun getServer(player: UUID): String {

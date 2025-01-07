@@ -7,6 +7,9 @@ inventory-framework = "0.10.18"
 fastutil = "8.5.9"
 velocity-api-annotation = "3.4.0-SNAPSHOT"
 mysql = "9.1.0"
+packetuxui = "1.0.1-SNAPSHOT"
+repo-auth = "3.0.4"
+mccoroutine-folia = "2.20.0"
 
 
 [libraries]
@@ -18,3 +21,7 @@ inventory-framework = { module = "com.github.stefvanschie.inventoryframework:IF"
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 velocity-api-annotation = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api-annotation" }
 mysql = {module = "mysql:mysql-connector-java", version.ref = "mysql" }
+packetuxui = { module = "net.craftoriya:packetuxui-bukkit", version.ref = "packetuxui" }
+repo-auth = { module = "org.hibernate.build.maven-repo-auth:org.hibernate.build.maven-repo-auth.gradle.plugin", version.ref = "repo-auth" }
+mccoroutine-folia = { module = "com.github.shynixn.mccoroutine:mccoroutine-folia-api", version.ref = "mccoroutine-folia" }
+mccoroutine-folia-core = { module = "com.github.shynixn.mccoroutine:mccoroutine-folia-core", version.ref = "mccoroutine-folia" }

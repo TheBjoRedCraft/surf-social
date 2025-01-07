@@ -14,6 +14,8 @@ import org.bukkit.entity.Player
 class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
 
     init {
+
+        withAliases("fl")
         executesPlayer(PlayerCommandExecutor { player: Player, _: CommandArguments? ->
             plugin.launch {
                 val friends = FriendManager.getFriends(player.uniqueId)
