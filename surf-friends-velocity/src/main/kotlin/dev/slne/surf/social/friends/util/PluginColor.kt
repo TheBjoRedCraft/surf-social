@@ -12,5 +12,5 @@ object PluginColor {
     val LIGHT_GRAY: TextColor? = TextColor.fromHexString("#d3d3d3")
     val DARK_GRAY: TextColor? = TextColor.fromHexString("#a9a9a9")
     val WHITE: TextColor? = TextColor.fromHexString("#ffffff")
-    var LIGHT_GREEN: TextColor? = TextColor.fromHexString("#29e918")
+    val LIGHT_GREEN: TextColor? = TextColor.fromHexString("#29e918")
 }

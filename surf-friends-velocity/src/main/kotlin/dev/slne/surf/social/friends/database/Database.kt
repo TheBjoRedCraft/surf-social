@@ -2,13 +2,17 @@ package dev.slne.surf.social.friends.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+
 import dev.slne.surf.social.friends.SurfFriends
-import dev.slne.surf.social.friends.manager.FriendData
-import dev.slne.surf.social.friends.manager.FriendManager
+import dev.slne.surf.social.friends.player.FriendPlayer
+
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
 import org.gradle.internal.cc.base.logger
+
 import java.sql.SQLException
 import java.util.*
 
@@ -43,6 +47,7 @@ object Database {
         val table: String = """
             CREATE TABLE IF NOT EXISTS surffriends (
             uuid VARCHAR(36) PRIMARY KEY,
+            name TEXT,
             friends TEXT,
             friendrequests TEXT,
             allowrequests boolean
@@ -65,7 +70,7 @@ object Database {
         }
     }
 
-    suspend fun getFriendData(player: UUID): FriendData {
+    suspend fun getPlayer(player: UUID): FriendPlayer? {
         val query = "SELECT * FROM surffriends WHERE uuid = ?"
 
         return withContext(Dispatchers.IO) {
@@ -77,6 +82,7 @@ object Database {
                         statement.setString(1, player.toString())
                         statement.executeQuery().use { resultSet ->
                             if (resultSet.next()) {
+                                val name: String = resultSet.getString("name")
                                 val friends: String = resultSet.getString("friends")
                                 val friendRequests: String = resultSet.getString("friendrequests")
                                 val allowRequests: Boolean = resultSet.getBoolean("allowrequests")
@@ -84,18 +90,65 @@ object Database {
                                 val friendsList = if (friends.isEmpty()) {
                                     ObjectArraySet()
                                 } else {
-                                    ObjectArraySet(friends.split(",")
-                                        .map { UUID.fromString(it.trim()) })
+                                    ObjectArraySet(friends.split(",").map { UUID.fromString(it.trim()) })
                                 }
 
                                 val friendRequestsList = if (friendRequests.isEmpty()) {
                                     ObjectArraySet()
                                 } else {
-                                    ObjectArraySet(friendRequests.split(",")
-                                        .map { UUID.fromString(it.trim()) })
+                                    ObjectArraySet(friendRequests.split(",").map { UUID.fromString(it.trim()) })
                                 }
 
-                                return@withContext FriendData(
+                                return@withContext FriendPlayer(
+                                    player,
+                                    name,
+                                    friendsList,
+                                    friendRequestsList,
+                                    allowRequests
+                                )
+                            }
+                        }
+                    }
+                }
+            } catch (e: SQLException) {
+                logger.error(e.message)
+            }
+
+            return@withContext null
+        }
+    }
+
+    suspend fun getPlayer(player: String): FriendPlayer? {
+        val query = "SELECT * FROM surffriends WHERE name = ?"
+
+        return withContext(Dispatchers.IO) {
+            try {
+                val source = dataSource;
+
+                source.connection.use { connection ->
+                    connection.prepareStatement(query).use { statement ->
+                        statement.setString(2, player)
+                        statement.executeQuery().use { resultSet ->
+                            if (resultSet.next()) {
+                                val uuid: UUID = UUID.fromString(resultSet.getString("uuid"))
+                                val friends: String = resultSet.getString("friends")
+                                val friendRequests: String = resultSet.getString("friendrequests")
+                                val allowRequests: Boolean = resultSet.getBoolean("allowrequests")
+
+                                val friendsList = if (friends.isEmpty()) {
+                                    ObjectArraySet()
+                                } else {
+                                    ObjectArraySet(friends.split(",").map { UUID.fromString(it.trim()) })
+                                }
+
+                                val friendRequestsList = if (friendRequests.isEmpty()) {
+                                    ObjectArraySet()
+                                } else {
+                                    ObjectArraySet(friendRequests.split(",").map { UUID.fromString(it.trim()) })
+                                }
+
+                                return@withContext FriendPlayer(
+                                    uuid,
                                     player,
                                     friendsList,
                                     friendRequestsList,
@@ -109,22 +162,23 @@ object Database {
                 logger.error(e.message)
             }
 
-            return@withContext FriendManager.newFriendData(player)
+            return@withContext null
         }
     }
 
-    suspend fun saveFriendData(friendData: FriendData) {
+    suspend fun saveFriendPlayer(player: FriendPlayer) {
         val query = """
-        INSERT INTO surffriends (uuid, friends, friendrequests, allowrequests)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO surffriends (uuid, name, friends, friendrequests, allowrequests)
+        VALUES (?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
+        name = VALUES(name),
         friends = VALUES(friends),
         friendrequests = VALUES(friendrequests),
         allowrequests = VALUES(allowrequests);
     """.trimIndent()
 
-        val friends = friendData.friends.joinToString(",") { it.toString() }
-        val friendRequests = friendData.friendRequests.joinToString(",") { it.toString() }
+        val friends = player.friends.joinToString(",") { it.toString() }
+        val friendRequests = player.friendRequests.joinToString(",") { it.toString() }
 
         withContext(Dispatchers.IO) {
             try {
@@ -132,10 +186,11 @@ object Database {
 
                 source.connection.use { connection ->
                     connection.prepareStatement(query).use { statement ->
-                        statement.setString(1, friendData.player.toString())
-                        statement.setString(2, friends)
-                        statement.setString(3, friendRequests)
-                        statement.setBoolean(4, friendData.allowRequests)
+                        statement.setString(1, player.uuid.toString())
+                        statement.setString(2, player.name)
+                        statement.setString(3, friends)
+                        statement.setString(4, friendRequests)
+                        statement.setBoolean(5, player.allowRequests)
                         statement.executeUpdate()
                     }
                 }
