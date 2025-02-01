@@ -23,7 +23,6 @@ class SurfFriends @Inject constructor (
     suspendingPluginContainer: SuspendingPluginContainer,
     val proxy: ProxyServer,
     val logger: Logger,
-    val friendManager: FriendManager,
     @DataDirectory val dataDirectory: Path
 ) {
     lateinit var config: Path
