@@ -13,7 +13,7 @@ object FriendPlayerFactory {
         .expireAfterWrite(30, TimeUnit.MINUTES)
         .removalListener<UUID, FriendPlayer> { uuid, player, cause ->
             if (cause == RemovalCause.EXPIRED && player != null) {
-                /* Save to db */
+
             }
         }
         .buildCoroutine(::loadFriendPlayer)

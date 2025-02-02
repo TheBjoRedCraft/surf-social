@@ -19,7 +19,7 @@ data class FriendPlayer (
 ) {
     fun toPlayer(): Player? = SurfFriends.instance.proxy.getPlayer(uuid).getOrNull()
 
-    suspend fun save() {
+    private suspend fun save() {
         FriendPlayerFactory.savePlayer(this)
     }
 
