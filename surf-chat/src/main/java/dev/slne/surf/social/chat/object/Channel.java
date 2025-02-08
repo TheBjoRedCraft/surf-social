@@ -12,5 +12,4 @@ public class Channel {
   private String description;
 
   private boolean closed;
-
 }
