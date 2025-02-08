@@ -11,9 +11,11 @@ public class ConfigProvider {
   public static ConfigProvider instance = new ConfigProvider();
   private final FileConfiguration config = SurfChat.getInstance().getConfig();
 
-  private String PRIVATE_MESSAGE_FORMAT;
+  private String privateMessageFormat;
+  private String publicMessageFormat;
 
   public void reload() {
-    PRIVATE_MESSAGE_FORMAT = config.getString("private-message-format");
+    privateMessageFormat = config.getString("private-message-format");
+    publicMessageFormat = config.getString("public-message-format");
   }
 }
