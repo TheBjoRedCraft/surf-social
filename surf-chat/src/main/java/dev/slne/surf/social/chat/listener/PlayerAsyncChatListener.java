@@ -3,11 +3,15 @@ package dev.slne.surf.social.chat.listener;
 import dev.slne.surf.social.chat.object.Message;
 import dev.slne.surf.social.chat.provider.ConfigProvider;
 import dev.slne.surf.social.chat.service.ChatHistoryService;
+
 import io.papermc.paper.event.player.AsyncChatEvent;
+
 import me.clip.placeholderapi.PlaceholderAPI;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

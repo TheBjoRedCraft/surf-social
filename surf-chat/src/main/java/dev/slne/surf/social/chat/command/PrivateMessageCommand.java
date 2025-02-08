@@ -14,13 +14,14 @@ public class PrivateMessageCommand extends CommandAPICommand {
 
     withArguments(new PlayerArgument("player"));
     withArguments(new GreedyStringArgument("message"));
+    withAliases("tell", "w", "pm", "dm");
     withPermission("surf.chat.command.private-message");
     executesPlayer((player, args) -> {
       Player target = args.getUnchecked("player");
       String message = args.getUnchecked("message");
 
-      target.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPRIVATE_MESSAGE_FORMAT()).replace("%message%", message)));
-      player.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(target, ConfigProvider.getInstance().getPRIVATE_MESSAGE_FORMAT()).replace("%message%", message)));
+      target.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPrivateMessageFormat()).replace("%message%", message)));
+      player.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(target, ConfigProvider.getInstance().getPrivateMessageFormat()).replace("%message%", message)));
     });
   }
 }
