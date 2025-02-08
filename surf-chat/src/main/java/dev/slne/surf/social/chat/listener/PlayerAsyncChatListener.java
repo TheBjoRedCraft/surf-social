@@ -1,7 +1,9 @@
 package dev.slne.surf.social.chat.listener;
 
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.object.Message;
 import dev.slne.surf.social.chat.provider.ConfigProvider;
+import dev.slne.surf.social.chat.service.ChatFilterService;
 import dev.slne.surf.social.chat.service.ChatHistoryService;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -10,6 +12,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.Bukkit;
@@ -23,6 +26,12 @@ public class PlayerAsyncChatListener implements Listener {
     Player player = event.getPlayer();
 
     if(event.isCancelled()) {
+      return;
+    }
+
+    if(ChatFilterService.getInstance().containsBlocked(event.message())) {
+      event.setCancelled(true);
+      player.sendMessage(SurfChat.getPrefix().append(Component.text("Bitte achte auf deine Wortwahl!", NamedTextColor.RED)));
       return;
     }
 
