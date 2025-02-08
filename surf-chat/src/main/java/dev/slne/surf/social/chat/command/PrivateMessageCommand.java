@@ -20,8 +20,8 @@ public class PrivateMessageCommand extends CommandAPICommand {
       Player target = args.getUnchecked("player");
       String message = args.getUnchecked("message");
 
-      target.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPrivateMessageFormat()).replace("%message%", message)));
-      player.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(target, ConfigProvider.getInstance().getPrivateMessageFormat()).replace("%message%", message)));
+      target.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPrivateMessageFormatReceive()).replace("%message%", message)));
+      player.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(target, ConfigProvider.getInstance().getPrivateMessageFormatSend()).replace("%message%", message)));
     });
   }
 }
