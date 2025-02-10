@@ -5,6 +5,7 @@ import dev.slne.surf.social.chat.command.SurfChatCommand;
 import dev.slne.surf.social.chat.command.channel.ChannelCommand;
 import dev.slne.surf.social.chat.listener.PlayerAsyncChatListener;
 import dev.slne.surf.social.chat.listener.PlayerQuitListener;
+import dev.slne.surf.social.chat.provider.ConfigProvider;
 import dev.slne.surf.social.chat.service.ChatFilterService;
 
 import net.kyori.adventure.text.Component;
@@ -25,6 +26,8 @@ public class SurfChat extends JavaPlugin {
     new SurfChatCommand("surfchat").register();
 
     this.saveDefaultConfig();
+
+    ConfigProvider.getInstance().reload();
 
     Bukkit.getPluginManager().registerEvents(new PlayerAsyncChatListener(), this);
     Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);

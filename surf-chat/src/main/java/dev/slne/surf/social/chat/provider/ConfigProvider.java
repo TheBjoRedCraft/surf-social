@@ -8,7 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 @Getter
 public class ConfigProvider {
   @Getter
-  public static ConfigProvider instance = new ConfigProvider();
+  private static final ConfigProvider instance = new ConfigProvider();
   private final FileConfiguration config = SurfChat.getInstance().getConfig();
 
   private String privateMessageFormatSend;
