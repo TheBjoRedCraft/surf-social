@@ -56,6 +56,8 @@ public class PlayerAsyncChatListener implements Listener {
       return;
     }
 
+    event.setCancelled(true);
+
     String plainMessage = PlainTextComponentSerializer.plainText().serialize(event.message());
     Channel channel = Channel.getChannel(player);
     int messageID = this.getRandomID();
@@ -88,8 +90,6 @@ public class PlayerAsyncChatListener implements Listener {
             .message(message)
             .build(), messageID);
       }
-
-      event.setCancelled(true);
       return;
     }
 
@@ -112,7 +112,9 @@ public class PlayerAsyncChatListener implements Listener {
             .build())
         ;
 
-    event.message(message);
+    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+      onlinePlayer.sendMessage(message);
+    }
 
     Bukkit.getOnlinePlayers().forEach(online -> ChatHistoryService.getInstance().insertNewMessage(online.getUniqueId(), Message.builder()
         .receiver(online.getName())
@@ -130,8 +132,7 @@ public class PlayerAsyncChatListener implements Listener {
   private Component getTeleportComponent(String name) {
     return Component.text(" [", PluginColor.LIGHT_GRAY).append(Component.text("TP", PluginColor.BLUE_MID)).append(Component.text("] ", PluginColor.LIGHT_GRAY))
         .clickEvent(ClickEvent.runCommand("/tp " + name))
-        .hoverEvent(Component.text("Zum Spieler teleportieren", PluginColor.BLUE_MID))
-        ;
+        .hoverEvent(Component.text("Zum Spieler teleportieren", PluginColor.BLUE_MID));
   }
 
   private int getRandomID() {
