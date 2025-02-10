@@ -187,6 +187,7 @@ public class Channel {
   }
 
   public void join(OfflinePlayer player) {
+
     if(members.contains(player)) {
       return;
     }
