@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import dev.slne.surf.social.chat.object.Message;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -33,15 +34,16 @@ public class ChatHistoryService {
     });
   }
 
-  public void insertNewMessage(UUID player, Message message, int messageID) {
-    Int2ObjectMap<Message> chatHistory = chatHistoryCache.getIfPresent(player);
+  public void insertNewMessage(UUID player, Message message) {
+      Int2ObjectMap<Message> chatHistory = chatHistoryCache.getIfPresent(player);
 
-    if (chatHistory == null) {
-      chatHistory = new Int2ObjectOpenHashMap<>();
-      chatHistoryCache.put(player, chatHistory);
-    }
+      if (chatHistory == null) {
+          chatHistory = new Int2ObjectOpenHashMap<>();
+          chatHistoryCache.put(player, chatHistory);
+      }
 
-    chatHistory.put(messageID, message);
+      int timestamp = (int) (System.currentTimeMillis() / 1000);
+      chatHistory.put(timestamp, message);
   }
 
   public Int2ObjectMap<Message> getChatHistory(UUID player) {
@@ -57,24 +59,23 @@ public class ChatHistoryService {
   }
 
   public void resend(UUID player) {
-    Int2ObjectMap<Message> chatHistory = chatHistoryCache.getIfPresent(player);
+      Int2ObjectMap<Message> chatHistory = chatHistoryCache.getIfPresent(player);
 
-    Bukkit.getOnlinePlayers().forEach(online -> {
-      int index = 0;
-      while (index < 100) {
-        online.sendMessage(Component.empty());
-        index++;
+      Bukkit.getOnlinePlayers().forEach(online -> {
+          int index = 0;
+          while (index < 100) {
+              online.sendMessage(Component.empty());
+              index++;
+          }
+      });
+
+      if (chatHistory != null) {
+          chatHistory.int2ObjectEntrySet()
+              .stream()
+              .sorted(Map.Entry.comparingByKey())
+              .forEach(entry -> {
+                  Bukkit.getOnlinePlayers().forEach(target -> target.sendMessage(entry.getValue().message()));
+              });
       }
-    });
-
-    if (chatHistory != null) {
-      chatHistory.int2ObjectEntrySet()
-        .stream()
-        .sorted((e1, e2) -> Integer.compare(e2.getIntKey(), e1.getIntKey()))
-        .limit(25)
-        .forEach(entry -> {
-          Bukkit.getOnlinePlayers().forEach(target -> target.sendMessage(entry.getValue().message()));
-        });
-    }
   }
 }
