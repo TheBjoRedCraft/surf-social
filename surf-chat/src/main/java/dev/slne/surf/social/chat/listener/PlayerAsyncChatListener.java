@@ -124,13 +124,13 @@ public class PlayerAsyncChatListener implements Listener {
   }
 
   private Component getDeleteComponent(int id) {
-    return Component.text(" [", PluginColor.LIGHT_GRAY).append(Component.text("DEL", PluginColor.RED)).append(Component.text("] ", PluginColor.LIGHT_GRAY))
+    return Component.text("[", PluginColor.DARK_GRAY).append(Component.text("DEL", PluginColor.RED)).append(Component.text("]", PluginColor.DARK_GRAY))
         .clickEvent(ClickEvent.runCommand("/surfchat delete " + id))
         .hoverEvent(Component.text("Nachricht löschen", PluginColor.RED));
   }
 
   private Component getTeleportComponent(String name) {
-    return Component.text(" [", PluginColor.LIGHT_GRAY).append(Component.text("TP", PluginColor.BLUE_MID)).append(Component.text("] ", PluginColor.LIGHT_GRAY))
+    return Component.text("[", PluginColor.DARK_GRAY).append(Component.text("TP", PluginColor.BLUE_MID)).append(Component.text("]", PluginColor.DARK_GRAY))
         .clickEvent(ClickEvent.runCommand("/tp " + name))
         .hoverEvent(Component.text("Zum Spieler teleportieren", PluginColor.BLUE_MID));
   }
