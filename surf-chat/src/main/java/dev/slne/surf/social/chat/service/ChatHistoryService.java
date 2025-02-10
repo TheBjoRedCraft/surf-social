@@ -31,7 +31,7 @@ public class ChatHistoryService {
     });
   }
 
-  public void insertNewMessage(UUID player, Message message) {
+  public void insertNewMessage(UUID player, Message message, int messageID) {
     Int2ObjectMap<Message> chatHistory = chatHistoryCache.getIfPresent(player);
 
     if (chatHistory == null) {
@@ -39,7 +39,7 @@ public class ChatHistoryService {
       chatHistoryCache.put(player, chatHistory);
     }
 
-    chatHistory.put(chatHistory.size(), message);
+    chatHistory.put(messageID, message);
   }
 
   public Int2ObjectMap<Message> getChatHistory(UUID player) {

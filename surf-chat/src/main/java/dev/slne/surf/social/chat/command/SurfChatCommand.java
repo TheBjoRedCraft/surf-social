@@ -8,5 +8,7 @@ public class SurfChatCommand extends CommandAPICommand {
     super(commandName);
 
     withPermission("surf.chat.command.surf-chat");
+    withSubcommand(new SurfChatDeleteCommand("delete"));
+    withSubcommand(new SurfChatChatClearCommand("clear"));
   }
 }

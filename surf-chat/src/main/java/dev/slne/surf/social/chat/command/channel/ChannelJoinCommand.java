@@ -1,0 +1,23 @@
+package dev.slne.surf.social.chat.command.channel;
+
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.slne.surf.social.chat.command.argument.ChannelArgument;
+import dev.slne.surf.social.chat.object.Channel;
+
+public class ChannelJoinCommand extends CommandAPICommand {
+
+  public ChannelJoinCommand(String commandName) {
+    super(commandName);
+
+    withArguments(new ChannelArgument("channel"));
+    executesPlayer((player, args) -> {
+      Channel channel = args.getUnchecked("channel");
+
+      if(channel.isClosed() && !channel.hasInvite(player)) {
+        return;
+      }
+
+      channel.join(player);
+    });
+  }
+}

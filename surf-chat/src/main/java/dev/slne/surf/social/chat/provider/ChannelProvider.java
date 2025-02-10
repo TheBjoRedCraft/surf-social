@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.util.UUID;
 import lombok.Getter;
 
+@Getter
 public class ChannelProvider {
   @Getter
   private static final ChannelProvider instance = new ChannelProvider();

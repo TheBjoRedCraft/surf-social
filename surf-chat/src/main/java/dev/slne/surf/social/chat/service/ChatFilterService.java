@@ -8,6 +8,7 @@ package dev.slne.surf.social.chat.service;
   import lombok.Getter;
   import lombok.extern.slf4j.Slf4j;
   import net.kyori.adventure.text.Component;
+  import net.kyori.adventure.text.format.NamedTextColor;
   import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
   import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
   import org.bukkit.configuration.file.FileConfiguration;
@@ -24,10 +25,11 @@ package dev.slne.surf.social.chat.service;
     @Getter
     private static final ChatFilterService instance = new ChatFilterService();
     private final ObjectSet<String> blockedWords = new ObjectArraySet<>();
+    private final ObjectSet<String> allowedDomains = new ObjectArraySet<>();
     private final ObjectSet<Pattern> blockedPatterns = new ObjectArraySet<>();
     private final ComponentLogger logger = ComponentLogger.logger(this.getClass());
 
-    public long loadBlockedWords() {
+    public void loadBlockedWords() {
       File file = new File(SurfChat.getInstance().getDataFolder(), "blocked.yml");
       long start = System.currentTimeMillis();
 
@@ -86,10 +88,29 @@ package dev.slne.surf.social.chat.service;
         blockedPatterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
       });
 
-      return System.currentTimeMillis() - start;
+      logger.info(Component.text("Loaded ", NamedTextColor.GREEN)
+          .append(Component.text(blockedWords.size(), NamedTextColor.GOLD))
+          .append(Component.text(" blocked words in ", NamedTextColor.GREEN))
+          .append(Component.text(System.currentTimeMillis() - start, NamedTextColor.GOLD))
+          .append(Component.text("ms", NamedTextColor.GREEN)));
     }
 
     public boolean containsBlocked(Component message) {
       return blockedPatterns.stream().anyMatch(pattern -> pattern.matcher(PlainTextComponentSerializer.plainText().serialize(message)).find());
+    }
+
+    public boolean containsLink(Component message) {
+      String plainMessage = PlainTextComponentSerializer.plainText().serialize(message);
+      String urlPattern = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?";
+      Pattern pattern = Pattern.compile(urlPattern, Pattern.CASE_INSENSITIVE);
+      var matcher = pattern.matcher(plainMessage);
+
+      while (matcher.find()) {
+        String domain = matcher.group(3);
+        if (allowedDomains.stream().noneMatch(domain::endsWith)) {
+          return true;
+        }
+      }
+      return false;
     }
   }
