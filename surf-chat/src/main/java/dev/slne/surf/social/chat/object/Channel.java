@@ -113,7 +113,16 @@ public class Channel {
   }
 
   public ObjectSet<Player> getOnlinePlayers() {
-    return members.stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).collect(Collectors.toCollection(ObjectArraySet::new));
+    final ObjectSet<Player> players = new ObjectArraySet<>();
+
+    players.addAll(members.stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).collect(Collectors.toCollection(ObjectArraySet::new)));
+    players.addAll(moderators.stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).collect(Collectors.toCollection(ObjectArraySet::new)));
+
+    if(this.getOwner().isOnline()) {
+      players.add(this.getOwner().getPlayer());
+    }
+
+    return players;
   }
 
   public void promote(OfflinePlayer player) {
