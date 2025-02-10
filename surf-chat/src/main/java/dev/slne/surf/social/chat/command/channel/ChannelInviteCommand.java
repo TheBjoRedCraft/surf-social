@@ -10,15 +10,6 @@ public class ChannelInviteCommand extends CommandAPICommand {
   public ChannelInviteCommand(String commandName) {
     super(commandName);
 
-    withRequirement((sender) -> {
-      Channel channel = Channel.getChannel(sender);
-
-      if(channel == null) {
-        return false;
-      }
-
-      return channel.isModerator(sender);
-    });
     withArguments(new OfflinePlayerArgument("player"));
     executesPlayer((player, args) -> {
       Channel channel = Channel.getChannel(player);

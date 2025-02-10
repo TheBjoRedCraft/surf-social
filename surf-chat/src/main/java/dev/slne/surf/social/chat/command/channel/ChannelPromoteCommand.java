@@ -10,15 +10,6 @@ public class ChannelPromoteCommand extends CommandAPICommand {
   public ChannelPromoteCommand(String commandName) {
     super(commandName);
 
-    withRequirement((sender) -> {
-      Channel channel = Channel.getChannel(sender);
-
-      if(channel == null) {
-        return false;
-      }
-
-      return channel.isOwner(sender);
-    });
     withArguments(new ChannelMembersArgument("player"));
     executesPlayer((player, args) -> {
       Channel channel = Channel.getChannel(player);

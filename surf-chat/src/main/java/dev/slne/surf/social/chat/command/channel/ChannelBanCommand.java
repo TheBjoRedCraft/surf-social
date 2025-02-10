@@ -10,16 +10,6 @@ public class ChannelBanCommand extends CommandAPICommand {
   public ChannelBanCommand(String commandName) {
     super(commandName);
 
-    withRequirement((sender) -> {
-      Channel channel = Channel.getChannel(sender);
-
-      if(channel == null) {
-        return false;
-      }
-
-      return channel.isModerator(sender);
-    });
-
     withArguments(new ChannelMembersArgument("player"));
     executesPlayer((player, args) -> {
       Channel channel = Channel.getChannel(player);
