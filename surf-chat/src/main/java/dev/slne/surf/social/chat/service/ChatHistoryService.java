@@ -26,7 +26,7 @@ public class ChatHistoryService {
 
     Bukkit.getOnlinePlayers().forEach(player -> {
       int index = 0;
-      while (index < 30) {
+      while (index < 100) {
         player.sendMessage(Component.empty());
         index++;
       }
@@ -58,6 +58,14 @@ public class ChatHistoryService {
 
   public void resend(UUID player) {
     Int2ObjectMap<Message> chatHistory = chatHistoryCache.getIfPresent(player);
+
+    Bukkit.getOnlinePlayers().forEach(online -> {
+      int index = 0;
+      while (index < 100) {
+        online.sendMessage(Component.empty());
+        index++;
+      }
+    });
 
     if (chatHistory != null) {
       chatHistory.int2ObjectEntrySet()
