@@ -3,6 +3,7 @@ package dev.slne.surf.social.chat.object;
 import dev.slne.surf.social.chat.provider.ChannelProvider;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.Builder;
@@ -16,16 +17,25 @@ import org.bukkit.entity.Player;
 @Setter
 @Builder
 public class Channel {
+  @Builder.Default
   private OfflinePlayer owner = null;
+  @Builder.Default
   private ObjectSet<OfflinePlayer> members = new ObjectArraySet<>();
+  @Builder.Default
   private ObjectSet<OfflinePlayer> moderators = new ObjectArraySet<>();
+  @Builder.Default
   private ObjectSet<OfflinePlayer> bannedPlayers = new ObjectArraySet<>();
+  @Builder.Default
   private ObjectSet<OfflinePlayer> invites = new ObjectArraySet<>();
 
-  private String name;
-  private String description;
+  @Builder.Default
+  private String name = UUID.randomUUID().toString();
 
-  private boolean closed;
+  @Builder.Default
+  private String description = "Ein cooler Kanal!";
+
+  @Builder.Default
+  private boolean closed = true;
 
   public boolean isMember(OfflinePlayer player) {
     return members.contains(player);
