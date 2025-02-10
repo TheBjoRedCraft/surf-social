@@ -16,11 +16,11 @@ import org.bukkit.entity.Player;
 @Setter
 @Builder
 public class Channel {
-  private OfflinePlayer owner;
-  private ObjectSet<OfflinePlayer> members;
-  private ObjectSet<OfflinePlayer> moderators;
-  private ObjectSet<OfflinePlayer> bannedPlayers;
-  private ObjectSet<OfflinePlayer> invites;
+  private OfflinePlayer owner = null;
+  private ObjectSet<OfflinePlayer> members = new ObjectArraySet<>();
+  private ObjectSet<OfflinePlayer> moderators = new ObjectArraySet<>();
+  private ObjectSet<OfflinePlayer> bannedPlayers = new ObjectArraySet<>();
+  private ObjectSet<OfflinePlayer> invites = new ObjectArraySet<>();
 
   private String name;
   private String description;
