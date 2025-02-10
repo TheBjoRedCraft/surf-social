@@ -22,6 +22,8 @@ public class ChatHistoryService {
   }
 
   public void clearChat() {
+    this.chatHistoryCache.invalidateAll();
+
     Bukkit.getOnlinePlayers().forEach(player -> {
       int index = 0;
       while (index < 30) {
