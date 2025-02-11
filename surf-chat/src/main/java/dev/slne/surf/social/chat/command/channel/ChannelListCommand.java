@@ -4,8 +4,8 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.slne.surf.social.chat.object.Channel;
 import dev.slne.surf.social.chat.provider.ChannelProvider;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import dev.slne.surf.social.chat.util.PageableMessageBuilder;
-import dev.slne.surf.social.chat.util.PluginColor;
 import net.kyori.adventure.text.Component;
 
 public class ChannelListCommand extends CommandAPICommand {
@@ -23,21 +23,23 @@ public class ChannelListCommand extends CommandAPICommand {
       message.setPageCommand("/channel list %page%");
 
       for (Channel channel : ChannelProvider.getInstance().getChannels().values()) {
-        message.addLine(Component.text(index ++ + ". ", PluginColor.LIGHT_GRAY).append(Component.text(channel.getName(), PluginColor.GOLD)).append(Component.newline()).hoverEvent(this.getHoverText(channel)));
+        index ++;
+
+        message.addLine(new MessageBuilder().darkSpacer(index + ". ").primary(channel.getName()).darkSpacer(" (").info(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).darkSpacer(")").build().hoverEvent(this.createInfoMessage(channel)));
       }
 
       message.send(player, page);
     });
   }
 
-  private Component getHoverText(Channel channel) {
-    return Component.text(channel.getDescription())
-        .append(Component.newline())
-        .append(Component.text("Mitglieder: ", PluginColor.LIGHT_GRAY).append(Component.text(channel.getMembers().size(), PluginColor.GOLD)))
-        .append(Component.newline())
-        .append(Component.text("Moderatoren: ", PluginColor.LIGHT_GRAY).append(Component.text(channel.getModerators().size(), PluginColor.GOLD)))
-        .append(Component.newline())
-        .append(Component.text("Einladungen: ", PluginColor.LIGHT_GRAY).append(Component.text(channel.getInvites().size(), PluginColor.GOLD)))
-        .append(Component.newline());
+  private Component createInfoMessage(Channel channel) {
+    return new MessageBuilder()
+        .primary("Kanalinformation: ").info(channel.getName()).newLine()
+        .variableKey("Beschreibung: ").variableValue(channel.getDescription()).newLine()
+        .variableKey("Besitzer: ").variableValue(channel.getOwner().getName()).newLine()
+        .variableKey("Status: ").variableValue(channel.isClosed() ? "Geschlossen" : "Offen").newLine()
+        .variableKey("Mitglieder: ").variableValue(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).newLine()
+        .variableKey("Einladungen: ").variableValue(String.valueOf(channel.getInvites().size())).newLine()
+        .build();
   }
 }

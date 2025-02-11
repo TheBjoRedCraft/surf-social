@@ -121,6 +121,11 @@ public class MessageBuilder {
     return this;
   }
 
+  public MessageBuilder newLine() {
+    message = message.append(Component.newline());
+    return this;
+  }
+
   public Component build() {
     return message;
   }
