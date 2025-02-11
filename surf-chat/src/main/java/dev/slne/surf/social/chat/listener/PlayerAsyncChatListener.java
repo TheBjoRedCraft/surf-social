@@ -8,6 +8,7 @@ import dev.slne.surf.social.chat.provider.ConfigProvider;
 import dev.slne.surf.social.chat.service.ChatFilterService;
 import dev.slne.surf.social.chat.service.ChatHistoryService;
 
+import dev.slne.surf.social.chat.util.Colors;
 import dev.slne.surf.social.chat.util.PluginColor;
 import io.papermc.paper.event.player.AsyncChatEvent;
 
@@ -41,13 +42,13 @@ public class PlayerAsyncChatListener implements Listener {
 
     if(ChatFilterService.getInstance().containsLink(event.message())) {
       event.setCancelled(true);
-      player.sendMessage(SurfChat.getPrefix().append(Component.text("Bitte sende keine Links!", NamedTextColor.RED)));
+      player.sendMessage(Colors.PREFIX.append(Component.text("Bitte sende keine Links!", NamedTextColor.RED)));
       return;
     }
 
     if(ChatFilterService.getInstance().containsBlocked(event.message())) {
       event.setCancelled(true);
-      player.sendMessage(SurfChat.getPrefix().append(Component.text("Bitte achte auf deine Wortwahl!", NamedTextColor.RED)));
+      player.sendMessage(Colors.PREFIX.append(Component.text("Bitte achte auf deine Wortwahl!", NamedTextColor.RED)));
       return;
     }
 
@@ -124,13 +125,13 @@ public class PlayerAsyncChatListener implements Listener {
   }
 
   private Component getDeleteComponent(int id) {
-    return Component.text("[", PluginColor.DARK_GRAY).append(Component.text("DEL", PluginColor.RED)).append(Component.text("]", PluginColor.DARK_GRAY))
+    return Component.text("[", Colors.DARK_SPACER).append(Component.text("DEL", Colors.VARIABLE_KEY)).append(Component.text("]", Colors.DARK_SPACER))
         .clickEvent(ClickEvent.runCommand("/surfchat delete " + id))
         .hoverEvent(Component.text("Nachricht löschen", PluginColor.RED));
   }
 
   private Component getTeleportComponent(String name) {
-    return Component.text("[", PluginColor.DARK_GRAY).append(Component.text("TP", PluginColor.BLUE_MID)).append(Component.text("]", PluginColor.DARK_GRAY))
+    return Component.text("[", Colors.DARK_SPACER).append(Component.text("TP", Colors.VARIABLE_KEY)).append(Component.text("]", Colors.DARK_SPACER))
         .clickEvent(ClickEvent.runCommand("/tp " + name))
         .hoverEvent(Component.text("Zum Spieler teleportieren", PluginColor.BLUE_MID));
   }
