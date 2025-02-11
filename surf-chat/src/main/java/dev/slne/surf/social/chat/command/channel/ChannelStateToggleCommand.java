@@ -10,7 +10,6 @@ public class ChannelStateToggleCommand extends CommandAPICommand {
   public ChannelStateToggleCommand(String commandName) {
     super(commandName);
 
-
     executesPlayer((player, args) -> {
       Channel channel = Channel.getChannel(player);
 
@@ -24,11 +23,11 @@ public class ChannelStateToggleCommand extends CommandAPICommand {
 
      if(channel.isClosed()) {
        channel.setClosed(false);
+       SurfChat.message(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).primary(" ist nun ").success("öffentlich."));
      } else {
        channel.setClosed(true);
+       SurfChat.message(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).primary(" ist nun ").error("privat."));
      }
-
-      SurfChat.message(player, new MessageBuilder().primary("Der Nachrichtenkanal ").secondary(channel.getName()).primary(" ist nun ").success(channel.isClosed() ? "geschlossen." : "geöffnet."));
     });
   }
 }

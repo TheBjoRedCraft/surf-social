@@ -29,7 +29,7 @@ public class ChannelCreateCommand extends CommandAPICommand {
 
       channel.register();
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").secondary(channel.getName()).success(" erstellt."));
+      SurfChat.message(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.getName()).success(" erstellt."));
     });
   }
 }

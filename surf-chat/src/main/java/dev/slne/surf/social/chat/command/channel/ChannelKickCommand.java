@@ -29,8 +29,8 @@ public class ChannelKickCommand extends CommandAPICommand {
 
       channel.kick(target);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast ").secondary(target.getName()).primary(" aus dem Nachrichtenkanal ").secondary(channel.getName()).info(" geworfen."));
-      SurfChat.message(target, new MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").secondary(channel.getName()).info(" geworfen."));
+      SurfChat.message(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" aus dem Nachrichtenkanal ").info(channel.getName()).error(" geworfen."));
+      SurfChat.message(target, new MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").info(channel.getName()).error(" geworfen."));
     });
   }
 }

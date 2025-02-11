@@ -29,8 +29,8 @@ public class ChannelInviteRevokeCommand extends CommandAPICommand {
 
       channel.revokeInvite(target);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast die Einladung für ").secondary(target.getName()).primary(" in den Nachrichtenkanal ").secondary(channel.getName()).success(" zurückgezogen."));
-      SurfChat.message(target, new MessageBuilder().primary("Deine Einladung in den Nachrichtenkanal ").secondary(channel.getName()).primary(" wurde zurückgezogen."));
+      SurfChat.message(player, new MessageBuilder().primary("Du hast die Einladung für ").info(target.getName()).primary(" in den Nachrichtenkanal ").info(channel.getName()).success(" zurückgezogen."));
+      SurfChat.message(target, new MessageBuilder().primary("Deine Einladung in den Nachrichtenkanal ").info(channel.getName()).success(" wurde zurückgezogen."));
     });
   }
 }

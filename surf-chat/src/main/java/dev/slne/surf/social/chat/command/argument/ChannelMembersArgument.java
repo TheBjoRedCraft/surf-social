@@ -3,10 +3,12 @@ package dev.slne.surf.social.chat.command.argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+
 import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.provider.ChannelProvider;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -28,19 +30,19 @@ public class ChannelMembersArgument extends CustomArgument<OfflinePlayer, String
     });
 
     this.replaceSuggestions(ArgumentSuggestions.strings(info -> {
-      try {
-        return ChannelProvider.getInstance().getChannels().values()
-            .stream()
-            .filter(channel ->  channel.isMember(info.sender()) || channel.isOwner(info.sender())).findFirst().orElseThrow(() -> CustomArgumentException.fromString("You are not a member of any channel."))
-            .getMembers()
-            .stream()
-            .filter(player -> player != info.sender())
-            .map(OfflinePlayer::getName)
-            .toArray(String[]::new);
-      } catch (CustomArgumentException e) {
-        info.sender().sendMessage(Component.text("You are not a member of any channel.").color(NamedTextColor.RED));
+      Channel channel = Channel.getChannel(info.sender());
+
+      if(channel == null) {
         return new String[0];
       }
+
+      final ObjectSet<String> members = new ObjectArraySet<>();
+
+      members.addAll(channel.getMembers().stream().map(OfflinePlayer::getName).toList());
+      members.addAll(channel.getModerators().stream().map(OfflinePlayer::getName).toList());
+      members.add(channel.getOwner().getName());
+
+      return members.toArray(String[]::new);
     }));
   }
 }

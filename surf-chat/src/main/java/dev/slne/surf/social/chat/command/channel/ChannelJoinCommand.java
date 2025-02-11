@@ -21,7 +21,7 @@ public class ChannelJoinCommand extends CommandAPICommand {
 
       channel.join(player);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du bist dem Nachrichtenkanal ").secondary(channel.getName()).success(" beigetreten."));
+      SurfChat.message(player, new MessageBuilder().primary("Du bist dem Nachrichtenkanal ").info(channel.getName()).success(" beigetreten."));
     });
   }
 }

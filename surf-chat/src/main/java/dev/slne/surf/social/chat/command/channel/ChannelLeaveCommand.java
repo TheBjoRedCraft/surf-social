@@ -20,7 +20,7 @@ public class ChannelLeaveCommand extends CommandAPICommand {
 
       channel.leave(player);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").secondary(channel.getName()).success(" verlassen."));
+      SurfChat.message(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.getName()).error(" verlassen."));
     });
   }
 }
