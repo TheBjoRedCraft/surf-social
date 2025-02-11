@@ -1,6 +1,8 @@
 package dev.slne.surf.social.chat.util;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 
 public class MessageBuilder {
   private Component message = Component.empty();
@@ -100,6 +102,22 @@ public class MessageBuilder {
    */
   public MessageBuilder prefixColor(String text) {
     message = message.append(Component.text(text, Colors.PREFIX_COLOR));
+    return this;
+  }
+
+  /**
+   * Appends text with the DARK_SPACER color to the message.
+   *
+   * @param text the text to be colored
+   * @return the MessageBuilder instance
+   */
+  public MessageBuilder darkSpacer(String text) {
+    message = message.append(Component.text(text, Colors.DARK_SPACER));
+    return this;
+  }
+
+  public MessageBuilder command(MessageBuilder text, MessageBuilder hover, String command) {
+    message = message.append(text.build().clickEvent(ClickEvent.runCommand(command)).hoverEvent(HoverEvent.showText(hover.build())));
     return this;
   }
 
