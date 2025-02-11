@@ -38,7 +38,7 @@ public class PageableMessageBuilder {
             return;
         }
     
-        Component message = Component.text("==== Seite " + page + " von " + totalPages + " ====", NamedTextColor.GOLD).decorate(TextDecoration.BOLD).append(Component.newline());
+        Component message = Component.text("==== Seite " + page + " von " + totalPages + " ====", Colors.VARIABLE_KEY).decorate(TextDecoration.BOLD).decoration(TextDecoration.BOLD, false).append(Component.newline());
         Component navigation = this.getComponent(page, totalPages);
     
         for (int i = start; i < end; i++) {
@@ -56,11 +56,11 @@ public class PageableMessageBuilder {
         Component navigation = Component.empty();
 
         if (page > 1) {
-            navigation = navigation.append(Component.text("[<< Zurück] ", NamedTextColor.GREEN).clickEvent(ClickEvent.runCommand(this.pageCommand.replace("%page%", String.valueOf(page - 1)))));
+            navigation = navigation.append(Component.text("[<< Zurück] ", Colors.SUCCESS).clickEvent(ClickEvent.runCommand(this.pageCommand.replace("%page%", String.valueOf(page - 1)))));
         }
 
         if (page < totalPages) {
-            navigation = navigation.append(Component.text("[Weiter >>]", NamedTextColor.GREEN).clickEvent(ClickEvent.runCommand(this.pageCommand.replace("%page%", String.valueOf(page + 1)))));
+            navigation = navigation.append(Component.text("[Weiter >>]", Colors.SUCCESS).clickEvent(ClickEvent.runCommand(this.pageCommand.replace("%page%", String.valueOf(page + 1)))));
         }
 
         return navigation;
