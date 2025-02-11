@@ -19,6 +19,10 @@ public class ChannelProvider {
   public void handleQuit(Player player) {
     Channel channel = Channel.getChannel(player);
 
+    if(channel == null) {
+      return;
+    }
+
     if(channel.getOwner().equals(player)) {
       channel.delete();
     }
