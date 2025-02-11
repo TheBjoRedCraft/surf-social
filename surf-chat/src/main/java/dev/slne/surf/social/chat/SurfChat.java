@@ -12,7 +12,7 @@ import dev.slne.surf.social.chat.service.ChatFilterService;
 import dev.slne.surf.social.chat.util.Colors;
 import dev.slne.surf.social.chat.util.MessageBuilder;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,6 +26,9 @@ public class SurfChat extends JavaPlugin {
   @Override
   public void onEnable() {
     CommandAPI.unregister("msg");
+    CommandAPI.unregister("tell");
+    CommandAPI.unregister("w");
+
 
     new PrivateMessageCommand("msg").register();
     new ChannelCommand("channel").register();
