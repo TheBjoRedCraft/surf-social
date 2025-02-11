@@ -22,7 +22,7 @@ public class ChannelUnBanCommand extends CommandAPICommand {
         return;
       }
 
-      if(!channel.isModerator(player)) {
+      if(!channel.isModerator(player) && !channel.isOwner(player)) {
         return;
       }
 
