@@ -28,7 +28,7 @@ public class ChannelDemoteCommand extends CommandAPICommand {
       channel.demote(target);
 
       SurfChat.message(player, new MessageBuilder().primary("Du hast den Spieler ").info(target.getName()).error(" degradiert."));
-      SurfChat.message(target, new MessageBuilder().primary("Du wurdest ").error("degradiert").primary(" und bist nun ein normaler Spieler im Nachrichtenkanal ").info(channel.getName()).primary("."));
+      SurfChat.message(target, new MessageBuilder().primary("Du wurdest ").error("degradiert"));
     });
   }
 }
