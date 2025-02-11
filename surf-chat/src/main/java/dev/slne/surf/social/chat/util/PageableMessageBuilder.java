@@ -49,7 +49,7 @@ public class PageableMessageBuilder {
             message = message.append(navigation);
         }
     
-        sender.sendMessage(message);
+        sender.sendMessage(Component.newline().append(message));
     }
 
     private Component getComponent(int page, int totalPages) {
