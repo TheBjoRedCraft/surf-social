@@ -17,10 +17,10 @@ public class ChannelMembersArgument extends CustomArgument<OfflinePlayer, String
       Channel channel = Channel.getChannelO(player);
 
       if(channel == null) {
-        throw CustomArgumentException.fromMessageBuilder(new MessageBuilder("Unknown person: ").appendArgInput());
+        throw CustomArgumentException.fromMessageBuilder(new MessageBuilder("Du bist in keinem Kanal, oder dieser ist invalid."));
       }
 
-      if(!channel.isMember(player) || !channel.isOwnerO(player) || !channel.isModeratorO(player)) {
+      if(!channel.isMember(player) && !channel.isOwnerO(player) && !channel.isModeratorO(player)) {
         throw CustomArgumentException.fromMessageBuilder(new MessageBuilder("Player is not a member of the channel: ").appendArgInput());
       }
 
