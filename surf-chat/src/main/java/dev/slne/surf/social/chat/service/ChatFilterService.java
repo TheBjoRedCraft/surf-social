@@ -34,7 +34,7 @@ package dev.slne.surf.social.chat.service;
     private final ConcurrentHashMap<UUID, Long> rateLimit = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, Integer> messageCount = new ConcurrentHashMap<>();
     private static final long TIME_FRAME = TimeUnit.SECONDS.toMillis(10);
-    private static final int MESSAGE_LIMIT = 5;
+    private static final int MESSAGE_LIMIT = 3;
 
     public void loadBlockedWords() {
       File file = new File(SurfChat.getInstance().getDataFolder(), "blocked.yml");
