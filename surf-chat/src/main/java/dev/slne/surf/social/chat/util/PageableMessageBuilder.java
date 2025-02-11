@@ -38,11 +38,11 @@ public class PageableMessageBuilder {
             return;
         }
     
-        Component message = Component.text("==== Seite " + page + " von " + totalPages + " ====", Colors.VARIABLE_KEY).decorate(TextDecoration.BOLD).decoration(TextDecoration.BOLD, false).append(Component.newline());
+        Component message = Component.text("==== Seite " + page + " von " + totalPages + " ====", Colors.VARIABLE_KEY).decorate(TextDecoration.BOLD).append(Component.newline());
         Component navigation = this.getComponent(page, totalPages);
     
         for (int i = start; i < end; i++) {
-            message = message.append(lines.get(i)).append(Component.newline());
+            message = message.append(lines.get(i)).append(Component.newline()).decoration(TextDecoration.BOLD, false);
         }
 
         if (!navigation.equals(Component.empty())) {
