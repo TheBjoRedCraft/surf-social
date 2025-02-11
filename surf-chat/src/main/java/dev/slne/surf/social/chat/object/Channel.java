@@ -256,10 +256,10 @@ public class Channel {
   }
 
   public static Channel getChannel(CommandSender sender) {
-    return ChannelProvider.getInstance().getChannels().values().stream().filter(channel ->  channel.isMember(sender) || channel.isOwner(sender)).findFirst().orElse(null);
+    return ChannelProvider.getInstance().getChannels().values().stream().filter(channel ->  channel.isModerator(sender) || channel.isMember(sender) || channel.isOwner(sender)).findFirst().orElse(null);
   }
 
   public static Channel getChannelO(OfflinePlayer player) {
-    return ChannelProvider.getInstance().getChannels().values().stream().filter(channel ->  channel.getMembers().contains(player) || channel.getOwner().equals(player)).findFirst().orElse(null);
+    return ChannelProvider.getInstance().getChannels().values().stream().filter(channel ->  channel.getModerators().contains(player) || channel.getMembers().contains(player) || channel.getOwner().equals(player)).findFirst().orElse(null);
   }
 }

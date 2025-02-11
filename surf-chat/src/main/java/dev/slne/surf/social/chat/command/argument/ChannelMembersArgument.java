@@ -17,7 +17,7 @@ public class ChannelMembersArgument extends CustomArgument<OfflinePlayer, String
       Channel channel = Channel.getChannelO(player);
 
       if(channel == null) {
-        throw CustomArgumentException.fromMessageBuilder(new MessageBuilder("Unknown channel: ").appendArgInput());
+        throw CustomArgumentException.fromMessageBuilder(new MessageBuilder("Unknown person: ").appendArgInput());
       }
 
       if(!channel.isMember(player)) {
