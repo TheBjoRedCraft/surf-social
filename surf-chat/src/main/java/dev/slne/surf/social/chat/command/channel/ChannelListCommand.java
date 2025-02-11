@@ -35,11 +35,11 @@ public class ChannelListCommand extends CommandAPICommand {
   private Component createInfoMessage(Channel channel) {
     return new MessageBuilder()
         .primary("Kanalinformation: ").info(channel.getName()).newLine()
-        .variableKey("Beschreibung: ").variableValue(channel.getDescription()).newLine()
-        .variableKey("Besitzer: ").variableValue(channel.getOwner().getName()).newLine()
-        .variableKey("Status: ").variableValue(channel.isClosed() ? "Geschlossen" : "Offen").newLine()
-        .variableKey("Mitglieder: ").variableValue(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).newLine()
-        .variableKey("Einladungen: ").variableValue(String.valueOf(channel.getInvites().size())).newLine()
+        .darkSpacer("   - ").variableKey("Beschreibung: ").variableValue(channel.getDescription()).newLine()
+        .darkSpacer("   - ").variableKey("Besitzer: ").variableValue(channel.getOwner().getName()).newLine()
+        .darkSpacer("   - ").variableKey("Status: ").variableValue(channel.isClosed() ? "Geschlossen" : "Offen").newLine()
+        .darkSpacer("   - ").variableKey("Mitglieder: ").variableValue(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).newLine()
+        .darkSpacer("   - ").variableKey("Einladungen: ").variableValue(String.valueOf(channel.getInvites().size())).newLine()
         .build();
   }
 }
