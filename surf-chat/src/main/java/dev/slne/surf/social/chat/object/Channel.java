@@ -232,15 +232,13 @@ public class Channel {
       return;
     }
 
-    if(!members.contains(player)) {
-      return;
-    }
-
+    moderators.remove(player);
     members.remove(player);
   }
 
   public void delete() {
     this.members.clear();
+    this.moderators.clear();
 
     this.unregister();
   }
