@@ -28,7 +28,7 @@ public class ChannelPromoteCommand extends CommandAPICommand {
       channel.promote(target);
 
       SurfChat.message(player, new MessageBuilder().primary("Du hast den Spieler ").info(target.getName()).success(" befördert."));
-      SurfChat.message(target, new MessageBuilder().primary("Du wurdest ").success("befördert").primary(" und bist nun ein Moderator im Nachrichtenkanal ").info(channel.getName()).primary("."));
+      SurfChat.message(target, new MessageBuilder().primary("Du wurdest ").success("befördert").primary(" und bist nun ").info("ein Moderator").primary(" im Nachrichtenkanal ").info(channel.getName()).primary("."));
     });
   }
 }
