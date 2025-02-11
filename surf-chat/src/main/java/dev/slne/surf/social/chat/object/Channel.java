@@ -73,6 +73,10 @@ public class Channel {
     return false;
   }
 
+  public boolean isModeratorO(OfflinePlayer player) {
+    return moderators.contains(player);
+  }
+
   public void invite(OfflinePlayer player) {
     if(members.contains(player)) {
       return;
