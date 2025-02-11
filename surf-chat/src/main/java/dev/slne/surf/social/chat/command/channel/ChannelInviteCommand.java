@@ -31,7 +31,7 @@ public class ChannelInviteCommand extends CommandAPICommand {
       SurfChat.message(target, new MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").info(channel.getName()).success(" eingeladen. ").command(
           new MessageBuilder().darkSpacer("[").success("Beitreten").darkSpacer("]"),
           new MessageBuilder().success("Klicke, um beizutreten"),
-          "/channel acceptinvite " + channel.getName()
+          "/channel accept " + channel.getName()
       ));
     });
   }
