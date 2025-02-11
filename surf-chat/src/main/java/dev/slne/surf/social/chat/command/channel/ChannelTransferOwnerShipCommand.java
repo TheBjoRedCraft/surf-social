@@ -19,8 +19,12 @@ public class ChannelTransferOwnerShipCommand extends CommandAPICommand {
       OfflinePlayer target = args.getUnchecked("member");
       String confirm = args.getOrDefaultUnchecked("confirm", "");
 
-      if(!confirm.equalsIgnoreCase("confirm")) {
-        SurfChat.message(player, new MessageBuilder().error("Bitte bestätige den Vorgang mit /channel transferOwnership <Spielername> confirm"));
+      if(!confirm.equalsIgnoreCase("confirm") && !confirm.equalsIgnoreCase("yes") && !confirm.equalsIgnoreCase("true") && !confirm.equalsIgnoreCase("ja")) {
+        SurfChat.message(player, new MessageBuilder().error("Bitte bestätige den Vorgang.").command(
+            new MessageBuilder().darkSpacer(" [").info("Bestätigen").darkSpacer("]"),
+            new MessageBuilder().info("Klicke hier, um den Vorgang zu bestätigen."),
+            "/channel transferOwnership " + target.getName() + " confirm"
+        ));
         return;
       }
 
@@ -36,6 +40,7 @@ public class ChannelTransferOwnerShipCommand extends CommandAPICommand {
 
       channel.getModerators().add(channel.getOwner());
       channel.setOwner(target);
+      channel.getMembers().remove(target);
 
       SurfChat.message(player, new MessageBuilder().primary("Du hast den Besitzer des Nachrichtenkanals an ").info(target.getName()).success(" übergeben."));
       SurfChat.message(target, new MessageBuilder().primary("Du wurdest zum Besitzer des Nachrichtenkanals ").info(channel.getName()).success(" ernannt."));
