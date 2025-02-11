@@ -12,7 +12,6 @@ public class ChannelCreateCommand extends CommandAPICommand {
   public ChannelCreateCommand(String commandName) {
     super(commandName);
 
-    withRequirement((sender) -> Channel.getChannel(sender) == null);
     withArguments(new TextArgument("name"));
     withArguments(new TextArgument("description"));
     executesPlayer((player, args) -> {

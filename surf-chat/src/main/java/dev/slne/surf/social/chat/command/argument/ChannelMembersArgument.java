@@ -41,6 +41,7 @@ public class ChannelMembersArgument extends CustomArgument<OfflinePlayer, String
       members.addAll(channel.getMembers().stream().map(OfflinePlayer::getName).toList());
       members.addAll(channel.getModerators().stream().map(OfflinePlayer::getName).toList());
       members.add(channel.getOwner().getName());
+      members.remove(info.sender().getName());
 
       return members.toArray(String[]::new);
     }));
