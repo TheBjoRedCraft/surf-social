@@ -16,6 +16,7 @@ public class ChannelJoinCommand extends CommandAPICommand {
       Channel channel = args.getUnchecked("channel");
 
       if(channel.isClosed() && !channel.hasInvite(player)) {
+        SurfChat.message(player, new MessageBuilder().error("Der Nachrichtenkanal ist privat."));
         return;
       }
 

@@ -15,6 +15,7 @@ public class ChannelLeaveCommand extends CommandAPICommand {
       Channel channel = Channel.getChannel(player);
 
       if(channel == null) {
+        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 

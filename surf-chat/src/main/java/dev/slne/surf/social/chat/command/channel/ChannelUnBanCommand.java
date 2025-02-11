@@ -18,10 +18,12 @@ public class ChannelUnBanCommand extends CommandAPICommand {
       Channel channel = Channel.getChannel(player);
 
       if(channel == null) {
+        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isModerator(player) && !channel.isOwner(player)) {
+        SurfChat.message(player, new MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals."));
         return;
       }
 

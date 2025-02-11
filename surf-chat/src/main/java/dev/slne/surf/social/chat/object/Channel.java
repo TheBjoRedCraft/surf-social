@@ -210,7 +210,6 @@ public class Channel {
   }
 
   public void join(OfflinePlayer player) {
-
     if(members.contains(player)) {
       return;
     }
@@ -225,6 +224,10 @@ public class Channel {
 
     if(invites.contains(player)) {
       invites.remove(player);
+    }
+
+    if(Channel.getChannelO(player) != null) {
+      return;
     }
 
     members.add(player);

@@ -16,6 +16,11 @@ public class ChannelCreateCommand extends CommandAPICommand {
     withArguments(new TextArgument("name"));
     withArguments(new TextArgument("description"));
     executesPlayer((player, args) -> {
+      if(Channel.getChannel(player) != null) {
+        SurfChat.message(player, new MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal."));
+        return;
+      }
+
       String name = args.getUnchecked("name");
       String description = args.getUnchecked("description");
       Channel channel = Channel.builder()

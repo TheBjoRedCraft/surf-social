@@ -20,10 +20,12 @@ public class ChannelInviteRevokeCommand extends CommandAPICommand {
       OfflinePlayer target = args.getUnchecked("player");
 
       if(channel == null) {
+        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isModerator(player) && !channel.isOwner(player)) {
+        SurfChat.message(player, new MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals."));
         return;
       }
 

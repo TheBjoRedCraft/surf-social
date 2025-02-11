@@ -18,10 +18,12 @@ public class ChannelBanCommand extends CommandAPICommand {
       OfflinePlayer target = args.getUnchecked("player");
 
       if(channel == null) {
+        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isModerator(player) && !channel.isOwner(player)) {
+        SurfChat.message(player, new MessageBuilder().primary("Du bist ").error("kein Moderator ").primary("in deinem Kanal."));
         return;
       }
 
