@@ -20,6 +20,11 @@ public class ChannelJoinCommand extends CommandAPICommand {
         return;
       }
 
+      if(Channel.getChannelO(player) != null) {
+        SurfChat.message(player, new MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal."));
+        return;
+      }
+
       channel.join(player);
 
       SurfChat.message(player, new MessageBuilder().primary("Du bist dem Nachrichtenkanal ").info(channel.getName()).success(" beigetreten."));

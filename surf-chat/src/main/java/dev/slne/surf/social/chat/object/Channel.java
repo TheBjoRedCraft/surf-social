@@ -1,6 +1,8 @@
 package dev.slne.surf.social.chat.object;
 
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.provider.ChannelProvider;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import java.util.UUID;
@@ -231,6 +233,8 @@ public class Channel {
     }
 
     members.add(player);
+
+    this.message(new MessageBuilder().primary(player.getName()).success(" ist dem Nachrichtenkanal beigetreten."));
   }
 
   public void leave(OfflinePlayer player) {
@@ -241,13 +245,21 @@ public class Channel {
 
     moderators.remove(player);
     members.remove(player);
+
+    this.message(new MessageBuilder().primary(player.getName()).error(" hat den Nachrichtenkanal verlassen."));
   }
 
   public void delete() {
+    this.message(new MessageBuilder().primary("Der Nachrichtenkanal ").info(this.getName()).error(" wurde gelöscht."));
+
     this.members.clear();
     this.moderators.clear();
 
     this.unregister();
+  }
+
+  private void message(MessageBuilder messageBuilder) {
+    this.getOnlinePlayers().forEach(player -> SurfChat.message(player, messageBuilder));
   }
 
   public void register() {

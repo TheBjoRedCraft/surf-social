@@ -13,10 +13,10 @@ public class ChannelListCommand extends CommandAPICommand {
   public ChannelListCommand(String commandName) {
     super(commandName);
 
-    withArguments(new IntegerArgument("page"));
+    withOptionalArguments(new IntegerArgument("page"));
     executesPlayer((player, args ) -> {
       PageableMessageBuilder message = new PageableMessageBuilder();
-      Integer page = args.getUnchecked("page");
+      Integer page = args.getOrDefaultUnchecked("page", 1);
 
       int index = 0;
 
