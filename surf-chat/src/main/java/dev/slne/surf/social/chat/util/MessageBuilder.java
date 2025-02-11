@@ -3,7 +3,7 @@ package dev.slne.surf.social.chat.util;
 import net.kyori.adventure.text.Component;
 
 public class MessageBuilder {
-  private Component message = Colors.PREFIX;
+  private Component message = Component.empty();
   /**
    * Appends text with the PRIMARY color to the message.
    *
