@@ -3,8 +3,10 @@ package dev.slne.surf.social.chat.command.channel;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.object.Channel;
 
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import org.bukkit.OfflinePlayer;
 
 public class ChannelKickCommand extends CommandAPICommand {
@@ -26,6 +28,8 @@ public class ChannelKickCommand extends CommandAPICommand {
       }
 
       channel.kick(target);
+
+      SurfChat.message(player, new MessageBuilder().primary("Du hast ").secondary(target.getName()).primary(" aus dem Nachrichtenkanal ").secondary(channel.getName()).info(" gekickt."));
     });
   }
 }

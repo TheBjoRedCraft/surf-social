@@ -1,8 +1,10 @@
 package dev.slne.surf.social.chat.command.channel;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.command.argument.ChannelMembersArgument;
 import dev.slne.surf.social.chat.object.Channel;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import org.bukkit.OfflinePlayer;
 
 public class ChannelPromoteCommand extends CommandAPICommand {
@@ -24,6 +26,9 @@ public class ChannelPromoteCommand extends CommandAPICommand {
       }
 
       channel.promote(target);
+
+      SurfChat.message(player, new MessageBuilder().primary("Du hast den Spieler ").secondary(target.getName()).success(" befördert."));
+      SurfChat.message(target, new MessageBuilder().primary("Du wurdest ").success("befördert").primary(" und bist nun ein Moderator im Nachrichtenkanal ").secondary(channel.getName()).primary("."));
     });
   }
 }

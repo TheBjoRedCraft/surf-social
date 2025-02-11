@@ -1,8 +1,10 @@
 package dev.slne.surf.social.chat.command.channel;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.command.argument.ChannelArgument;
 import dev.slne.surf.social.chat.object.Channel;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 
 public class ChannelForceDeleteCommand extends CommandAPICommand {
 
@@ -15,6 +17,8 @@ public class ChannelForceDeleteCommand extends CommandAPICommand {
       Channel channel = args.getUnchecked("channel");
 
       channel.delete();
+
+      SurfChat.message(player, new MessageBuilder().primary("Der Nachrichtenkanal ").secondary(channel.getName()).success(" wurde gelöscht."));
     });
   }
 }

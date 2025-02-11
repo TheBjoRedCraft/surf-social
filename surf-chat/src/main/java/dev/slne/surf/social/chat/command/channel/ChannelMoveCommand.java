@@ -2,8 +2,10 @@ package dev.slne.surf.social.chat.command.channel;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.command.argument.ChannelArgument;
 import dev.slne.surf.social.chat.object.Channel;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import org.bukkit.OfflinePlayer;
 
 public class ChannelMoveCommand extends CommandAPICommand {
@@ -20,6 +22,9 @@ public class ChannelMoveCommand extends CommandAPICommand {
       Channel channel = args.getUnchecked("channel");
 
       channel.move(target, channel);
+
+      SurfChat.message(player, new MessageBuilder().primary("Du hast ").secondary(target.getName()).primary(" in den Nachrichtenkanal ").secondary(channel.getName()).success(" verschoben."));
+      SurfChat.message(target, new MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").secondary(channel.getName()).success(" verschoben."));
     });
   }
 }

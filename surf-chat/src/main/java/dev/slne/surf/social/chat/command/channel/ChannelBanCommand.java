@@ -1,8 +1,10 @@
 package dev.slne.surf.social.chat.command.channel;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.command.argument.ChannelMembersArgument;
 import dev.slne.surf.social.chat.object.Channel;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import org.bukkit.OfflinePlayer;
 
 public class ChannelBanCommand extends CommandAPICommand {
@@ -24,6 +26,9 @@ public class ChannelBanCommand extends CommandAPICommand {
       }
 
       channel.ban(target);
+
+      SurfChat.message(player, new MessageBuilder().primary("Du hast ").secondary(target.getName()).primary(" aus dem Nachrichtenkanal ").secondary(channel.getName()).info(" verbannt."));
+      SurfChat.message(target, new MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").secondary(channel.getName()).info(" verbannt."));
     });
   }
 }

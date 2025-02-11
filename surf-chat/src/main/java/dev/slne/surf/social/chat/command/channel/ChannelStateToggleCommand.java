@@ -1,7 +1,9 @@
 package dev.slne.surf.social.chat.command.channel;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.object.Channel;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 
 public class ChannelStateToggleCommand extends CommandAPICommand {
 
@@ -25,6 +27,8 @@ public class ChannelStateToggleCommand extends CommandAPICommand {
      } else {
        channel.setClosed(true);
      }
+
+      SurfChat.message(player, new MessageBuilder().primary("Der Nachrichtenkanal ").secondary(channel.getName()).primary(" ist nun ").success(channel.isClosed() ? "geschlossen." : "geöffnet."));
     });
   }
 }

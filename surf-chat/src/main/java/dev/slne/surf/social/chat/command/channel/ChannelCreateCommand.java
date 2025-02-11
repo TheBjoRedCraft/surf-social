@@ -2,7 +2,9 @@ package dev.slne.surf.social.chat.command.channel;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.TextArgument;
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.object.Channel;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 
 public class ChannelCreateCommand extends CommandAPICommand {
@@ -26,6 +28,8 @@ public class ChannelCreateCommand extends CommandAPICommand {
           .build();
 
       channel.register();
+
+      SurfChat.message(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").secondary(channel.getName()).success(" erstellt."));
     });
   }
 }

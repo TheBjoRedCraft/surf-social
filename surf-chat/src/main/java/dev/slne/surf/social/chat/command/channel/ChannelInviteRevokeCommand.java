@@ -3,8 +3,10 @@ package dev.slne.surf.social.chat.command.channel;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.object.Channel;
 
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import org.bukkit.OfflinePlayer;
 
 public class ChannelInviteRevokeCommand extends CommandAPICommand {
@@ -26,6 +28,9 @@ public class ChannelInviteRevokeCommand extends CommandAPICommand {
       }
 
       channel.revokeInvite(target);
+
+      SurfChat.message(player, new MessageBuilder().primary("Du hast die Einladung für ").secondary(target.getName()).primary(" in den Nachrichtenkanal ").secondary(channel.getName()).success(" zurückgezogen."));
+      SurfChat.message(target, new MessageBuilder().primary("Deine Einladung in den Nachrichtenkanal ").secondary(channel.getName()).primary(" wurde zurückgezogen."));
     });
   }
 }
