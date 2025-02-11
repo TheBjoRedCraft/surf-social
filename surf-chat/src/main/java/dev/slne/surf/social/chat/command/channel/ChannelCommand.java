@@ -26,5 +26,6 @@ public class ChannelCommand extends CommandAPICommand {
     withSubcommand(new ChannelMoveCommand("move"));
     withSubcommand(new ChannelForceDeleteCommand("forceDelete"));
     withSubcommand(new ChannelForceJoinCommand("forceJoin"));
+    withSubcommand(new ChannelTransferOwnerShipCommand("transferOwnership"));
   }
 }
