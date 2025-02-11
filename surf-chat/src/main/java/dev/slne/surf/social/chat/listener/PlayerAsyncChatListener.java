@@ -54,7 +54,7 @@ public class PlayerAsyncChatListener implements Listener {
 
     if(ChatFilterService.getInstance().isSpamming(event.getPlayer().getUniqueId())) {
       event.setCancelled(true);
-      player.sendMessage(Colors.PREFIX.append(Component.text("Mal ganz ruhig hier, Spam bitte nicht!", NamedTextColor.RED)));
+      player.sendMessage(Colors.PREFIX.append(Component.text("Mal ganz ruhig hier, spam bitte nicht!", NamedTextColor.RED)));
       return;
     }
 
