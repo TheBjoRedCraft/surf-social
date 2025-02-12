@@ -1,153 +1,164 @@
 package dev.slne.surf.social.chat.service;
 
-  import dev.slne.surf.social.chat.SurfChat;
-  import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-  import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-  import it.unimi.dsi.fastutil.objects.ObjectSet;
-  import lombok.Getter;
-  import lombok.extern.slf4j.Slf4j;
-  import net.kyori.adventure.text.Component;
-  import net.kyori.adventure.text.format.NamedTextColor;
-  import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-  import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-  import org.bukkit.configuration.file.FileConfiguration;
-  import org.bukkit.configuration.file.YamlConfiguration;
+import dev.slne.surf.social.chat.SurfChat;
 
-  import java.io.File;
-  import java.io.IOException;
-  import java.util.UUID;
-  import java.util.concurrent.ConcurrentHashMap;
-  import java.util.concurrent.TimeUnit;
-  import java.util.regex.Pattern;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Slf4j
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+@SuppressWarnings("ResultOfMethodCallIgnored")
+@Slf4j
+@Getter
+public class ChatFilterService {
   @Getter
-  public class ChatFilterService {
-    @Getter
-    private static final ChatFilterService instance = new ChatFilterService();
-    private final ObjectSet<String> blockedWords = new ObjectArraySet<>();
-    private final ObjectSet<String> allowedDomains = new ObjectArraySet<>();
-    private final ObjectSet<Pattern> blockedPatterns = new ObjectArraySet<>();
+  private static final ChatFilterService instance = new ChatFilterService();
+  private final ObjectSet<String> blockedWords = new ObjectArraySet<>();
+  private final ObjectSet<String> allowedDomains = new ObjectArraySet<>();
+  private final ObjectSet<Pattern> blockedPatterns = new ObjectArraySet<>();
 
-    private final ComponentLogger logger = ComponentLogger.logger(this.getClass());
-    private final ConcurrentHashMap<UUID, Long> rateLimit = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<UUID, Integer> messageCount = new ConcurrentHashMap<>();
+  private final ComponentLogger logger = ComponentLogger.logger(this.getClass());
+  private final ConcurrentHashMap<UUID, Long> rateLimit = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<UUID, Integer> messageCount = new ConcurrentHashMap<>();
 
-    private static final Pattern VALID_CHARACTERS_PATTERN = Pattern.compile("^[a-zA-Z0-9/.:_,()%&()=?!<>|#^\"²³+*~-]*$");
-    private static final long TIME_FRAME = TimeUnit.SECONDS.toMillis(10);
-    private static final int MESSAGE_LIMIT = 5;
+  private static final Pattern VALID_CHARACTERS_PATTERN = Pattern.compile("^[a-zA-Z0-9/.:_,()%&()=?!<>|#^\"²³+*~-]*$");
+  private static final long TIME_FRAME = TimeUnit.SECONDS.toMillis(10);
+  private static final int MESSAGE_LIMIT = 5;
 
-    public void loadBlockedWords() {
-      File file = new File(SurfChat.getInstance().getDataFolder(), "blocked.yml");
+  public void loadBlockedWords() {
+      File file = new File(SurfChat.getInstance().getDataFolder(), "blocked.txt");
       long start = System.currentTimeMillis();
 
       if (!file.exists()) {
-        try {
-          file.getParentFile().mkdirs();
-          file.createNewFile();
-        } catch (IOException e) {
-          logger.error("Failed to create blocked.yml file", e);
-        }
+        file.getParentFile().mkdirs();
+        SurfChat.getInstance().saveResource("blocked.txt", false);
       }
 
-      FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-      ObjectSet<String> words = new ObjectArraySet<>(config.getStringList("blocked-words"));
-
       this.blockedWords.clear();
-      this.blockedWords.addAll(words);
-
       this.blockedPatterns.clear();
-      words.forEach(word -> {
-        Object2ObjectMap<Character, String> replacements = new Object2ObjectOpenHashMap<>();
 
-        replacements.put('a', "[a@4]?");
-        replacements.put('b', "[b8]?");
-        replacements.put('c', "c?");
-        replacements.put('d', "d?");
-        replacements.put('e', "[e3]?");
-        replacements.put('f', "f?");
-        replacements.put('g', "[g9]?");
-        replacements.put('h', "h?");
-        replacements.put('i', "[i1!]?");
-        replacements.put('j', "j?");
-        replacements.put('k', "k?");
-        replacements.put('l', "[l1]?");
-        replacements.put('m', "m?");
-        replacements.put('n', "n?");
-        replacements.put('o', "[o0]?");
-        replacements.put('p', "p?");
-        replacements.put('q', "q?");
-        replacements.put('r', "r?");
-        replacements.put('s', "[s5]?");
-        replacements.put('t', "[t7]?");
-        replacements.put('u', "u?");
-        replacements.put('v', "v?");
-        replacements.put('w', "w?");
-        replacements.put('x', "x?");
-        replacements.put('y', "y?");
-        replacements.put('z', "[z2]?");
+      try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+          String line;
 
-        StringBuilder regexBuilder = new StringBuilder();
-        for (char c : word.toCharArray()) {
-          regexBuilder.append(replacements.getOrDefault(c, c + "?"));
-        }
+          while ((line = reader.readLine()) != null) {
+              String word = line.trim();
+              if (!word.isEmpty()) {
+                  this.blockedWords.add(word);
 
-        String regex = regexBuilder.toString();
-        blockedPatterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
-      });
+                String regex = this.getRegex(word);
+                blockedPatterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
+              }
+          }
+      } catch (IOException e) {
+          logger.error("Failed to read blocked.txt file", e);
+      }
 
       logger.info(Component.text("Loaded ", NamedTextColor.GREEN)
           .append(Component.text(blockedWords.size(), NamedTextColor.GOLD))
           .append(Component.text(" blocked words in ", NamedTextColor.GREEN))
           .append(Component.text(System.currentTimeMillis() - start, NamedTextColor.GOLD))
           .append(Component.text("ms", NamedTextColor.GREEN)));
+  }
+
+  private String getRegex(String word) {
+    Object2ObjectMap<Character, String> replacements = new Object2ObjectOpenHashMap<>();
+    replacements.put('a', "[a@4]?");
+    replacements.put('b', "[b8]?");
+    replacements.put('c', "c?");
+    replacements.put('d', "d?");
+    replacements.put('e', "[e3]?");
+    replacements.put('f', "f?");
+    replacements.put('g', "[g9]?");
+    replacements.put('h', "h?");
+    replacements.put('i', "[i1!]?");
+    replacements.put('j', "j?");
+    replacements.put('k', "k?");
+    replacements.put('l', "[l1]?");
+    replacements.put('m', "m?");
+    replacements.put('n', "n?");
+    replacements.put('o', "[o0]?");
+    replacements.put('p', "p?");
+    replacements.put('q', "q?");
+    replacements.put('r', "r?");
+    replacements.put('s', "[s5]?");
+    replacements.put('t', "[t7]?");
+    replacements.put('u', "u?");
+    replacements.put('v', "v?");
+    replacements.put('w', "w?");
+    replacements.put('x', "x?");
+    replacements.put('y', "y?");
+    replacements.put('z', "[z2]?");
+
+    StringBuilder regexBuilder = new StringBuilder();
+    for (char c : word.toCharArray()) {
+        regexBuilder.append(replacements.getOrDefault(c, c + "?"));
     }
 
-    public boolean containsBlocked(Component message) {
-      return blockedPatterns.stream().anyMatch(pattern -> pattern.matcher(PlainTextComponentSerializer.plainText().serialize(message)).find());
-    }
+    String regex = regexBuilder.toString();
+    return regex;
+  }
 
-    public boolean containsLink(Component message) {
-      String plainMessage = PlainTextComponentSerializer.plainText().serialize(message);
-      String urlPattern = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?";
-      Pattern pattern = Pattern.compile(urlPattern, Pattern.CASE_INSENSITIVE);
-      var matcher = pattern.matcher(plainMessage);
+  public boolean containsBlocked(Component message) {
+    return blockedPatterns.stream().anyMatch(pattern -> pattern.matcher(PlainTextComponentSerializer.plainText().serialize(message)).find());
+  }
 
-      while (matcher.find()) {
-        String domain = matcher.group(3);
-        if (allowedDomains.stream().noneMatch(domain::endsWith)) {
-          return true;
-        }
+  public boolean containsLink(Component message) {
+    String plainMessage = PlainTextComponentSerializer.plainText().serialize(message);
+    String urlPattern = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?";
+    Pattern pattern = Pattern.compile(urlPattern, Pattern.CASE_INSENSITIVE);
+    var matcher = pattern.matcher(plainMessage);
+
+    while (matcher.find()) {
+      String domain = matcher.group(3);
+      if (allowedDomains.stream().noneMatch(domain::endsWith)) {
+        return true;
       }
-      return false;
     }
+    return false;
+  }
 
-    public boolean isValidInput(String input) {
-      return VALID_CHARACTERS_PATTERN.matcher(input).matches();
-    }
+  public boolean isValidInput(String input) {
+    return VALID_CHARACTERS_PATTERN.matcher(input).matches();
+  }
 
-    public boolean isSpamming(UUID uuid) {
-      long currentTime = System.currentTimeMillis();
+  public boolean isSpamming(UUID uuid) {
+    long currentTime = System.currentTimeMillis();
 
-      rateLimit.putIfAbsent(uuid, currentTime);
-      messageCount.putIfAbsent(uuid, 0);
+    rateLimit.putIfAbsent(uuid, currentTime);
+    messageCount.putIfAbsent(uuid, 0);
 
-      long lastMessageTime = rateLimit.get(uuid);
-      int count = messageCount.get(uuid);
+    long lastMessageTime = rateLimit.get(uuid);
+    int count = messageCount.get(uuid);
 
-      if (currentTime - lastMessageTime < TIME_FRAME) {
-        if (count >= MESSAGE_LIMIT) {
-          return true;
-        } else {
-          messageCount.put(uuid, count + 1);
-          return false;
-        }
+    if (currentTime - lastMessageTime < TIME_FRAME) {
+      if (count >= MESSAGE_LIMIT) {
+        return true;
       } else {
-        rateLimit.put(uuid, currentTime);
-        messageCount.put(uuid, 1);
+        messageCount.put(uuid, count + 1);
         return false;
       }
+    } else {
+      rateLimit.put(uuid, currentTime);
+      messageCount.put(uuid, 1);
+      return false;
     }
   }
+}
