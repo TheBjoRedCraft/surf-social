@@ -272,8 +272,6 @@ public class Channel {
   public boolean unregister(UUID uuid) {
     ChannelProvider.getInstance().getChannels().remove(uuid);
 
-    Bukkit.broadcastMessage(ChannelProvider.getInstance().getChannels().toString());
-
     return !ChannelProvider.getInstance().getChannels().containsKey(uuid);
   }
 
