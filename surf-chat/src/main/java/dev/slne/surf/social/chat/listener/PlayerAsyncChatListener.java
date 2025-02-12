@@ -35,6 +35,7 @@ public class PlayerAsyncChatListener implements Listener {
   @EventHandler
   public void onChat(AsyncChatEvent event) {
     Player player = event.getPlayer();
+    String plainMessage = PlainTextComponentSerializer.plainText().serialize(event.message());
 
     if(event.isCancelled()) {
       return;
@@ -58,6 +59,12 @@ public class PlayerAsyncChatListener implements Listener {
       return;
     }
 
+    if(!ChatFilterService.getInstance().isValidInput(plainMessage)) {
+      event.setCancelled(true);
+      player.sendMessage(Colors.PREFIX.append(Component.text("Bitte verwende keine unerlaubten Zeichen!", NamedTextColor.RED)));
+      return;
+    }
+
     if(BasicPunishApi.isMuted(player)) {
       event.setCancelled(true);
       return;
@@ -65,7 +72,6 @@ public class PlayerAsyncChatListener implements Listener {
 
     event.setCancelled(true);
 
-    String plainMessage = PlainTextComponentSerializer.plainText().serialize(event.message());
     Channel channel = Channel.getChannel(player);
     int messageID = this.getRandomID();
     boolean found = false;

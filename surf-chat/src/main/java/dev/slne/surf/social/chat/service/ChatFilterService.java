@@ -30,9 +30,12 @@ package dev.slne.surf.social.chat.service;
     private final ObjectSet<String> blockedWords = new ObjectArraySet<>();
     private final ObjectSet<String> allowedDomains = new ObjectArraySet<>();
     private final ObjectSet<Pattern> blockedPatterns = new ObjectArraySet<>();
+
     private final ComponentLogger logger = ComponentLogger.logger(this.getClass());
     private final ConcurrentHashMap<UUID, Long> rateLimit = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, Integer> messageCount = new ConcurrentHashMap<>();
+
+    private static final Pattern VALID_CHARACTERS_PATTERN = Pattern.compile("^[a-zA-Z0-9/.:_,()]*$");
     private static final long TIME_FRAME = TimeUnit.SECONDS.toMillis(10);
     private static final int MESSAGE_LIMIT = 3;
 
@@ -119,6 +122,10 @@ package dev.slne.surf.social.chat.service;
         }
       }
       return false;
+    }
+
+    public boolean isValidInput(String input) {
+      return VALID_CHARACTERS_PATTERN.matcher(input).matches();
     }
 
     public boolean isSpamming(UUID uuid) {
