@@ -252,11 +252,13 @@ public class Channel {
   public boolean delete() {
     this.message(new MessageBuilder().primary("Der Nachrichtenkanal ").info(this.getName()).error(" wurde gelöscht."));
 
+    final UUID uuid = this.getOwner().getUniqueId();
+
     this.members.clear();
     this.moderators.clear();
     this.setOwner(null);
 
-    return this.unregister();
+    return this.unregister(uuid);
   }
 
   private void message(MessageBuilder messageBuilder) {
@@ -267,8 +269,8 @@ public class Channel {
     ChannelProvider.getInstance().getChannels().put(owner.getUniqueId(), this);
   }
 
-  public boolean unregister() {
-    ChannelProvider.getInstance().getChannels().remove(owner.getUniqueId());
+  public boolean unregister(UUID uuid) {
+    ChannelProvider.getInstance().getChannels().remove(uuid);
 
     return !ChannelProvider.getInstance().getChannels().containsKey(owner.getUniqueId());
   }
