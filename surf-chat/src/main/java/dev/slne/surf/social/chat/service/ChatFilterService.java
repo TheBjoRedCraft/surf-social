@@ -73,7 +73,7 @@ public class ChatFilterService {
 
       logger.info(Component.text("Loaded ", NamedTextColor.GREEN)
           .append(Component.text(blockedWords.size(), NamedTextColor.GOLD))
-          .append(Component.text(" blocked words in ", NamedTextColor.GREEN))
+          .append(Component.text(" blocked words and their regexes in ", NamedTextColor.GREEN))
           .append(Component.text(System.currentTimeMillis() - start, NamedTextColor.GOLD))
           .append(Component.text("ms", NamedTextColor.GREEN)));
   }
