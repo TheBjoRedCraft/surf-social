@@ -37,7 +37,7 @@ package dev.slne.surf.social.chat.service;
 
     private static final Pattern VALID_CHARACTERS_PATTERN = Pattern.compile("^[a-zA-Z0-9/.:_,()]*$");
     private static final long TIME_FRAME = TimeUnit.SECONDS.toMillis(10);
-    private static final int MESSAGE_LIMIT = 3;
+    private static final int MESSAGE_LIMIT = 5;
 
     public void loadBlockedWords() {
       File file = new File(SurfChat.getInstance().getDataFolder(), "blocked.yml");
