@@ -40,7 +40,7 @@ public class ChatFilterService {
   private final ConcurrentHashMap<UUID, Long> rateLimit = new ConcurrentHashMap<>();
   private final ConcurrentHashMap<UUID, Integer> messageCount = new ConcurrentHashMap<>();
 
-  private static final Pattern VALID_CHARACTERS_PATTERN = Pattern.compile("^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~-äöü@]*$");
+  private static final Pattern VALID_CHARACTERS_PATTERN = Pattern.compile("^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~-äöü@ ]*$");
   private static final long TIME_FRAME = TimeUnit.SECONDS.toMillis(10);
   private static final int MESSAGE_LIMIT = 5;
 
