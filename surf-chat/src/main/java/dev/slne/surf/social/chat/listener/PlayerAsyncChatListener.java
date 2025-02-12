@@ -1,6 +1,4 @@
 package dev.slne.surf.social.chat.listener;
-
-import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.external.BasicPunishApi;
 import dev.slne.surf.social.chat.object.Channel;
 import dev.slne.surf.social.chat.object.Message;
