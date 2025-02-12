@@ -30,18 +30,18 @@ public class ChannelMembersCommand extends CommandAPICommand {
 
       message.setPageCommand("/channel members " + channel.getName() + " %page%");
 
-      message.addLine(new MessageBuilder().variableKey(index + ". ").primary(channel.getOwner().getName()).darkSpacer(" (Besitzer)").build());
+      message.addLine(new MessageBuilder().variableValue(index + ". ").primary(channel.getOwner().getName()).darkSpacer(" (Besitzer)").build());
 
       for (OfflinePlayer moderator : channel.getModerators()) {
         index ++;
 
-        message.addLine(new MessageBuilder().variableKey(index + ". ").primary(moderator.getName()).darkSpacer(" (Moderator)").build());
+        message.addLine(new MessageBuilder().variableValue(index + ". ").primary(moderator.getName()).darkSpacer(" (Moderator)").build());
       }
 
       for (OfflinePlayer member : channel.getMembers()) {
         index ++;
 
-        message.addLine(new MessageBuilder().variableKey(index + ". ").primary(member.getName()).darkSpacer(" (Mitglied)").build());
+        message.addLine(new MessageBuilder().variableValue(index + ". ").primary(member.getName()).darkSpacer(" (Mitglied)").build());
       }
 
       message.send(player, page);
