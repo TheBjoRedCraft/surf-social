@@ -272,7 +272,7 @@ public class Channel {
   public boolean unregister(UUID uuid) {
     ChannelProvider.getInstance().getChannels().remove(uuid);
 
-    return !ChannelProvider.getInstance().getChannels().containsKey(owner.getUniqueId());
+    return !ChannelProvider.getInstance().getChannels().containsKey(uuid);
   }
 
   public static Channel getChannel(String name) {
