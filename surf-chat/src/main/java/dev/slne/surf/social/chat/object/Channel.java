@@ -249,13 +249,14 @@ public class Channel {
     this.message(new MessageBuilder().primary(player.getName()).error(" hat den Nachrichtenkanal verlassen."));
   }
 
-  public void delete() {
+  public boolean delete() {
     this.message(new MessageBuilder().primary("Der Nachrichtenkanal ").info(this.getName()).error(" wurde gelöscht."));
 
     this.members.clear();
     this.moderators.clear();
+    this.setOwner(null);
 
-    this.unregister();
+    return this.unregister();
   }
 
   private void message(MessageBuilder messageBuilder) {
@@ -266,8 +267,10 @@ public class Channel {
     ChannelProvider.getInstance().getChannels().put(owner.getUniqueId(), this);
   }
 
-  public void unregister() {
+  public boolean unregister() {
     ChannelProvider.getInstance().getChannels().remove(owner.getUniqueId());
+
+    return !ChannelProvider.getInstance().getChannels().containsKey(owner.getUniqueId());
   }
 
   public static Channel getChannel(String name) {

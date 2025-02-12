@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.object.Channel;
+import dev.slne.surf.social.chat.provider.ChannelProvider;
 import dev.slne.surf.social.chat.util.MessageBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 
@@ -30,6 +31,11 @@ public class ChannelCreateCommand extends CommandAPICommand {
           .closed(true)
           .owner(player)
           .build();
+
+      if(ChannelProvider.getInstance().exists(name)) {
+        SurfChat.message(player, new MessageBuilder().error("Der Nachrichtenkanal ").info(name).error(" existiert bereits."));
+        return;
+      }
 
       channel.register();
 

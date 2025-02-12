@@ -9,7 +9,6 @@ import dev.slne.surf.social.chat.util.PageableMessageBuilder;
 import net.kyori.adventure.text.Component;
 
 public class ChannelListCommand extends CommandAPICommand {
-
   public ChannelListCommand(String commandName) {
     super(commandName);
 

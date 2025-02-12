@@ -16,6 +16,10 @@ public class ChannelProvider {
   private static final ChannelProvider instance = new ChannelProvider();
   private final Object2ObjectMap<UUID, Channel> channels = new Object2ObjectOpenHashMap<>();
 
+  public boolean exists(String name) {
+    return this.channels.values().stream().filter(channel -> channel.getName().equals(name)).findFirst().orElse(null) != null;
+  }
+
   public void handleQuit(Player player) {
     Channel channel = Channel.getChannel(player);
 

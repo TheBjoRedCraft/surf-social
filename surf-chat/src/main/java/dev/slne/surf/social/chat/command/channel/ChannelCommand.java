@@ -14,6 +14,7 @@ public class ChannelCommand extends CommandAPICommand {
     withSubcommand(new ChannelInviteCommand("invite"));
     withSubcommand(new ChannelInviteRevokeCommand("revoke"));
     withSubcommand(new ChannelInfoCommand("info"));
+    withSubcommand(new ChannelMembersCommand("members"));
     withSubcommand(new ChannelListCommand("list"));
     withSubcommand(new ChannelJoinCommand("join"));
     withSubcommand(new ChannelLeaveCommand("leave"));

@@ -92,11 +92,11 @@ public class PlayerAsyncChatListener implements Listener {
                   .build())
               .replaceText(TextReplacementConfig.builder()
                   .matchLiteral("%delete%")
-                  .replacement(player.hasPermission(this.deletePerms) ? this.getDeleteComponent(messageID) : Component.empty())
+                  .replacement(onlinePlayer.hasPermission(this.deletePerms) ? this.getDeleteComponent(messageID) : Component.empty())
                   .build())
               .replaceText(TextReplacementConfig.builder()
                   .matchLiteral("%teleport%")
-                  .replacement(player.hasPermission(this.teleportPerms) ? this.getTeleportComponent(player.getName()) : Component.empty())
+                  .replacement(onlinePlayer.hasPermission(this.teleportPerms) ? this.getTeleportComponent(player.getName()) : Component.empty())
                   .build());
 
           onlinePlayer.sendMessage(message);
@@ -109,34 +109,33 @@ public class PlayerAsyncChatListener implements Listener {
       }
     }
 
-    Component message = MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPublicMessageFormat()))
-        .replaceText(TextReplacementConfig.builder()
-            .matchLiteral("%message%")
-            .replacement(event.message())
-            .build())
-        .replaceText(TextReplacementConfig.builder()
-            .matchLiteral("%channel%")
-            .replacement(channel == null ? "" : " " + channel.getName() + " ")
-            .build())
-        .replaceText(TextReplacementConfig.builder()
-            .matchLiteral("%delete%")
-            .replacement(player.hasPermission(this.deletePerms) ? this.getDeleteComponent(messageID) : Component.empty())
-            .build())
-        .replaceText(TextReplacementConfig.builder()
-            .matchLiteral("%teleport%")
-            .replacement(player.hasPermission(this.teleportPerms) ? this.getTeleportComponent(player.getName()) : Component.empty())
-            .build())
-        ;
-
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-      onlinePlayer.sendMessage(message);
-    }
+      Component message = MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPublicMessageFormat()))
+          .replaceText(TextReplacementConfig.builder()
+              .matchLiteral("%message%")
+              .replacement(event.message())
+              .build())
+          .replaceText(TextReplacementConfig.builder()
+              .matchLiteral("%channel%")
+              .replacement(channel == null ? "" : " " + channel.getName() + " ")
+              .build())
+          .replaceText(TextReplacementConfig.builder()
+              .matchLiteral("%delete%")
+              .replacement(onlinePlayer.hasPermission(this.deletePerms) ? this.getDeleteComponent(messageID) : Component.empty())
+              .build())
+          .replaceText(TextReplacementConfig.builder()
+              .matchLiteral("%teleport%")
+              .replacement(onlinePlayer.hasPermission(this.teleportPerms) ? this.getTeleportComponent(player.getName()) : Component.empty())
+              .build())
+          ;
 
-    Bukkit.getOnlinePlayers().forEach(online -> ChatHistoryService.getInstance().insertNewMessage(online.getUniqueId(), Message.builder()
-        .receiver(online.getName())
-        .sender(player.getName())
-        .message(message)
-        .build(), messageID));
+      onlinePlayer.sendMessage(message);
+      ChatHistoryService.getInstance().insertNewMessage(onlinePlayer.getUniqueId(), Message.builder()
+          .receiver(onlinePlayer.getName())
+          .sender(player.getName())
+          .message(message)
+          .build(), messageID);
+    }
   }
 
   private Component getDeleteComponent(int id) {

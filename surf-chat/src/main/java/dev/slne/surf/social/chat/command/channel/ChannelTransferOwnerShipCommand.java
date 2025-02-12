@@ -19,15 +19,6 @@ public class ChannelTransferOwnerShipCommand extends CommandAPICommand {
       OfflinePlayer target = args.getUnchecked("member");
       String confirm = args.getOrDefaultUnchecked("confirm", "");
 
-      if(!confirm.equalsIgnoreCase("confirm") && !confirm.equalsIgnoreCase("yes") && !confirm.equalsIgnoreCase("true") && !confirm.equalsIgnoreCase("ja")) {
-        SurfChat.message(player, new MessageBuilder().error("Bitte bestätige den Vorgang.").command(
-            new MessageBuilder().darkSpacer(" [").info("Bestätigen").darkSpacer("]"),
-            new MessageBuilder().info("Klicke hier, um den Vorgang zu bestätigen."),
-            "/channel transferOwnership " + target.getName() + " confirm"
-        ));
-        return;
-      }
-
       if(channel == null) {
         SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
@@ -35,6 +26,15 @@ public class ChannelTransferOwnerShipCommand extends CommandAPICommand {
 
       if(!channel.isOwner(player)) {
         SurfChat.message(player, new MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals."));
+        return;
+      }
+
+      if(!confirm.equalsIgnoreCase("confirm") && !confirm.equalsIgnoreCase("yes") && !confirm.equalsIgnoreCase("true") && !confirm.equalsIgnoreCase("ja")) {
+        SurfChat.message(player, new MessageBuilder().error("Bitte bestätige den Vorgang.").command(
+            new MessageBuilder().darkSpacer(" [").info("Bestätigen").darkSpacer("]"),
+            new MessageBuilder().info("Klicke hier, um den Vorgang zu bestätigen."),
+            "/channel transferOwnership " + target.getName() + " confirm"
+        ));
         return;
       }
 
