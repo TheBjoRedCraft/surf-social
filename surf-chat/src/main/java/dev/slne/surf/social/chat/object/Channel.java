@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -270,6 +271,8 @@ public class Channel {
 
   public boolean unregister(UUID uuid) {
     ChannelProvider.getInstance().getChannels().remove(uuid);
+
+    Bukkit.broadcastMessage(ChannelProvider.getInstance().getChannels().toString());
 
     return !ChannelProvider.getInstance().getChannels().containsKey(uuid);
   }

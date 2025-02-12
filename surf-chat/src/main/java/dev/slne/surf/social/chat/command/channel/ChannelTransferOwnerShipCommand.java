@@ -38,9 +38,13 @@ public class ChannelTransferOwnerShipCommand extends CommandAPICommand {
         return;
       }
 
+      channel.unregister(channel.getOwner().getUniqueId());
+
       channel.getModerators().add(channel.getOwner());
       channel.setOwner(target);
       channel.getMembers().remove(target);
+
+      channel.register();
 
       SurfChat.message(player, new MessageBuilder().primary("Du hast den Besitzer des Nachrichtenkanals an ").info(target.getName()).success(" übergeben."));
       SurfChat.message(target, new MessageBuilder().primary("Du wurdest zum Besitzer des Nachrichtenkanals ").info(channel.getName()).success(" ernannt."));
