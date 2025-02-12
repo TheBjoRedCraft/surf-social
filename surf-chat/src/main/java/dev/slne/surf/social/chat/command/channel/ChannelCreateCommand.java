@@ -14,7 +14,7 @@ public class ChannelCreateCommand extends CommandAPICommand {
     super(commandName);
 
     withArguments(new TextArgument("name"));
-    withArguments(new TextArgument("description"));
+    withOptionalArguments(new TextArgument("description"));
     executesPlayer((player, args) -> {
       if(Channel.getChannel(player) != null) {
         SurfChat.message(player, new MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal."));
@@ -22,7 +22,7 @@ public class ChannelCreateCommand extends CommandAPICommand {
       }
 
       String name = args.getUnchecked("name");
-      String description = args.getUnchecked("description");
+      String description = args.getOrDefaultUnchecked("description", "???");
       Channel channel = Channel.builder()
           .name(name)
           .description(description)
