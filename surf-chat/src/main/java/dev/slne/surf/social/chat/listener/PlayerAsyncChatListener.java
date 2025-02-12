@@ -13,6 +13,7 @@ import dev.slne.surf.social.chat.util.PluginColor;
 import io.papermc.paper.event.player.AsyncChatEvent;
 
 import java.security.SecureRandom;
+import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import net.kyori.adventure.text.Component;
@@ -27,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+@Getter
 public class PlayerAsyncChatListener implements Listener {
   private final SecureRandom random = new SecureRandom();
   private final String deletePerms = "surf.chat.delete";
@@ -68,36 +70,45 @@ public class PlayerAsyncChatListener implements Listener {
     String plainMessage = PlainTextComponentSerializer.plainText().serialize(event.message());
     Channel channel = Channel.getChannel(player);
     int messageID = this.getRandomID();
+    boolean found = false;
 
-    if(channel != null && !plainMessage.startsWith("@all") && !plainMessage.startsWith("@a")) {
-      for (Player onlinePlayer : channel.getOnlinePlayers()) {
-        Component message = MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPublicMessageFormat()))
-            .replaceText(TextReplacementConfig.builder()
-                .matchLiteral("%message%")
-                .replacement(event.message())
-                .build())
-            .replaceText(TextReplacementConfig.builder()
-                .matchLiteral("%channel%")
-                .replacement(" " + channel.getName() + " ")
-                .build())
-            .replaceText(TextReplacementConfig.builder()
-                .matchLiteral("%delete%")
-                .replacement(player.hasPermission(this.deletePerms) ? this.getDeleteComponent(messageID) : Component.empty())
-                .build())
-            .replaceText(TextReplacementConfig.builder()
-                .matchLiteral("%teleport%")
-                .replacement(player.hasPermission(this.teleportPerms) ? this.getTeleportComponent(player.getName()) : Component.empty())
-                .build())
-            ;
-
-        onlinePlayer.sendMessage(message);
-        ChatHistoryService.getInstance().insertNewMessage(onlinePlayer.getUniqueId(), Message.builder()
-            .receiver(onlinePlayer.getName())
-            .sender(player.getName())
-            .message(message)
-            .build(), messageID);
+    if (channel != null) {
+      if (plainMessage.startsWith("@all")) {
+        plainMessage = plainMessage.replaceFirst("@all", "").trim();
+        found = true;
+      } else if (plainMessage.startsWith("@a")) {
+        plainMessage = plainMessage.replaceFirst("@a", "").trim();
+        found = true;
       }
-      return;
+
+      if(!found) {
+        for (Player onlinePlayer : channel.getOnlinePlayers()) {
+          Component message = MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPublicMessageFormat()))
+              .replaceText(TextReplacementConfig.builder()
+                  .matchLiteral("%message%")
+                  .replacement(Component.text(plainMessage))
+                  .build())
+              .replaceText(TextReplacementConfig.builder()
+                  .matchLiteral("%channel%")
+                  .replacement(" " + channel.getName() + " ")
+                  .build())
+              .replaceText(TextReplacementConfig.builder()
+                  .matchLiteral("%delete%")
+                  .replacement(player.hasPermission(this.deletePerms) ? this.getDeleteComponent(messageID) : Component.empty())
+                  .build())
+              .replaceText(TextReplacementConfig.builder()
+                  .matchLiteral("%teleport%")
+                  .replacement(player.hasPermission(this.teleportPerms) ? this.getTeleportComponent(player.getName()) : Component.empty())
+                  .build());
+
+          onlinePlayer.sendMessage(message);
+          ChatHistoryService.getInstance().insertNewMessage(onlinePlayer.getUniqueId(), Message.builder()
+              .receiver(onlinePlayer.getName())
+              .sender(player.getName())
+              .message(message)
+              .build(), messageID);
+        }
+      }
     }
 
     Component message = MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPublicMessageFormat()))
