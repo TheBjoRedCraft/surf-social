@@ -80,36 +80,36 @@ public class ChatFilterService {
 
   private String getRegex(String word) {
     Object2ObjectMap<Character, String> replacements = new Object2ObjectOpenHashMap<>();
-    replacements.put('a', "[a@4]?");
-    replacements.put('b', "[b8]?");
-    replacements.put('c', "c?");
-    replacements.put('d', "d?");
-    replacements.put('e', "[e3]?");
-    replacements.put('f', "f?");
-    replacements.put('g', "[g9]?");
-    replacements.put('h', "h?");
-    replacements.put('i', "[i1!]?");
-    replacements.put('j', "j?");
-    replacements.put('k', "k?");
-    replacements.put('l', "[l1]?");
-    replacements.put('m', "m?");
-    replacements.put('n', "n?");
-    replacements.put('o', "[o0]?");
-    replacements.put('p', "p?");
-    replacements.put('q', "q?");
-    replacements.put('r', "r?");
-    replacements.put('s', "[s5]?");
-    replacements.put('t', "[t7]?");
-    replacements.put('u', "u?");
-    replacements.put('v', "v?");
-    replacements.put('w', "w?");
-    replacements.put('x', "x?");
-    replacements.put('y', "y?");
-    replacements.put('z', "[z2]?");
+    replacements.put('a', "[a@4]");
+    replacements.put('b', "[b8]");
+    replacements.put('c', "c");
+    replacements.put('d', "d");
+    replacements.put('e', "[e3]");
+    replacements.put('f', "f");
+    replacements.put('g', "[g9]");
+    replacements.put('h', "h");
+    replacements.put('i', "[i1!]");
+    replacements.put('j', "j");
+    replacements.put('k', "k");
+    replacements.put('l', "[l1]");
+    replacements.put('m', "m");
+    replacements.put('n', "n");
+    replacements.put('o', "[o0]");
+    replacements.put('p', "p");
+    replacements.put('q', "q");
+    replacements.put('r', "r");
+    replacements.put('s', "[s5]");
+    replacements.put('t', "[t7]");
+    replacements.put('u', "u");
+    replacements.put('v', "v");
+    replacements.put('w', "w");
+    replacements.put('x', "x");
+    replacements.put('y', "y");
+    replacements.put('z', "[z2]");
 
     StringBuilder regexBuilder = new StringBuilder();
     for (char c : word.toCharArray()) {
-        regexBuilder.append(replacements.getOrDefault(c, c + "?"));
+        regexBuilder.append(replacements.getOrDefault(c, c + ""));
     }
 
     String regex = regexBuilder.toString();
