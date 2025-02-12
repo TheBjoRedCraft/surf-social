@@ -24,7 +24,7 @@ public class ChannelListCommand extends CommandAPICommand {
       for (Channel channel : ChannelProvider.getInstance().getChannels().values()) {
         index ++;
 
-        message.addLine(new MessageBuilder().darkSpacer(index + ". ").primary(channel.getName()).darkSpacer(" (").info(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).darkSpacer(")").build().hoverEvent(this.createInfoMessage(channel)));
+        message.addLine(new MessageBuilder().variableKey(index + ". ").primary(channel.getName()).darkSpacer(" (").info(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).darkSpacer(")").build().hoverEvent(this.createInfoMessage(channel)));
       }
 
       message.send(player, page);

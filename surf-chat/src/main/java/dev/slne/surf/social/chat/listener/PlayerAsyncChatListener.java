@@ -107,6 +107,8 @@ public class PlayerAsyncChatListener implements Listener {
               .build(), messageID);
         }
       }
+
+      return;
     }
 
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -117,7 +119,7 @@ public class PlayerAsyncChatListener implements Listener {
               .build())
           .replaceText(TextReplacementConfig.builder()
               .matchLiteral("%channel%")
-              .replacement(channel == null ? "" : " " + channel.getName() + " ")
+              .replacement("")
               .build())
           .replaceText(TextReplacementConfig.builder()
               .matchLiteral("%delete%")
