@@ -256,7 +256,6 @@ public class Channel {
 
     this.members.clear();
     this.moderators.clear();
-    this.setOwner(null);
 
     return this.unregister(uuid);
   }
