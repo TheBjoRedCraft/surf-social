@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.ObjectSet;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,44 +40,49 @@ public class ChatFilterService {
   private final ConcurrentHashMap<UUID, Long> rateLimit = new ConcurrentHashMap<>();
   private final ConcurrentHashMap<UUID, Integer> messageCount = new ConcurrentHashMap<>();
 
-  private static final Pattern VALID_CHARACTERS_PATTERN = Pattern.compile("^[a-zA-Z0-9/.:_,()%&()=?!<>|#^\"²³+*~-äöü@]*$");
+  private static final Pattern VALID_CHARACTERS_PATTERN = Pattern.compile("^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~-äöü@]*$");
   private static final long TIME_FRAME = TimeUnit.SECONDS.toMillis(10);
   private static final int MESSAGE_LIMIT = 5;
 
   public void loadBlockedWords() {
-      File file = new File(SurfChat.getInstance().getDataFolder(), "blocked.txt");
-      long start = System.currentTimeMillis();
+    File file = new File(SurfChat.getInstance().getDataFolder(), "blocked.txt");
+    long start = System.currentTimeMillis();
 
-      if (!file.exists()) {
-        file.getParentFile().mkdirs();
-        SurfChat.getInstance().saveResource("blocked.txt", false);
-      }
+    if (!file.exists()) {
+      file.getParentFile().mkdirs();
+      SurfChat.getInstance().saveResource("blocked.txt", false);
+    }
 
-      this.blockedWords.clear();
-      this.blockedPatterns.clear();
+    this.blockedWords.clear();
+    this.blockedPatterns.clear();
 
-      try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-          String line;
+    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+      List<String> lines = reader.lines()
+          .map(String::trim)
+          .filter(word -> !word.isEmpty())
+          .toList();
 
-          while ((line = reader.readLine()) != null) {
-              String word = line.trim();
-              if (!word.isEmpty()) {
-                  this.blockedWords.add(word);
+      this.blockedWords.addAll(lines);
 
-                String regex = this.getRegex(word);
-                blockedPatterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
-              }
-          }
-      } catch (IOException e) {
-          logger.error("Failed to read blocked.txt file", e);
-      }
+      this.blockedPatterns.addAll(
+          lines.parallelStream()
+              .map(this::getRegex)
+              .map(regex -> Pattern.compile(regex, Pattern.CASE_INSENSITIVE))
+              .toList()
+      );
 
-      logger.info(Component.text("Loaded ", NamedTextColor.GREEN)
-          .append(Component.text(blockedWords.size(), NamedTextColor.GOLD))
-          .append(Component.text(" blocked words and their regexes in ", NamedTextColor.GREEN))
-          .append(Component.text(System.currentTimeMillis() - start, NamedTextColor.GOLD))
-          .append(Component.text("ms", NamedTextColor.GREEN)));
+    } catch (IOException e) {
+      logger.error("Failed to read blocked.txt file", e);
+    }
+
+    long duration = System.currentTimeMillis() - start;
+    logger.info(Component.text("Loaded ", NamedTextColor.GREEN)
+        .append(Component.text(blockedWords.size(), NamedTextColor.GOLD))
+        .append(Component.text(" blocked words and their regexes in ", NamedTextColor.GREEN))
+        .append(Component.text(duration, NamedTextColor.GOLD))
+        .append(Component.text("ms", NamedTextColor.GREEN)));
   }
+
 
   private String getRegex(String word) {
     Object2ObjectMap<Character, String> replacements = new Object2ObjectOpenHashMap<>();
@@ -112,8 +118,7 @@ public class ChatFilterService {
         regexBuilder.append(replacements.getOrDefault(c, c + ""));
     }
 
-    String regex = regexBuilder.toString();
-    return regex;
+    return regexBuilder.toString();
   }
 
   public boolean containsBlocked(Component message) {
