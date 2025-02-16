@@ -3,6 +3,7 @@ package dev.slne.surf.social.chat.util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class MessageBuilder {
   private Component message = Component.empty();
@@ -113,6 +114,11 @@ public class MessageBuilder {
    */
   public MessageBuilder darkSpacer(String text) {
     message = message.append(Component.text(text, Colors.DARK_SPACER));
+    return this;
+  }
+
+  public MessageBuilder miniMessage(String text) {
+    message = message.append(MiniMessage.miniMessage().deserialize(text));
     return this;
   }
 
