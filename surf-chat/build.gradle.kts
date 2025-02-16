@@ -1,0 +1,90 @@
+import net.minecrell.pluginyml.paper.PaperPluginDescription
+
+plugins {
+    id("java")
+    id("com.gradleup.shadow")
+    id("net.minecrell.plugin-yml.paper") version "0.6.0"
+    id("io.freefair.lombok")
+}
+
+val versionFile = file("version.txt")
+val incrementVersion = project.findProperty("incrementVersion")?.toString()?.toBoolean() ?: true
+
+val versionParts = versionFile.readText().trim().split(".")
+val major = versionParts[0].toInt()
+val minor = versionParts[1].toInt()
+var patch = versionParts[2].toInt()
+
+if (incrementVersion) {
+    patch += 1
+}
+
+val newVersion = "$major.$minor.$patch"
+
+group = "dev.slne"
+version = "$newVersion-1.21.4-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
+
+    maven {
+        name = "codemc"
+        url = uri("https://repo.codemc.org/repository/maven-public/")
+    }
+
+    maven {
+        url = uri("https://repo.extendedclip.com/releases/")
+    }
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.7.0")
+    compileOnly("me.clip:placeholderapi:2.11.6")
+
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+}
+
+paper {
+    name = "SurfChat"
+    main = "dev.slne.surf.social.chat.SurfChat"
+    apiVersion = "1.21.4"
+    authors = listOf("TheBjoRedCraft", "SLNE Development")
+    prefix = "SurfChat"
+    version = "${project.version}"
+    foliaSupported = true
+
+    serverDependencies {
+        register("CommandAPI") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            required = true
+        }
+
+        register("PlaceholderAPI") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            required = false
+        }
+    }
+}
+
+tasks {
+    shadowJar {
+        archiveFileName = "${project.name}-${project.version}.jar"
+
+        if (incrementVersion) {
+            dependsOn("incrementVersion")
+        }
+    }
+}
+
+tasks.register("incrementVersion") {
+    doLast {
+        versionFile.writeText(newVersion)
+        println("Incremented version to $newVersion")
+    }
+}
