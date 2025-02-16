@@ -48,6 +48,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
 
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+    implementation("com.zaxxer:HikariCP:5.0.1")
 }
 
 paper {
