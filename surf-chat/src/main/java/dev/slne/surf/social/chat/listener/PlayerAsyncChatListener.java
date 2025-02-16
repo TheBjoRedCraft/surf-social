@@ -1,12 +1,13 @@
 package dev.slne.surf.social.chat.listener;
+import dev.slne.surf.social.chat.SurfChat;
 import dev.slne.surf.social.chat.external.BasicPunishApi;
 import dev.slne.surf.social.chat.object.Channel;
 import dev.slne.surf.social.chat.object.Message;
-import dev.slne.surf.social.chat.provider.ConfigProvider;
 import dev.slne.surf.social.chat.service.ChatFilterService;
 import dev.slne.surf.social.chat.service.ChatHistoryService;
 
 import dev.slne.surf.social.chat.util.Colors;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import dev.slne.surf.social.chat.util.PluginColor;
 import io.papermc.paper.event.player.AsyncChatEvent;
 
@@ -106,11 +107,8 @@ public class PlayerAsyncChatListener implements Listener {
                   .build());
 
           onlinePlayer.sendMessage(message);
-          ChatHistoryService.getInstance().insertNewMessage(onlinePlayer.getUniqueId(), Message.builder()
-              .receiver(onlinePlayer.getName())
-              .sender(player.getName())
-              .message(message)
-              .build(), messageID);
+
+          SurfChat.send(onlinePlayer, new MessageBuilder().miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>" + plainMessage));
         }
       }
 
