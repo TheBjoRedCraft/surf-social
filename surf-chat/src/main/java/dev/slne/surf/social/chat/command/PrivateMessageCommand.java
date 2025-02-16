@@ -3,11 +3,9 @@ package dev.slne.surf.social.chat.command;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
-import dev.slne.surf.social.chat.object.Message;
-import dev.slne.surf.social.chat.provider.ConfigProvider;
-import dev.slne.surf.social.chat.service.ChatHistoryService;
-import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import dev.slne.surf.social.chat.SurfChat;
+import dev.slne.surf.social.chat.object.ChatUser;
+import dev.slne.surf.social.chat.util.MessageBuilder;
 import org.bukkit.entity.Player;
 
 public class PrivateMessageCommand extends CommandAPICommand {
@@ -22,8 +20,16 @@ public class PrivateMessageCommand extends CommandAPICommand {
       Player target = args.getUnchecked("player");
       String message = args.getUnchecked("message");
 
-      target.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPrivateMessageFormatReceive()).replace("%message%", message)));
-      player.sendMessage(MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(target, ConfigProvider.getInstance().getPrivateMessageFormatSend()).replace("%message%", message)));
+      ChatUser targetUser = ChatUser.getUser(target.getUniqueId());
+
+      if(targetUser.isToggledPM()) {
+        SurfChat.send(player, new MessageBuilder().error("Der Spieler hat private Nachrichten deaktiviert."));
+        return;
+      }
+
+
+      SurfChat.send(target, new MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.getName()).darkSpacer(" ->").variableValue(" Dich ").info(message));
+      SurfChat.send(player, new MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(player.getName() + " ").info(message));
     });
   }
 }
