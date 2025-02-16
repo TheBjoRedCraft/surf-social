@@ -4,6 +4,6 @@ import org.bukkit.entity.Player;
 
 public class BasicPunishApi {
   public static boolean isMuted(Player player) {
-    return false;
+    return false; //TODO: Punish API
   }
 }
