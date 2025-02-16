@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -262,7 +261,7 @@ public class Channel {
   }
 
   private void message(MessageBuilder messageBuilder) {
-    this.getOnlinePlayers().forEach(player -> SurfChat.message(player, messageBuilder));
+    this.getOnlinePlayers().forEach(player -> SurfChat.send(player, messageBuilder));
   }
 
   public void register() {

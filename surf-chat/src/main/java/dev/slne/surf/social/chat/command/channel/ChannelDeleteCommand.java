@@ -15,21 +15,21 @@ public class ChannelDeleteCommand extends CommandAPICommand {
       Channel channel = Channel.getChannel(player);
 
       if(channel == null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isOwner(player)) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals."));
         return;
       }
 
       if(!channel.delete()) {
-        SurfChat.message(player, new MessageBuilder().error("Der Nachrichtenkanal konnte nicht gelöscht werden."));
+        SurfChat.send(player, new MessageBuilder().error("Der Nachrichtenkanal konnte nicht gelöscht werden."));
         return;
       }
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.getName()).error(" gelöscht."));
+      SurfChat.send(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.getName()).error(" gelöscht."));
     });
   }
 }

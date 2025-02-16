@@ -22,7 +22,7 @@ public class ChannelMembersCommand extends CommandAPICommand {
       Channel channel = Channel.getChannelO(player);
 
       if(channel == null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 

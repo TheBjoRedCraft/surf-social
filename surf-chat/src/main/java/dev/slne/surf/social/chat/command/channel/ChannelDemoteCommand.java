@@ -18,19 +18,19 @@ public class ChannelDemoteCommand extends CommandAPICommand {
       OfflinePlayer target = args.getUnchecked("player");
 
       if(channel == null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isOwner(player)) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals."));
         return;
       }
 
       channel.demote(target);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast den Spieler ").info(target.getName()).error(" degradiert."));
-      SurfChat.message(target, new MessageBuilder().primary("Du wurdest ").error("degradiert"));
+      SurfChat.send(player, new MessageBuilder().primary("Du hast den Spieler ").info(target.getName()).error(" degradiert."));
+      SurfChat.send(target, new MessageBuilder().primary("Du wurdest ").error("degradiert"));
     });
   }
 }

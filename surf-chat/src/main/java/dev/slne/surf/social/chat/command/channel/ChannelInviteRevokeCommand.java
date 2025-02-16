@@ -20,19 +20,19 @@ public class ChannelInviteRevokeCommand extends CommandAPICommand {
       OfflinePlayer target = args.getUnchecked("player");
 
       if(channel == null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isModerator(player) && !channel.isOwner(player)) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals."));
         return;
       }
 
       channel.revokeInvite(target);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast die Einladung für ").info(target.getName()).primary(" in den Nachrichtenkanal ").info(channel.getName()).success(" zurückgezogen."));
-      SurfChat.message(target, new MessageBuilder().primary("Deine Einladung in den Nachrichtenkanal ").info(channel.getName()).success(" wurde zurückgezogen."));
+      SurfChat.send(player, new MessageBuilder().primary("Du hast die Einladung für ").info(target.getName()).primary(" in den Nachrichtenkanal ").info(channel.getName()).success(" zurückgezogen."));
+      SurfChat.send(target, new MessageBuilder().primary("Deine Einladung in den Nachrichtenkanal ").info(channel.getName()).success(" wurde zurückgezogen."));
     });
   }
 }

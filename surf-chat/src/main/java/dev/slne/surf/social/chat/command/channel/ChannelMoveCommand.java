@@ -23,8 +23,8 @@ public class ChannelMoveCommand extends CommandAPICommand {
 
       channel.move(target, channel);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" in den Nachrichtenkanal ").info(channel.getName()).success(" verschoben."));
-      SurfChat.message(target, new MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").info(channel.getName()).success(" verschoben."));
+      SurfChat.send(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" in den Nachrichtenkanal ").info(channel.getName()).success(" verschoben."));
+      SurfChat.send(target, new MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").info(channel.getName()).success(" verschoben."));
     });
   }
 }

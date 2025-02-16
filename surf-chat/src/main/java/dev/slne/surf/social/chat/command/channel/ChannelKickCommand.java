@@ -20,19 +20,19 @@ public class ChannelKickCommand extends CommandAPICommand {
       OfflinePlayer target = args.getUnchecked("player");
 
       if(channel == null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isModerator(player) && !channel.isOwner(player)) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals."));
         return;
       }
 
       channel.kick(target);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" aus dem Nachrichtenkanal ").info(channel.getName()).error(" geworfen."));
-      SurfChat.message(target, new MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").info(channel.getName()).error(" geworfen."));
+      SurfChat.send(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" aus dem Nachrichtenkanal ").info(channel.getName()).error(" geworfen."));
+      SurfChat.send(target, new MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").info(channel.getName()).error(" geworfen."));
     });
   }
 }

@@ -14,21 +14,21 @@ public class ChannelStateToggleCommand extends CommandAPICommand {
       Channel channel = Channel.getChannel(player);
 
       if(channel == null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isOwner(player)) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals."));
         return;
       }
 
      if(channel.isClosed()) {
        channel.setClosed(false);
-       SurfChat.message(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).primary(" ist nun ").success("öffentlich."));
+       SurfChat.send(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).primary(" ist nun ").success("öffentlich."));
      } else {
        channel.setClosed(true);
-       SurfChat.message(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).primary(" ist nun ").error("privat."));
+       SurfChat.send(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).primary(" ist nun ").error("privat."));
      }
     });
   }

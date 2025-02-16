@@ -16,18 +16,18 @@ public class ChannelJoinCommand extends CommandAPICommand {
       Channel channel = args.getUnchecked("channel");
 
       if(channel.isClosed() && !channel.hasInvite(player)) {
-        SurfChat.message(player, new MessageBuilder().error("Der Nachrichtenkanal ist privat."));
+        SurfChat.send(player, new MessageBuilder().error("Der Nachrichtenkanal ist privat."));
         return;
       }
 
       if(Channel.getChannelO(player) != null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal."));
         return;
       }
 
       channel.join(player);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du bist dem Nachrichtenkanal ").info(channel.getName()).success(" beigetreten."));
+      SurfChat.send(player, new MessageBuilder().primary("Du bist dem Nachrichtenkanal ").info(channel.getName()).success(" beigetreten."));
     });
   }
 }

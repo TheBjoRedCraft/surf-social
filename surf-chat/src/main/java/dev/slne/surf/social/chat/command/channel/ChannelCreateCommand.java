@@ -17,7 +17,7 @@ public class ChannelCreateCommand extends CommandAPICommand {
     withOptionalArguments(new TextArgument("description"));
     executesPlayer((player, args) -> {
       if(Channel.getChannel(player) != null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal."));
         return;
       }
 
@@ -33,13 +33,13 @@ public class ChannelCreateCommand extends CommandAPICommand {
           .build();
 
       if(ChannelProvider.getInstance().exists(name)) {
-        SurfChat.message(player, new MessageBuilder().error("Der Nachrichtenkanal ").info(name).error(" existiert bereits."));
+        SurfChat.send(player, new MessageBuilder().error("Der Nachrichtenkanal ").info(name).error(" existiert bereits."));
         return;
       }
 
       channel.register();
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.getName()).success(" erstellt."));
+      SurfChat.send(player, new MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.getName()).success(" erstellt."));
     });
   }
 }

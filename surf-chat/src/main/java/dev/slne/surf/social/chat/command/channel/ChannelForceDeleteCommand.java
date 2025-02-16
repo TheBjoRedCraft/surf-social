@@ -17,11 +17,11 @@ public class ChannelForceDeleteCommand extends CommandAPICommand {
       Channel channel = args.getUnchecked("channel");
 
       if(!channel.delete()) {
-        SurfChat.message(player, new MessageBuilder().error("Der Nachrichtenkanal konnte nicht gelöscht werden."));
+        SurfChat.send(player, new MessageBuilder().error("Der Nachrichtenkanal konnte nicht gelöscht werden."));
         return;
       }
 
-      SurfChat.message(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).error(" wurde gelöscht."));
+      SurfChat.send(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).error(" wurde gelöscht."));
     });
   }
 }

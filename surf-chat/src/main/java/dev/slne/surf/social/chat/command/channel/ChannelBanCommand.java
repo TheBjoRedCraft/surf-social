@@ -18,19 +18,19 @@ public class ChannelBanCommand extends CommandAPICommand {
       OfflinePlayer target = args.getUnchecked("player");
 
       if(channel == null) {
-        SurfChat.message(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
+        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
         return;
       }
 
       if(!channel.isModerator(player) && !channel.isOwner(player)) {
-        SurfChat.message(player, new MessageBuilder().primary("Du bist ").error("kein Moderator ").primary("in deinem Kanal."));
+        SurfChat.send(player, new MessageBuilder().primary("Du bist ").error("kein Moderator ").primary("in deinem Kanal."));
         return;
       }
 
       channel.ban(target);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" aus dem Nachrichtenkanal ").info(channel.getName()).error(" verbannt."));
-      SurfChat.message(target, new MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").info(channel.getName()).error(" verbannt."));
+      SurfChat.send(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" aus dem Nachrichtenkanal ").info(channel.getName()).error(" verbannt."));
+      SurfChat.send(target, new MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").info(channel.getName()).error(" verbannt."));
     });
   }
 }

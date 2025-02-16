@@ -17,13 +17,13 @@ public class ChannelAcceptInviteCommand extends CommandAPICommand {
       Channel channel = args.getUnchecked("channel");
 
       if(!channel.hasInvite(player)) {
-        SurfChat.message(player, new MessageBuilder().primary("Du hast keine Einladung in den Nachrichtenkanal ").info(channel.getName()).error(" erhalten."));
+        SurfChat.send(player, new MessageBuilder().primary("Du hast keine Einladung in den Nachrichtenkanal ").info(channel.getName()).error(" erhalten."));
         return;
       }
 
       channel.acceptInvite(player);
 
-      SurfChat.message(player, new MessageBuilder().primary("Du hast die Einladung in den Nachrichtenkanal ").info(channel.getName()).success(" angenommen."));
+      SurfChat.send(player, new MessageBuilder().primary("Du hast die Einladung in den Nachrichtenkanal ").info(channel.getName()).success(" angenommen."));
     });
   }
 }
