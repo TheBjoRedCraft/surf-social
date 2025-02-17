@@ -122,6 +122,11 @@ public class MessageBuilder {
     return this;
   }
 
+  public MessageBuilder component(Component component) {
+    message = message.append(component);
+    return this;
+  }
+
   public MessageBuilder command(MessageBuilder text, MessageBuilder hover, String command) {
     message = message.append(text.build().clickEvent(ClickEvent.runCommand(command)).hoverEvent(HoverEvent.showText(hover.build())));
     return this;
