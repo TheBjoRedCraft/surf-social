@@ -50,10 +50,9 @@ class SurfChat : SuspendingJavaPlugin() {
     companion object {
         private val random: SecureRandom = SecureRandom()
 
-        val instance: SurfChat
-            get() = getPlugin(SurfChat::class.java)
+        val instance: SurfChat get() = getPlugin(SurfChat::class.java)
 
-        fun send(player: OfflinePlayer, text: MessageBuilder) {
+        fun send(player: OfflinePlayer, text: MessageBuilder, messageID: Int = 0) {
             val message = Colors.PREFIX.append(text.build())
 
             if (player.isOnline) {
@@ -61,7 +60,7 @@ class SurfChat : SuspendingJavaPlugin() {
 
                 onlinePlayer.sendMessage(message)
 
-                ChatHistoryService.instance.insertNewMessage(player.uniqueId, Message("Unknown", player.name ?: player.uniqueId.toString(), message), random.nextInt(1000000))
+                ChatHistoryService.instance.insertNewMessage(player.uniqueId, Message("Unknown", player.name ?: player.uniqueId.toString(), message), messageID)
             }
         }
     }

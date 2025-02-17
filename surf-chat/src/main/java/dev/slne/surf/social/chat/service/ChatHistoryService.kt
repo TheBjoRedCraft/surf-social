@@ -49,7 +49,11 @@ class ChatHistoryService {
     fun removeMessage(player: UUID, messageID: Int) {
         val chatHistory: Object2ObjectMap<HistoryPair, Message> = chatHistoryCache.getIfPresent(player) ?: return
 
-        chatHistory.entries.removeIf { entry: Map.Entry<HistoryPair, Message> -> entry.key.messageID == messageID }
+        val key = chatHistory.keys.stream().filter { it.messageID == messageID }.findFirst().orElse(null)
+
+        if (key != null) {
+            chatHistory.remove(key)
+        }
     }
 
     fun resend(player: UUID) {

@@ -82,7 +82,7 @@ class PlayerAsyncChatListener : Listener {
 
             if (!found) {
                 for (onlinePlayer in channel.onlinePlayers) {
-                    SurfChat.send(onlinePlayer, MessageBuilder().component(this.getDeleteComponent(onlinePlayer, messageID)).component(this.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").component(getChannelComponent(channel)).miniMessage("<white>$plainMessage"))
+                    SurfChat.send(onlinePlayer, MessageBuilder().component(this.getDeleteComponent(onlinePlayer, messageID)).component(this.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").component(getChannelComponent(channel)).miniMessage("<white>$plainMessage"), messageID)
                 }
             }
             return
@@ -96,7 +96,7 @@ class PlayerAsyncChatListener : Listener {
                     continue
                 }
 
-                SurfChat.send(onlinePlayer, MessageBuilder().component(this@PlayerAsyncChatListener.getDeleteComponent(onlinePlayer, messageID)).component(this@PlayerAsyncChatListener.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>$plainMessage"))
+                SurfChat.send(onlinePlayer, MessageBuilder().component(this@PlayerAsyncChatListener.getDeleteComponent(onlinePlayer, messageID)).component(this@PlayerAsyncChatListener.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>$plainMessage"), messageID)
             }
         }
     }
