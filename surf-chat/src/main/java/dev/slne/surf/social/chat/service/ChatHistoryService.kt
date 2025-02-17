@@ -13,12 +13,11 @@ import org.bukkit.entity.Player
 import java.util.*
 
 class ChatHistoryService {
-    private val chatHistoryCache: Cache<UUID, Object2ObjectMap<HistoryPair, Message>?> =
-        Caffeine
+    private val chatHistoryCache: Cache<UUID, Object2ObjectMap<HistoryPair, Message>?> = Caffeine
             .newBuilder()
-            .build<java.util.UUID, Object2ObjectMap<HistoryPair, Message>?>()
+            .build<UUID, Object2ObjectMap<HistoryPair, Message>?>()
 
-    fun clearInternalChatHistory(player: java.util.UUID) {
+    fun clearInternalChatHistory(player: UUID) {
         chatHistoryCache.invalidate(player)
     }
 
@@ -34,30 +33,27 @@ class ChatHistoryService {
         }
     }
 
-    fun insertNewMessage(player: java.util.UUID, message: Message, messageID: Int) {
-        var chatHistory: Object2ObjectMap<HistoryPair, Message>? =
-            chatHistoryCache.getIfPresent(player)
+    fun insertNewMessage(player: UUID, message: Message, messageID: Int) {
+        var chatHistory: Object2ObjectMap<HistoryPair, Message>? = chatHistoryCache.getIfPresent(player)
 
         if (chatHistory == null) {
-            chatHistory = Object2ObjectOpenHashMap<HistoryPair, Message>()
+            chatHistory = Object2ObjectOpenHashMap()
             chatHistoryCache.put(player, chatHistory)
         }
 
-        val timestamp: Int = (java.lang.System.currentTimeMillis() / 1000).toInt()
-        chatHistory!!.put(HistoryPair(messageID, timestamp.toLong()), message)
+        val timestamp: Int = (System.currentTimeMillis() / 1000).toInt()
+        chatHistory[HistoryPair(messageID, timestamp.toLong())] = message
     }
 
 
-    fun removeMessage(player: java.util.UUID, messageID: Int) {
-        val chatHistory: Object2ObjectMap<HistoryPair, Message>? =
-            chatHistoryCache.getIfPresent(player)
+    fun removeMessage(player: UUID, messageID: Int) {
+        val chatHistory: Object2ObjectMap<HistoryPair, Message> = chatHistoryCache.getIfPresent(player) ?: return
 
-        chatHistory?.entries?.removeIf { entry: Map.Entry<HistoryPair, Message?> -> entry.key.getMessageID() == messageID }
+        chatHistory.entries.removeIf { entry: Map.Entry<HistoryPair, Message> -> entry.key.messageID == messageID }
     }
 
-    fun resend(player: java.util.UUID) {
-        val chatHistory: Object2ObjectMap<HistoryPair, Message>? =
-            chatHistoryCache.getIfPresent(player)
+    fun resend(player: UUID) {
+        val chatHistory: Object2ObjectMap<HistoryPair, Message> = chatHistoryCache.getIfPresent(player) ?: return
 
         Bukkit.getOnlinePlayers().forEach { online: Player ->
             var index = 0
@@ -67,18 +63,13 @@ class ChatHistoryService {
             }
         }
 
-        chatHistory?.object2ObjectEntrySet()?.stream()?.sorted(
-            java.util.Comparator.comparingLong<Object2ObjectMap.Entry<HistoryPair, Message>>(
-                java.util.function.ToLongFunction<Object2ObjectMap.Entry<HistoryPair, Message>> { entry: Object2ObjectMap.Entry<HistoryPair, Message?> -> entry.key.getSendTime() })
-        )
-            ?.forEach { entry: Object2ObjectMap.Entry<HistoryPair?, Message> ->
-                Bukkit.getOnlinePlayers()
-                    .forEach { target: Player -> target.sendMessage(entry.value.message) }
-            }
+        chatHistory.object2ObjectEntrySet()
+            .stream()
+            .sorted(Comparator.comparingLong<Object2ObjectMap.Entry<HistoryPair, Message>> { entry: Object2ObjectMap.Entry<HistoryPair, Message> -> entry.key.sendTime })
+            .forEach { entry: Object2ObjectMap.Entry<HistoryPair?, Message> -> Bukkit.getOnlinePlayers().forEach { target: Player -> target.sendMessage(entry.value.message) } }
     }
 
     companion object {
-        @Getter
-        private val instance = ChatHistoryService()
+        val instance = ChatHistoryService()
     }
 }
