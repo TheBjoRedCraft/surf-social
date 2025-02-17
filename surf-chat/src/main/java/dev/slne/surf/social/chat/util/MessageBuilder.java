@@ -132,6 +132,11 @@ public class MessageBuilder {
     return this;
   }
 
+  public MessageBuilder white(String text) {
+    message = message.append(Component.text(text, Colors.WHITE));
+    return this;
+  }
+
   public MessageBuilder newLine() {
     message = message.append(Component.newline());
     return this;
