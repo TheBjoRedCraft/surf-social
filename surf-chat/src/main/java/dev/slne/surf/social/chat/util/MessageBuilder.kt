@@ -137,6 +137,15 @@ class MessageBuilder {
         return this
     }
 
+    fun suggest(text: MessageBuilder, hover: MessageBuilder, command: String): MessageBuilder {
+        message = message.append(
+            text.build().clickEvent(ClickEvent.suggestCommand(command)).hoverEvent(
+                HoverEvent.showText(hover.build())
+            )
+        )
+        return this
+    }
+
     fun white(text: String): MessageBuilder {
         message = message.append(Component.text(text, Colors.WHITE))
         return this

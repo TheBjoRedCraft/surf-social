@@ -48,10 +48,10 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 }
 
                 if(!targetUser.isIgnoring(player.uniqueId)) {
-                    SurfChat.send(target, MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.name).darkSpacer(" ->").variableValue(" Dich: ").white(message))
+                    SurfChat.send(target, MessageBuilder().suggest(MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.name).darkSpacer(" ->").variableValue(" Dich: ").white(message), MessageBuilder().primary("Clicke, um anzuworten."), "/msg " + player.name + " "))
                 }
 
-                SurfChat.send(player, MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(target.name + ": ").white(message))
+                SurfChat.send(player, MessageBuilder().suggest(MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(target.name + ": ").white(message), MessageBuilder().primary("Clicke, um anzuworten."), "/msg " + target.name + " "))
             }
         })
     }
