@@ -13,22 +13,15 @@ class ChannelAcceptInviteCommand(commandName: String) : CommandAPICommand(comman
     init {
         withArguments(ChannelInviteArgument("channel"))
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val channel = args.getUnchecked<Channel>("channel")
-            if (!channel!!.hasInvite(player)) {
-                SurfChat.Companion.send(
-                    player,
-                    MessageBuilder().primary("Du hast keine Einladung in den Nachrichtenkanal ")
-                        .info(channel.name).error(" erhalten.")
-                )
-                return@executesPlayer
+            val channel = args.getUnchecked<Channel>("channel") ?: return@PlayerCommandExecutor
+
+            if (!channel.hasInvite(player)) {
+                SurfChat.send(player, MessageBuilder().primary("Du hast keine Einladung in den Nachrichtenkanal ").info(channel.name).error(" erhalten."))
+                return@PlayerCommandExecutor
             }
 
             channel.acceptInvite(player)
-            SurfChat.Companion.send(
-                player,
-                MessageBuilder().primary("Du hast die Einladung in den Nachrichtenkanal ")
-                    .info(channel.name).success(" angenommen.")
-            )
+            SurfChat.send(player, MessageBuilder().primary("Du hast die Einladung in den Nachrichtenkanal ").info(channel.name).success(" angenommen."))
         })
     }
 }

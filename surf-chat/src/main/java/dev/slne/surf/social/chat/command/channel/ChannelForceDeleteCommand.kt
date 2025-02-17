@@ -14,19 +14,14 @@ class ChannelForceDeleteCommand(commandName: String) : CommandAPICommand(command
         withPermission("surf.chat.command.channel.forceDelete")
         withArguments(ChannelArgument("channel"))
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val channel = args.getUnchecked<Channel>("channel")
-            if (!channel!!.delete()) {
-                SurfChat.Companion.send(
-                    player,
-                    MessageBuilder().error("Der Nachrichtenkanal konnte nicht gelöscht werden.")
-                )
-                return@executesPlayer
+            val channel = args.getUnchecked<Channel>("channel") ?: return@PlayerCommandExecutor
+
+            if (!channel.delete()) {
+                SurfChat.send(player, MessageBuilder().error("Der Nachrichtenkanal konnte nicht gelöscht werden."))
+                return@PlayerCommandExecutor
             }
-            SurfChat.Companion.send(
-                player,
-                MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.name)
-                    .error(" wurde gelöscht.")
-            )
+
+            SurfChat.send(player, MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.name).error(" wurde gelöscht."))
         })
     }
 }

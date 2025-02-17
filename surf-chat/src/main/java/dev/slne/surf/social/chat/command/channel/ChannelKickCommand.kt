@@ -14,37 +14,23 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withArguments(OfflinePlayerArgument("player"))
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val channel: Channel = Channel.Companion.getChannel(player)
-            val target = args.getUnchecked<OfflinePlayer>("player")
+            val channel: Channel? = Channel.getChannel(player)
+            val target = args.getUnchecked<OfflinePlayer>("player") ?: return@PlayerCommandExecutor
 
             if (channel == null) {
-                SurfChat.Companion.send(
-                    player,
-                    MessageBuilder().error("Du bist in keinem Nachrichtenkanal.")
-                )
-                return@executesPlayer
+                SurfChat.send(player, MessageBuilder().error("Du bist in keinem Nachrichtenkanal."))
+                return@PlayerCommandExecutor
             }
 
             if (!channel.isModerator(player) && !channel.isOwner(player)) {
-                SurfChat.Companion.send(
-                    player,
-                    MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals.")
-                )
-                return@executesPlayer
+                SurfChat.send(player, MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals."))
+                return@PlayerCommandExecutor
             }
 
-            channel.kick(target!!)
+            channel.kick(target)
 
-            SurfChat.Companion.send(
-                player, MessageBuilder().primary("Du hast ").info(
-                    target.name!!
-                ).primary(" aus dem Nachrichtenkanal ").info(channel.name).error(" geworfen.")
-            )
-            SurfChat.Companion.send(
-                target,
-                MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").info(channel.name)
-                    .error(" geworfen.")
-            )
+            SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name!!).primary(" aus dem Nachrichtenkanal ").info(channel.name).error(" geworfen."))
+            SurfChat.send(target, MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").info(channel.name).error(" geworfen."))
         })
     }
 }

@@ -18,21 +18,13 @@ class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
         withPermission("surf.chat.command.channel.move")
 
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val target = args.getUnchecked<OfflinePlayer>("player")
-            val channel = args.getUnchecked<Channel>("channel")
+            val target = args.getUnchecked<OfflinePlayer>("player") ?: return@PlayerCommandExecutor
+            val channel = args.getUnchecked<Channel>("channel") ?: return@PlayerCommandExecutor
 
-            channel!!.move(target!!, channel)
+            channel.move(target, channel)
 
-            SurfChat.Companion.send(
-                player, MessageBuilder().primary("Du hast ").info(
-                    target.name!!
-                ).primary(" in den Nachrichtenkanal ").info(channel.name).success(" verschoben.")
-            )
-            SurfChat.Companion.send(
-                target,
-                MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").info(channel.name)
-                    .success(" verschoben.")
-            )
+            SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name ?: target.uniqueId.toString()).primary(" in den Nachrichtenkanal ").info(channel.name).success(" verschoben."))
+            SurfChat.send(target, MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").info(channel.name).success(" verschoben."))
         })
     }
 }

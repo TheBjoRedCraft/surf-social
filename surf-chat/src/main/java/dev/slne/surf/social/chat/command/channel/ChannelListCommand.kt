@@ -22,7 +22,7 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
 
             message.setPageCommand("/channel list %page%")
 
-            for (channel in ChannelProvider.getInstance().channels.values) {
+            for (channel in ChannelProvider.instance.channels.values) {
                 index++
 
                 message.addLine(

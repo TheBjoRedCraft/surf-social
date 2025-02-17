@@ -7,31 +7,29 @@ import dev.slne.surf.social.chat.command.argument.ChannelArgument
 import dev.slne.surf.social.chat.`object`.Channel
 import dev.slne.surf.social.chat.util.MessageBuilder
 import net.kyori.adventure.text.Component
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withOptionalArguments(ChannelArgument("channel"))
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val channel =
-                args.getOrDefaultUnchecked<Channel?>(
-                    "channel",
-                    Channel.Companion.getChannel(player)
-                )
-                    ?: return@executesPlayer
-            player.sendMessage(createInfoMessage(channel)!!)
+            val channel = args.getOrDefaultUnchecked<Channel?>("channel", Channel.getChannel(player)) ?: return@PlayerCommandExecutor
+
+            player.sendMessage(createInfoMessage(channel))
         })
     }
 
-    private fun createInfoMessage(channel: Channel): Component? {
+    private fun createInfoMessage(channel: Channel): Component {
+        val owner: OfflinePlayer = channel.owner ?: return MessageBuilder().error("Ein Fehler ist aufgetreten.").build()
         return MessageBuilder()
             .primary("Kanalinformation: ").info(channel.name).newLine()
             .darkSpacer("   - ").variableKey("Beschreibung: ").variableValue(channel.description)
             .newLine()
-            .darkSpacer("   - ").variableKey("Besitzer: ").variableValue(channel.owner.name)
+            .darkSpacer("   - ").variableKey("Besitzer: ").variableValue(owner.name ?: "Unbekannt")
             .newLine()
             .darkSpacer("   - ").variableKey("Status: ")
-            .variableValue(if (channel.isClosed) "Geschlossen" else "Offen").newLine()
+            .variableValue(if (channel.closed) "Geschlossen" else "Offen").newLine()
             .darkSpacer("   - ").variableKey("Mitglieder: ")
             .variableValue((channel.members.size + channel.moderators.size + 1).toString())
             .newLine()

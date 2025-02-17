@@ -10,22 +10,16 @@ import org.bukkit.entity.Player
 
 class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments? ->
-            val channel: Channel = Channel.Companion.getChannel(player)
+        executesPlayer(PlayerCommandExecutor { player: Player, _: CommandArguments? ->
+            val channel: Channel? = Channel.getChannel(player)
+
             if (channel == null) {
-                SurfChat.Companion.send(
-                    player,
-                    MessageBuilder().error("Du bist in keinem Nachrichtenkanal.")
-                )
-                return@executesPlayer
+                SurfChat.send(player, MessageBuilder().error("Du bist in keinem Nachrichtenkanal."))
+                return@PlayerCommandExecutor
             }
 
             channel.leave(player)
-            SurfChat.Companion.send(
-                player,
-                MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.name)
-                    .error(" verlassen.")
-            )
+            SurfChat.send(player, MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.name).error(" verlassen."))
         })
     }
 }

@@ -16,39 +16,22 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
         withArguments(TextArgument("name"))
         withOptionalArguments(TextArgument("description"))
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            if (Channel.Companion.getChannel(player) != null) {
-                SurfChat.Companion.send(
-                    player,
-                    MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal.")
-                )
-                return@executesPlayer
+            if (Channel.getChannel(player) != null) {
+                SurfChat.send(player, MessageBuilder().error("Du bist bereits in einem Nachrichtenkanal."))
+                return@PlayerCommandExecutor
             }
-            val name = args.getUnchecked<String>("name")
-            val description = args.getOrDefaultUnchecked("description", "???")
-            val channel = Channel.builder()
-                .name(name)
-                .description(description)
-                .members(ObjectArraySet())
-                .invites(ObjectArraySet())
-                .closed(true)
-                .owner(player)
-                .build()
 
-            if (ChannelProvider.getInstance().exists(name)) {
-                SurfChat.Companion.send(
-                    player, MessageBuilder().error("Der Nachrichtenkanal ").info(
-                        name!!
-                    ).error(" existiert bereits.")
-                )
-                return@executesPlayer
+            val name = args.getUnchecked<String>("name") ?: return@PlayerCommandExecutor
+            val description = args.getOrDefaultUnchecked("description", "???")
+            val channel = Channel(player, ObjectArraySet(), ObjectArraySet(), ObjectArraySet(), ObjectArraySet(), name, description, false)
+
+            if (ChannelProvider.instance.exists(name)) {
+                SurfChat.send(player, MessageBuilder().error("Der Nachrichtenkanal ").info(name).error(" existiert bereits."))
+                return@PlayerCommandExecutor
             }
 
             channel.register()
-            SurfChat.Companion.send(
-                player,
-                MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.name)
-                    .success(" erstellt.")
-            )
+            SurfChat.send(player, MessageBuilder().primary("Du hast den Nachrichtenkanal ").info(channel.name).success(" erstellt."))
         })
     }
 }

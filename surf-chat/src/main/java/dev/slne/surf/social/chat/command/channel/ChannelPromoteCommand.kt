@@ -14,36 +14,26 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
     init {
         withArguments(ChannelMembersArgument("player"))
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val channel: Channel = Channel.Companion.getChannel(player)
-            val target = args.getUnchecked<OfflinePlayer>("player")
+            val channel: Channel? = Channel.getChannel(player)
+            val target = args.getUnchecked<OfflinePlayer>("player") ?: return@PlayerCommandExecutor
 
-            if (channel == null) {
-                SurfChat.Companion.send(
-                    player,
-                    MessageBuilder().error("Du bist in keinem Nachrichtenkanal.")
-                )
-                return@executesPlayer
+            if(channel == null) {
+                SurfChat.send(player, MessageBuilder().error("Du bist in keinem Nachrichtenkanal."))
+                return@PlayerCommandExecutor
             }
 
             if (!channel.isOwner(player)) {
-                SurfChat.Companion.send(
+                SurfChat.send(
                     player,
                     MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals.")
                 )
-                return@executesPlayer
+                return@PlayerCommandExecutor
             }
 
             channel.promote(target)
 
-            SurfChat.Companion.send(
-                player, MessageBuilder().primary("Du hast den Spieler ").info(
-                    target!!.name!!
-                ).success(" befördert.")
-            )
-            SurfChat.Companion.send(
-                target,
-                MessageBuilder().primary("Du wurdest ").success("befördert")
-            )
+            SurfChat.send(player, MessageBuilder().primary("Du hast den Spieler ").info(target.name ?: target.uniqueId.toString()).success(" befördert."))
+            SurfChat.send(target, MessageBuilder().primary("Du wurdest ").success("befördert"))
         })
     }
 }
