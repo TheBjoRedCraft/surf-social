@@ -35,8 +35,8 @@ public class PrivateMessageCommand extends CommandAPICommand {
       }
 
 
-      SurfChat.send(target, new MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.getName()).darkSpacer(" ->").variableValue(" Dich ").info(message));
-      SurfChat.send(player, new MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(player.getName() + " ").info(message));
+      SurfChat.send(target, new MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.getName()).darkSpacer(" ->").variableValue(" Dich: ").white(message));
+      SurfChat.send(player, new MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(player.getName() + ": ").white(message));
     });
   }
 }
