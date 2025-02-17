@@ -24,6 +24,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val message = args.getUnchecked<String>("message") ?: return@launch
 
                 val targetUser: ChatUser = ChatUser.getUser(target.uniqueId)
+                val user: ChatUser = ChatUser.getUser(player.uniqueId)
 
 
                 if (BasicPunishApi.isMuted(player)) {
@@ -38,6 +39,11 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
 
                 if(targetUser.isIgnoring(player.uniqueId)) {
                     SurfChat.send(player, MessageBuilder().error("Der Spieler ignoriert dich."))
+                    return@launch
+                }
+
+                if(user.isIgnoring(target.uniqueId)) {
+                    SurfChat.send(player, MessageBuilder().error("Du ignorierst den Spieler."))
                     return@launch
                 }
 
