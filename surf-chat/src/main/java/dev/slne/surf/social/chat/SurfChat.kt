@@ -1,5 +1,6 @@
 package dev.slne.surf.social.chat
 
+import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import dev.jorel.commandapi.CommandAPI
 import dev.slne.surf.social.chat.command.IgnoreCommand
 import dev.slne.surf.social.chat.command.PrivateMessageCommand
@@ -20,7 +21,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.plugin.java.JavaPlugin
 import java.security.SecureRandom
 
-class SurfChat : JavaPlugin() {
+class SurfChat : SuspendingJavaPlugin() {
     override fun onEnable() {
         CommandAPI.unregister("msg")
         CommandAPI.unregister("tell")
@@ -38,10 +39,7 @@ class SurfChat : JavaPlugin() {
         DatabaseService.instance.connect()
 
         Bukkit.getPluginManager().registerEvents(PlayerAsyncChatListener(), this)
-        Bukkit.getPluginManager().registerEvents(
-            PlayerQuitListener(),
-            this
-        )
+        Bukkit.getPluginManager().registerEvents(PlayerQuitListener(), this)
     }
 
     override fun onDisable() {

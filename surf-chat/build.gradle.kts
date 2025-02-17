@@ -49,7 +49,11 @@ dependencies {
 
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.21.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.21.0")
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("dev.hsbrysk:caffeine-coroutines:2.0.0")
 }
 
 paper {

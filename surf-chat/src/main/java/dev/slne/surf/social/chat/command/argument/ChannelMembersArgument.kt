@@ -36,7 +36,7 @@ class ChannelMembersArgument(nodeName: String) :
             members.addAll(channel.moderators.stream().map<String> { obj: OfflinePlayer -> obj.name }.toList())
             members.add(owner.name)
             members.remove(info.sender().name)
-            members.stream().toArray() { arrayOfNulls<String>(it) }
+            members.stream().toArray { arrayOfNulls<String>(it) }
             }
         )
     }

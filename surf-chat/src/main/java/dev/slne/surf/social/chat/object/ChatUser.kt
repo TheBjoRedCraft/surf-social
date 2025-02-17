@@ -3,6 +3,10 @@ package dev.slne.surf.social.chat.`object`
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 import com.github.benmanes.caffeine.cache.RemovalCause
+import com.github.shynixn.mccoroutine.bukkit.launch
+import dev.hsbrysk.caffeine.CoroutineLoadingCache
+import dev.hsbrysk.caffeine.buildCoroutine
+import dev.slne.surf.social.chat.SurfChat
 import dev.slne.surf.social.chat.service.DatabaseService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -20,14 +24,14 @@ class ChatUser(
     }
 
     companion object {
-        private val cache: LoadingCache<UUID, ChatUser> = Caffeine
+        private val cache: CoroutineLoadingCache<UUID, ChatUser> = Caffeine
             .newBuilder()
-            .removalListener<Any, Any> { _: Any?, user: Any?, _: RemovalCause? -> DatabaseService.instance.saveUser(user as ChatUser) }
+            .removalListener<Any, Any> { _: Any?, user: Any?, _: RemovalCause? -> SurfChat.instance.launch { DatabaseService.instance.saveUser(user as ChatUser) } }
             .expireAfterWrite(30, java.util.concurrent.TimeUnit.MINUTES)
-            .build { uuid: UUID -> DatabaseService.instance.loadUser(uuid) }
+            .buildCoroutine() { uuid: UUID -> DatabaseService.instance.loadUser(uuid) }
 
-        fun getUser(uuid: UUID): ChatUser {
-            return cache[uuid]
+        suspend fun getUser(uuid: UUID): ChatUser {
+            return this.cache.get(uuid)
         }
     }
 }

@@ -1,5 +1,6 @@
 package dev.slne.surf.social.chat.command
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.arguments.PlayerArgument
@@ -18,25 +19,27 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
         withAliases("tell", "w", "pm", "dm")
         withPermission("surf.chat.command.private-message")
         executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
-            val target = args.getUnchecked<Player>("player") ?: return@PlayerCommandExecutor
-            val message = args.getUnchecked<String>("message") ?: return@PlayerCommandExecutor
+            SurfChat.instance.launch {
+                val target = args.getUnchecked<Player>("player") ?: return@launch
+                val message = args.getUnchecked<String>("message") ?: return@launch
 
-            val targetUser: ChatUser = ChatUser.getUser(target.uniqueId)
+                val targetUser: ChatUser = ChatUser.getUser(target.uniqueId)
 
 
-            if (BasicPunishApi.isMuted(player)) {
-                SurfChat.send(player, MessageBuilder().error("Du bist gemuted und kannst nicht schreiben."))
-                return@PlayerCommandExecutor
+                if (BasicPunishApi.isMuted(player)) {
+                    SurfChat.send(player, MessageBuilder().error("Du bist gemuted und kannst nicht schreiben."))
+                    return@launch
+                }
+
+                if (targetUser.toggledPM) {
+                    SurfChat.send(player, MessageBuilder().error("Der Spieler hat private Nachrichten deaktiviert."))
+                    return@launch
+                }
+
+
+                SurfChat.send(target, MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.name).darkSpacer(" ->").variableValue(" Dich: ").white(message))
+                SurfChat.send(player, MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(player.name + ": ").white(message))
             }
-
-            if (targetUser.toggledPM) {
-                SurfChat.send(player, MessageBuilder().error("Der Spieler hat private Nachrichten deaktiviert."))
-                return@PlayerCommandExecutor
-            }
-
-
-            SurfChat.send(target, MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.name).darkSpacer(" ->").variableValue(" Dich: ").white(message))
-            SurfChat.send(player, MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(player.name + ": ").white(message))
         })
     }
 }
