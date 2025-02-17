@@ -1,8 +1,10 @@
 package dev.slne.surf.social.chat.listener
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.slne.surf.social.chat.SurfChat
 import dev.slne.surf.social.chat.external.BasicPunishApi
 import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.`object`.ChatUser
 import dev.slne.surf.social.chat.service.ChatFilterService
 import dev.slne.surf.social.chat.util.Colors
 import dev.slne.surf.social.chat.util.MessageBuilder
@@ -86,8 +88,16 @@ class PlayerAsyncChatListener : Listener {
             return
         }
 
-        for (onlinePlayer in Bukkit.getOnlinePlayers()) {
-            SurfChat.send(onlinePlayer, MessageBuilder().component(this.getDeleteComponent(onlinePlayer, messageID)).component(this.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>$plainMessage"))
+        SurfChat.instance.launch {
+            for (onlinePlayer in Bukkit.getOnlinePlayers()) {
+                val targetUser = ChatUser.getUser(onlinePlayer.uniqueId)
+
+                if(targetUser.isIgnoring(player.uniqueId)) {
+                    continue
+                }
+
+                SurfChat.send(onlinePlayer, MessageBuilder().component(this@PlayerAsyncChatListener.getDeleteComponent(onlinePlayer, messageID)).component(this@PlayerAsyncChatListener.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>$plainMessage"))
+            }
         }
     }
 
