@@ -36,6 +36,16 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                     return@launch
                 }
 
+                if(targetUser.isIgnoring(player.uniqueId)) {
+                    SurfChat.send(player, MessageBuilder().error("Der Spieler ignoriert dich."))
+                    return@launch
+                }
+
+                if(target == player) {
+                    SurfChat.send(player, MessageBuilder().error("Du kannst dir nicht selbst schreiben."))
+                    return@launch
+                }
+
 
                 SurfChat.send(target, MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.name).darkSpacer(" ->").variableValue(" Dich: ").white(message))
                 SurfChat.send(player, MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(target.name + ": ").white(message))
