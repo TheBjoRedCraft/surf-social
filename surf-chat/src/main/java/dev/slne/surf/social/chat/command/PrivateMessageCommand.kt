@@ -33,7 +33,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 }
 
                 if (targetUser.toggledPM) {
-                    SurfChat.send(player, MessageBuilder().error("Der Spieler hat private Nachrichten deaktiviert."))
+                    SurfChat.send(player, MessageBuilder().error("Der Spieler hat Privatnachrichten deaktiviert."))
                     return@launch
                 }
 
