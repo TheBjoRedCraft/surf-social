@@ -7,5 +7,6 @@ class SurfChatCommand(commandName: String) : CommandAPICommand(commandName) {
         withPermission("surf.chat.command.surf-chat")
         withSubcommand(SurfChatDeleteCommand("delete"))
         withSubcommand(SurfChatChatClearCommand("clear"))
+        withSubcommand(SurfChatSaveCommand("saveUsers"))
     }
 }

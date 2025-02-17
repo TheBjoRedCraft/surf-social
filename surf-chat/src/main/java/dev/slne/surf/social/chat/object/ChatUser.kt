@@ -24,7 +24,7 @@ class ChatUser(
     }
 
     companion object {
-        private val cache: CoroutineLoadingCache<UUID, ChatUser> = Caffeine
+        val cache: CoroutineLoadingCache<UUID, ChatUser> = Caffeine
             .newBuilder()
             .removalListener<Any, Any> { _: Any?, user: Any?, _: RemovalCause? -> SurfChat.instance.launch { DatabaseService.instance.saveUser(user as ChatUser) } }
             .expireAfterWrite(30, java.util.concurrent.TimeUnit.MINUTES)
