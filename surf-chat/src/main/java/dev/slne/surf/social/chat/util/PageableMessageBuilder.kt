@@ -7,6 +7,8 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.command.CommandSender
+import kotlin.math.ceil
+import kotlin.math.min
 
 class PageableMessageBuilder {
     private val lines: ObjectList<Component> = ObjectArrayList()
@@ -24,7 +26,7 @@ class PageableMessageBuilder {
 
     fun send(sender: CommandSender, page: Int) {
         val linesPerPage = 10
-        val totalPages = ceil(lines.size.toDouble() / linesPerPage) as Int
+        val totalPages = ceil(lines.size.toDouble() / linesPerPage).toInt()
         val start = (page - 1) * linesPerPage
         val end: Int = min(start + linesPerPage, lines.size)
 
@@ -33,15 +35,11 @@ class PageableMessageBuilder {
             return
         }
 
-        var message: Component =
-            Component.text("==== Seite $page von $totalPages ====", Colors.VARIABLE_KEY).decorate(
-                TextDecoration.BOLD
-            ).append(Component.newline())
+        var message: Component = Component.text("==== Seite $page von $totalPages ====", Colors.VARIABLE_KEY).decorate(TextDecoration.BOLD).append(Component.newline())
         val navigation = this.getComponent(page, totalPages)
 
         for (i in start..<end) {
-            message = message.append(lines[i]).append(Component.newline())
-                .decoration(TextDecoration.BOLD, false)
+            message = message.append(lines[i]).append(Component.newline()).decoration(TextDecoration.BOLD, false)
         }
 
         if (navigation != Component.empty()) {
@@ -55,23 +53,11 @@ class PageableMessageBuilder {
         var navigation: Component = Component.empty()
 
         if (page > 1) {
-            navigation = navigation.append(
-                Component.text("[<< Zurück] ", Colors.SUCCESS).clickEvent(
-                    ClickEvent.runCommand(
-                        pageCommand.replace("%page%", (page - 1).toString())
-                    )
-                )
-            )
+            navigation = navigation.append(Component.text("[<< Zurück] ", Colors.SUCCESS).clickEvent(ClickEvent.runCommand(pageCommand.replace("%page%", (page - 1).toString()))))
         }
 
         if (page < totalPages) {
-            navigation = navigation.append(
-                Component.text("[Weiter >>]", Colors.SUCCESS).clickEvent(
-                    ClickEvent.runCommand(
-                        pageCommand.replace("%page%", (page + 1).toString())
-                    )
-                )
-            )
+            navigation = navigation.append(Component.text("[Weiter >>]", Colors.SUCCESS).clickEvent(ClickEvent.runCommand(pageCommand.replace("%page%", (page + 1).toString()))))
         }
 
         return navigation
