@@ -75,7 +75,7 @@ public class PlayerAsyncChatListener implements Listener {
     event.setCancelled(true);
 
     Channel channel = Channel.getChannel(player);
-    int messageID = this.getRandomID();
+    int messageID = random.nextInt(1000000);
     boolean found = false;
 
     if (channel != null) {
@@ -113,12 +113,8 @@ public class PlayerAsyncChatListener implements Listener {
   }
 
   private Component getTeleportComponent(Player player, String name) {
-    return player.hasPermission(this.teleportPerms) ?Component.text("[", Colors.DARK_SPACER).append(Component.text("TP", Colors.VARIABLE_KEY)).append(Component.text("] ", Colors.DARK_SPACER))
+    return player.hasPermission(this.teleportPerms) ? Component.text("[", Colors.DARK_SPACER).append(Component.text("TP", Colors.VARIABLE_KEY)).append(Component.text("] ", Colors.DARK_SPACER))
         .clickEvent(ClickEvent.runCommand("/tp " + name))
         .hoverEvent(Component.text("Zum Spieler teleportieren", PluginColor.BLUE_MID)) : Component.empty();
-  }
-
-  private int getRandomID() {
-    return this.random.nextInt(1000000);
   }
 }

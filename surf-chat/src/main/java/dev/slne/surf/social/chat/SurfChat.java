@@ -57,11 +57,7 @@ public class SurfChat extends JavaPlugin {
     if(player.isOnline()) {
       player.getPlayer().sendMessage(message);
 
-      ChatHistoryService.getInstance().insertNewMessage(player.getUniqueId(), new Message("Unknown", player.getName(), message), getRandomID());
+      ChatHistoryService.getInstance().insertNewMessage(player.getUniqueId(), new Message("Unknown", player.getName(), message), random.nextInt(1000000));
     }
-  }
-
-  public static int getRandomID() {
-    return random.nextInt(1000000);
   }
 }
