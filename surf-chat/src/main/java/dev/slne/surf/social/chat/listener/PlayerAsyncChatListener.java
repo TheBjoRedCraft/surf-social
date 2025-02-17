@@ -44,29 +44,30 @@ public class PlayerAsyncChatListener implements Listener {
 
     if(ChatFilterService.getInstance().containsLink(event.message())) {
       event.setCancelled(true);
-      player.sendMessage(Colors.PREFIX.append(Component.text("Bitte sende keine Links!", NamedTextColor.RED)));
+      SurfChat.send(player, new MessageBuilder().error("Bitte sende keine Links!"));
       return;
     }
 
     if(ChatFilterService.getInstance().containsBlocked(event.message())) {
       event.setCancelled(true);
-      player.sendMessage(Colors.PREFIX.append(Component.text("Bitte achte auf deine Wortwahl!", NamedTextColor.RED)));
+      SurfChat.send(player, new MessageBuilder().error("Bitte achte auf deine Wortwahl!"));
       return;
     }
 
     if(ChatFilterService.getInstance().isSpamming(event.getPlayer().getUniqueId())) {
       event.setCancelled(true);
-      player.sendMessage(Colors.PREFIX.append(Component.text("Mal ganz ruhig hier, spam bitte nicht!", NamedTextColor.RED)));
+      SurfChat.send(player, new MessageBuilder().error("Mal ganz ruhig hier, spam bitte nicht!"));
       return;
     }
 
     if(!ChatFilterService.getInstance().isValidInput(plainMessage)) {
       event.setCancelled(true);
-      player.sendMessage(Colors.PREFIX.append(Component.text("Bitte verwende keine unerlaubten Zeichen!", NamedTextColor.RED)));
+      SurfChat.send(player, new MessageBuilder().error("Bitte verwende keine unerlaubten Zeichen!"));
       return;
     }
 
     if(BasicPunishApi.isMuted(player)) {
+      SurfChat.send(player, new MessageBuilder().error("Du bist gemuted und kannst nicht chatten."));
       event.setCancelled(true);
       return;
     }
@@ -88,27 +89,8 @@ public class PlayerAsyncChatListener implements Listener {
 
       if(!found) {
         for (Player onlinePlayer : channel.getOnlinePlayers()) {
-          Component message = MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPublicMessageFormat()))
-              .replaceText(TextReplacementConfig.builder()
-                  .matchLiteral("%message%")
-                  .replacement(Component.text(plainMessage))
-                  .build())
-              .replaceText(TextReplacementConfig.builder()
-                  .matchLiteral("%channel%")
-                  .replacement(" " + channel.getName() + " ")
-                  .build())
-              .replaceText(TextReplacementConfig.builder()
-                  .matchLiteral("%delete%")
-                  .replacement(onlinePlayer.hasPermission(this.deletePerms) ? this.getDeleteComponent(messageID) : Component.empty())
-                  .build())
-              .replaceText(TextReplacementConfig.builder()
-                  .matchLiteral("%teleport%")
-                  .replacement(onlinePlayer.hasPermission(this.teleportPerms) ? this.getTeleportComponent(player.getName()) : Component.empty())
-                  .build());
 
-          onlinePlayer.sendMessage(message);
-
-          SurfChat.send(onlinePlayer, new MessageBuilder().miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>" + plainMessage));
+          SurfChat.send(onlinePlayer, new MessageBuilder().component(this.getDeleteComponent(onlinePlayer, messageID)).component(this.getTeleportComponent(onlinePlayer, player.getName())).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").component(this.getChannelComponent(channel)).miniMessage("<white>" + plainMessage));
         }
       }
 
@@ -116,44 +98,24 @@ public class PlayerAsyncChatListener implements Listener {
     }
 
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-      Component message = MiniMessage.miniMessage().deserialize(PlaceholderAPI.setPlaceholders(player, ConfigProvider.getInstance().getPublicMessageFormat()))
-          .replaceText(TextReplacementConfig.builder()
-              .matchLiteral("%message%")
-              .replacement(event.message())
-              .build())
-          .replaceText(TextReplacementConfig.builder()
-              .matchLiteral("%channel%")
-              .replacement("")
-              .build())
-          .replaceText(TextReplacementConfig.builder()
-              .matchLiteral("%delete%")
-              .replacement(onlinePlayer.hasPermission(this.deletePerms) ? this.getDeleteComponent(messageID) : Component.empty())
-              .build())
-          .replaceText(TextReplacementConfig.builder()
-              .matchLiteral("%teleport%")
-              .replacement(onlinePlayer.hasPermission(this.teleportPerms) ? this.getTeleportComponent(player.getName()) : Component.empty())
-              .build())
-          ;
-
-      onlinePlayer.sendMessage(message);
-      ChatHistoryService.getInstance().insertNewMessage(onlinePlayer.getUniqueId(), Message.builder()
-          .receiver(onlinePlayer.getName())
-          .sender(player.getName())
-          .message(message)
-          .build(), messageID);
+      SurfChat.send(onlinePlayer, new MessageBuilder().component(this.getDeleteComponent(onlinePlayer, messageID)).component(this.getTeleportComponent(onlinePlayer, player.getName())).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>" + plainMessage));
     }
   }
 
-  private Component getDeleteComponent(int id) {
-    return Component.text("[", Colors.DARK_SPACER).append(Component.text("DEL", Colors.VARIABLE_KEY)).append(Component.text("]", Colors.DARK_SPACER))
+  private Component getDeleteComponent(Player player, int id) {
+    return player.hasPermission(this.deletePerms) ? Component.text("[", Colors.DARK_SPACER).append(Component.text("DEL", Colors.VARIABLE_KEY)).append(Component.text("] ", Colors.DARK_SPACER))
         .clickEvent(ClickEvent.runCommand("/surfchat delete " + id))
-        .hoverEvent(Component.text("Nachricht löschen", PluginColor.RED));
+        .hoverEvent(Component.text("Nachricht löschen", PluginColor.RED)) : Component.empty();
   }
 
-  private Component getTeleportComponent(String name) {
-    return Component.text("[", Colors.DARK_SPACER).append(Component.text("TP", Colors.VARIABLE_KEY)).append(Component.text("]", Colors.DARK_SPACER))
+  private Component getChannelComponent(Channel channel) {
+    return new MessageBuilder().darkSpacer("[").variableKey(channel.getName()).darkSpacer("] ").build();
+  }
+
+  private Component getTeleportComponent(Player player, String name) {
+    return player.hasPermission(this.teleportPerms) ?Component.text("[", Colors.DARK_SPACER).append(Component.text("TP", Colors.VARIABLE_KEY)).append(Component.text("] ", Colors.DARK_SPACER))
         .clickEvent(ClickEvent.runCommand("/tp " + name))
-        .hoverEvent(Component.text("Zum Spieler teleportieren", PluginColor.BLUE_MID));
+        .hoverEvent(Component.text("Zum Spieler teleportieren", PluginColor.BLUE_MID)) : Component.empty();
   }
 
   private int getRandomID() {
