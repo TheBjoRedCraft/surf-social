@@ -1,7 +1,9 @@
 package dev.slne.surf.social.chat.external
 
+import java.util.*
+
 object BasicFriendApi {
-    fun areFriends(player: java.util.UUID?, target: java.util.UUID?): Boolean {
+    fun areFriends(player: UUID, target: UUID): Boolean {
         return false //TODO: Friend API
     }
 }
