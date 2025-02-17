@@ -123,6 +123,12 @@ class DatabaseService {
         }
     }
 
+    suspend fun saveAll() {
+        ChatUser.cache.synchronous().asMap().values.forEach { user ->
+            this.saveUser(user)
+        }
+    }
+
     private fun createUser(uuid: UUID): ChatUser = ChatUser(uuid, false, ObjectOpenHashSet())
 
     companion object {

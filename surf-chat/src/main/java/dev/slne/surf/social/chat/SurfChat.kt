@@ -42,7 +42,8 @@ class SurfChat : SuspendingJavaPlugin() {
         Bukkit.getPluginManager().registerEvents(PlayerQuitListener(), this)
     }
 
-    override fun onDisable() {
+    override suspend fun onDisableAsync() {
+        DatabaseService.instance.saveAll()
         DatabaseService.instance.disconnect()
     }
 
