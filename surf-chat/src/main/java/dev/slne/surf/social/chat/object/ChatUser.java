@@ -21,7 +21,7 @@ public class ChatUser {
   @Getter
   private static final LoadingCache<UUID, ChatUser> cache = Caffeine
       .newBuilder()
-      .removalListener((_, user, _) -> DatabaseService.getInstance().saveUser((ChatUser) user))
+      .removalListener((object, user, cause) -> DatabaseService.getInstance().saveUser((ChatUser) user))
       .expireAfterWrite(30, TimeUnit.MINUTES)
       .build(DatabaseService.getInstance()::loadUser);
 
