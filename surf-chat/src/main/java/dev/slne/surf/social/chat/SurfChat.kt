@@ -18,6 +18,7 @@ import dev.slne.surf.social.chat.util.MessageBuilder
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.plugin.java.JavaPlugin
+import java.security.SecureRandom
 
 class SurfChat : JavaPlugin() {
     override fun onEnable() {
@@ -33,8 +34,8 @@ class SurfChat : JavaPlugin() {
 
         this.saveDefaultConfig()
 
-        ChatFilterService.getInstance().loadBlockedWords()
-        DatabaseService.getInstance().connect()
+        ChatFilterService.instance.loadBlockedWords()
+        DatabaseService.instance.connect()
 
         Bukkit.getPluginManager().registerEvents(PlayerAsyncChatListener(), this)
         Bukkit.getPluginManager().registerEvents(
@@ -44,26 +45,24 @@ class SurfChat : JavaPlugin() {
     }
 
     override fun onDisable() {
-        DatabaseService.getInstance().disconnect()
+        DatabaseService.instance.disconnect()
     }
 
     companion object {
-        private val random: java.security.SecureRandom = java.security.SecureRandom()
+        private val random: SecureRandom = SecureRandom()
 
         val instance: SurfChat
-            get() = getPlugin<SurfChat>(SurfChat::class.java)
+            get() = getPlugin(SurfChat::class.java)
 
         fun send(player: OfflinePlayer, text: MessageBuilder) {
             val message = Colors.PREFIX.append(text.build())
 
             if (player.isOnline) {
-                player.player.sendMessage(message)
+                val onlinePlayer = player.player ?: return
 
-                ChatHistoryService.getInstance().insertNewMessage(
-                    player.uniqueId,
-                    Message("Unknown", player.name, message),
-                    random.nextInt(1000000)
-                )
+                onlinePlayer.sendMessage(message)
+
+                ChatHistoryService.instance.insertNewMessage(player.uniqueId, Message("Unknown", player.name ?: player.uniqueId.toString(), message), random.nextInt(1000000))
             }
         }
     }
