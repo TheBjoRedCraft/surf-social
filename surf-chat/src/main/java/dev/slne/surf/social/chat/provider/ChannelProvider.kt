@@ -1,34 +1,31 @@
-package dev.slne.surf.social.chat.provider;
+package dev.slne.surf.social.chat.provider
 
-import dev.slne.surf.social.chat.object.Channel;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
-import java.util.UUID;
-import lombok.Getter;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
+import dev.slne.surf.social.chat.`object`.Channel
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 
-@Getter
-public class ChannelProvider {
-  @Getter
-  private static final ChannelProvider instance = new ChannelProvider();
-  private final Object2ObjectMap<UUID, Channel> channels = new Object2ObjectOpenHashMap<>();
+import org.bukkit.entity.Player
 
-  public boolean exists(String name) {
-    return this.channels.values().stream().filter(channel -> channel.getName().equals(name)).findFirst().orElse(null) != null;
-  }
+class ChannelProvider {
+    private val channels: Object2ObjectMap<java.util.UUID, Channel> = Object2ObjectOpenHashMap()
 
-  public void handleQuit(Player player) {
-    Channel channel = Channel.getChannel(player);
-
-    if(channel == null) {
-      return;
+    fun exists(name: String): Boolean {
+        return channels.values.stream().filter { channel: Channel -> channel.name == name }
+            .findFirst().orElse(null) != null
     }
 
-    if(channel.getOwner().equals(player)) {
-      channel.delete();
+    fun handleQuit(player: Player) {
+        val channel: Channel =
+            Channel.Companion.getChannel(player)
+                ?: return
+
+        if (channel.owner == player) {
+            channel.delete()
+        }
     }
-  }
+
+    companion object {
+        @Getter
+        private val instance = ChannelProvider()
+    }
 }

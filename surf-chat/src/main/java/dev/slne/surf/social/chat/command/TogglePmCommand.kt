@@ -1,26 +1,30 @@
-package dev.slne.surf.social.chat.command;
+package dev.slne.surf.social.chat.command
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.slne.surf.social.chat.SurfChat;
-import dev.slne.surf.social.chat.object.ChatUser;
-import dev.slne.surf.social.chat.util.MessageBuilder;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.social.chat.util.MessageBuilder
+import org.bukkit.entity.Player
 
-public class TogglePmCommand extends CommandAPICommand {
-
-  public TogglePmCommand(String commandName) {
-    super(commandName);
-
-    withPermission("surf.chat.command.toggle");
-    executesPlayer((player, args) -> {
-      ChatUser user = ChatUser.getUser(player.getUniqueId());
-
-      if(user.isToggledPM()) {
-        user.setToggledPM(false);
-        SurfChat.send(player, new MessageBuilder().primary("Du hast privat Nachrichten ").success("aktiviert."));
-      } else {
-        user.setToggledPM(true);
-        SurfChat.send(player, new MessageBuilder().primary("Du hast privat Nachrichten ").error("deaktiviert."));
-      }
-    });
-  }
+class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withPermission("surf.chat.command.toggle")
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments? ->
+            val user: ChatUser = ChatUser.Companion.getUser(player.uniqueId)
+            if (user.isToggledPM()) {
+                user.setToggledPM(false)
+                SurfChat.Companion.send(
+                    player,
+                    MessageBuilder().primary("Du hast privat Nachrichten ").success("aktiviert.")
+                )
+            } else {
+                user.setToggledPM(true)
+                SurfChat.Companion.send(
+                    player,
+                    MessageBuilder().primary("Du hast privat Nachrichten ").error("deaktiviert.")
+                )
+            }
+        })
+    }
 }

@@ -1,30 +1,38 @@
-package dev.slne.surf.social.chat.command.channel;
+package dev.slne.surf.social.chat.command.channel
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
-import dev.slne.surf.social.chat.SurfChat;
-import dev.slne.surf.social.chat.command.argument.ChannelArgument;
-import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.util.MessageBuilder;
-import org.bukkit.OfflinePlayer;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.OfflinePlayerArgument
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.social.chat.command.argument.ChannelArgument
+import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.util.MessageBuilder
+import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
-public class ChannelMoveCommand extends CommandAPICommand {
+class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withArguments(OfflinePlayerArgument("player"))
+        withOptionalArguments(ChannelArgument("channel"))
+        withPermission("surf.chat.command.channel.move")
 
-  public ChannelMoveCommand(String commandName) {
-    super(commandName);
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val target = args.getUnchecked<OfflinePlayer>("player")
+            val channel = args.getUnchecked<Channel>("channel")
 
-    withArguments(new OfflinePlayerArgument("player"));
-    withOptionalArguments(new ChannelArgument("channel"));
-    withPermission("surf.chat.command.channel.move");
+            channel!!.move(target!!, channel)
 
-    executesPlayer((player, args) -> {
-      OfflinePlayer target = args.getUnchecked("player");
-      Channel channel = args.getUnchecked("channel");
-
-      channel.move(target, channel);
-
-      SurfChat.send(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" in den Nachrichtenkanal ").info(channel.getName()).success(" verschoben."));
-      SurfChat.send(target, new MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").info(channel.getName()).success(" verschoben."));
-    });
-  }
+            SurfChat.Companion.send(
+                player, MessageBuilder().primary("Du hast ").info(
+                    target.name!!
+                ).primary(" in den Nachrichtenkanal ").info(channel.name).success(" verschoben.")
+            )
+            SurfChat.Companion.send(
+                target,
+                MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").info(channel.name)
+                    .success(" verschoben.")
+            )
+        })
+    }
 }

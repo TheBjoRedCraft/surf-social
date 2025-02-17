@@ -1,50 +1,60 @@
-package dev.slne.surf.social.chat.command.channel;
+package dev.slne.surf.social.chat.command.channel
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.IntegerArgument
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.util.MessageBuilder
+import dev.slne.surf.social.chat.util.PageableMessageBuilder
+import org.bukkit.entity.Player
 
-import dev.slne.surf.social.chat.SurfChat;
-import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.util.MessageBuilder;
-import dev.slne.surf.social.chat.util.PageableMessageBuilder;
+class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withOptionalArguments(IntegerArgument("page"))
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val message = PageableMessageBuilder()
+            val page = args.getOrDefaultUnchecked("page", 1)
+            val channel: Channel = Channel.Companion.getChannelO(player)
 
-import org.bukkit.OfflinePlayer;
+            if (channel == null) {
+                SurfChat.Companion.send(
+                    player,
+                    MessageBuilder().error("Du bist in keinem Nachrichtenkanal.")
+                )
+                return@executesPlayer
+            }
 
-public class ChannelMembersCommand extends CommandAPICommand {
+            var index = 1
 
-  public ChannelMembersCommand(String commandName) {
-    super(commandName);
+            message.setPageCommand("/channel members " + channel.name + " %page%")
 
-    withOptionalArguments(new IntegerArgument("page"));
-    executesPlayer((player, args ) -> {
-      PageableMessageBuilder message = new PageableMessageBuilder();
-      Integer page = args.getOrDefaultUnchecked("page", 1);
-      Channel channel = Channel.getChannelO(player);
+            message.addLine(
+                MessageBuilder().variableValue("$index. ").primary(channel.owner.name)
+                    .darkSpacer(" (Besitzer)").build()
+            )
 
-      if(channel == null) {
-        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
-        return;
-      }
+            for (moderator in channel.moderators) {
+                index++
 
-      int index = 1;
+                message.addLine(
+                    MessageBuilder().variableValue("$index. ").primary(
+                        moderator.name!!
+                    ).darkSpacer(" (Moderator)").build()
+                )
+            }
 
-      message.setPageCommand("/channel members " + channel.getName() + " %page%");
+            for (member in channel.members) {
+                index++
 
-      message.addLine(new MessageBuilder().variableValue(index + ". ").primary(channel.getOwner().getName()).darkSpacer(" (Besitzer)").build());
-
-      for (OfflinePlayer moderator : channel.getModerators()) {
-        index ++;
-
-        message.addLine(new MessageBuilder().variableValue(index + ". ").primary(moderator.getName()).darkSpacer(" (Moderator)").build());
-      }
-
-      for (OfflinePlayer member : channel.getMembers()) {
-        index ++;
-
-        message.addLine(new MessageBuilder().variableValue(index + ". ").primary(member.getName()).darkSpacer(" (Mitglied)").build());
-      }
-
-      message.send(player, page);
-    });
-  }
+                message.addLine(
+                    MessageBuilder().variableValue("$index. ").primary(
+                        member.name!!
+                    ).darkSpacer(" (Mitglied)").build()
+                )
+            }
+            message.send(player, page)
+        })
+    }
 }

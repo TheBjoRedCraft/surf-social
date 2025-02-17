@@ -1,288 +1,308 @@
-package dev.slne.surf.social.chat.object;
+package dev.slne.surf.social.chat.`object`
 
-import dev.slne.surf.social.chat.SurfChat;
-import dev.slne.surf.social.chat.provider.ChannelProvider;
-import dev.slne.surf.social.chat.util.MessageBuilder;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.social.chat.provider.ChannelProvider
+import dev.slne.surf.social.chat.util.MessageBuilder
+import it.unimi.dsi.fastutil.objects.ObjectArraySet
+import it.unimi.dsi.fastutil.objects.ObjectSet
 
-@Getter
-@Setter
-@Builder
-public class Channel {
-  @Builder.Default
-  private OfflinePlayer owner = null;
-  @Builder.Default
-  private ObjectSet<OfflinePlayer> members = new ObjectArraySet<>();
-  @Builder.Default
-  private ObjectSet<OfflinePlayer> moderators = new ObjectArraySet<>();
-  @Builder.Default
-  private ObjectSet<OfflinePlayer> bannedPlayers = new ObjectArraySet<>();
-  @Builder.Default
-  private ObjectSet<OfflinePlayer> invites = new ObjectArraySet<>();
+import org.bukkit.OfflinePlayer
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
-  @Builder.Default
-  private String name = UUID.randomUUID().toString();
+class Channel {
+    private val owner: OfflinePlayer? = null
+    private val members: ObjectSet<OfflinePlayer> = ObjectArraySet()
+    private val moderators: ObjectSet<OfflinePlayer> = ObjectArraySet()
+    private val bannedPlayers: ObjectSet<OfflinePlayer> = ObjectArraySet()
+    private val invites: ObjectSet<OfflinePlayer> = ObjectArraySet()
+    private val name: String = java.util.UUID.randomUUID().toString()
+    private val description = "Ein cooler Kanal!"
+    private val closed = true
 
-  @Builder.Default
-  private String description = "Ein cooler Kanal!";
-
-  @Builder.Default
-  private boolean closed = true;
-
-  public boolean isMember(OfflinePlayer player) {
-    return members.contains(player);
-  }
-
-  public boolean isMember(CommandSender player) {
-    if(player instanceof OfflinePlayer sender) {
-      return members.contains(sender);
+    fun isMember(player: OfflinePlayer): Boolean {
+        return members.contains(player)
     }
 
-    return false;
-  }
+    fun isMember(player: CommandSender): Boolean {
+        if (player is OfflinePlayer) {
+            return members.contains(player)
+        }
 
-  public boolean isOwnerO(OfflinePlayer player) {
-    return owner.equals(player);
-  }
-
-  public boolean isOwner(CommandSender sender) {
-    return owner.equals(sender);
-  }
-
-  public boolean hasInvite(CommandSender sender) {
-    if(sender instanceof OfflinePlayer player) {
-      return invites.contains(player);
+        return false
     }
 
-    return false;
-  }
-
-  public boolean isModerator(CommandSender player) {
-    if(player instanceof OfflinePlayer sender) {
-      return moderators.contains(sender);
+    fun isOwnerO(player: OfflinePlayer): Boolean {
+        return owner == player
     }
 
-    return false;
-  }
-
-  public boolean isModeratorO(OfflinePlayer player) {
-    return moderators.contains(player);
-  }
-
-  public void invite(OfflinePlayer player) {
-    if(members.contains(player)) {
-      return;
+    fun isOwner(sender: CommandSender): Boolean {
+        return owner == sender
     }
 
-    if(moderators.contains(player)) {
-      return;
+    fun hasInvite(sender: CommandSender): Boolean {
+        if (sender is OfflinePlayer) {
+            return invites.contains(sender)
+        }
+
+        return false
     }
 
-    if(owner.equals(player)) {
-      return;
+    fun isModerator(player: CommandSender): Boolean {
+        if (player is OfflinePlayer) {
+            return moderators.contains(player)
+        }
+
+        return false
     }
 
-    if(bannedPlayers.contains(player)) {
-      return;
+    fun isModeratorO(player: OfflinePlayer): Boolean {
+        return moderators.contains(player)
     }
 
-    if(invites.contains(player)) {
-      return;
+    fun invite(player: OfflinePlayer) {
+        if (members.contains(player)) {
+            return
+        }
+
+        if (moderators.contains(player)) {
+            return
+        }
+
+        if (owner == player) {
+            return
+        }
+
+        if (bannedPlayers.contains(player)) {
+            return
+        }
+
+        if (invites.contains(player)) {
+            return
+        }
+
+        invites.add(player)
     }
 
-    invites.add(player);
-  }
+    fun ban(player: OfflinePlayer) {
+        if (!members.contains(player)) {
+            return
+        }
 
-  public void ban(OfflinePlayer player) {
-    if(!members.contains(player)) {
-      return;
+        if (owner == player) {
+            return
+        }
+
+        if (bannedPlayers.contains(player)) {
+            return
+        }
+
+        bannedPlayers.add(player)
+        this.leave(player)
     }
 
-    if(owner.equals(player)) {
-      return;
+    fun unban(player: OfflinePlayer) {
+        if (!bannedPlayers.contains(player)) {
+            return
+        }
+
+        bannedPlayers.remove(player)
     }
 
-    if(bannedPlayers.contains(player)) {
-      return;
+    val onlinePlayers: ObjectSet<Player>
+        get() {
+            val players: ObjectSet<Player> = ObjectArraySet()
+
+            players.addAll(
+                members.stream().filter { obj: OfflinePlayer -> obj.isOnline }
+                    .map<Player> { obj: OfflinePlayer -> obj.player }
+                    .collect<ObjectArraySet<Player>, Any>(
+                        java.util.stream.Collectors.toCollection<Player, ObjectArraySet<Player>>(
+                            java.util.function.Supplier<ObjectArraySet<Player>> { ObjectArraySet() })
+                    )
+            )
+            players.addAll(
+                moderators.stream().filter { obj: OfflinePlayer -> obj.isOnline }
+                    .map<Player> { obj: OfflinePlayer -> obj.player }
+                    .collect<ObjectArraySet<Player>, Any>(
+                        java.util.stream.Collectors.toCollection<Player, ObjectArraySet<Player>>(
+                            java.util.function.Supplier<ObjectArraySet<Player>> { ObjectArraySet() })
+                    )
+            )
+
+            if (this.getOwner().isOnline()) {
+                players.add(this.getOwner().getPlayer())
+            }
+
+            return players
+        }
+
+    fun promote(player: OfflinePlayer) {
+        if (!members.contains(player)) {
+            return
+        }
+
+        if (owner == player) {
+            return
+        }
+
+        if (moderators.contains(player)) {
+            return
+        }
+
+        members.remove(player)
+        moderators.add(player)
     }
 
-    bannedPlayers.add(player);
-    this.leave(player);
-  }
+    fun demote(player: OfflinePlayer) {
+        if (!moderators.contains(player)) {
+            return
+        }
 
-  public void unban(OfflinePlayer player) {
-    if(!bannedPlayers.contains(player)) {
-      return;
+        moderators.remove(player)
     }
 
-    bannedPlayers.remove(player);
-  }
+    fun kick(player: OfflinePlayer) {
+        if (!members.contains(player)) {
+            return
+        }
 
-  public ObjectSet<Player> getOnlinePlayers() {
-    final ObjectSet<Player> players = new ObjectArraySet<>();
+        if (owner == player) {
+            return
+        }
 
-    players.addAll(members.stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).collect(Collectors.toCollection(ObjectArraySet::new)));
-    players.addAll(moderators.stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).collect(Collectors.toCollection(ObjectArraySet::new)));
-
-    if(this.getOwner().isOnline()) {
-      players.add(this.getOwner().getPlayer());
+        this.leave(player)
     }
 
-    return players;
-  }
+    fun acceptInvite(player: OfflinePlayer) {
+        if (!invites.contains(player)) {
+            return
+        }
 
-  public void promote(OfflinePlayer player) {
-    if(!members.contains(player)) {
-      return;
+        val channel = getChannelO(player)
+
+        channel?.leave(player)
+
+        this.join(player)
     }
 
-    if(owner.equals(player)) {
-      return;
+    fun revokeInvite(player: OfflinePlayer) {
+        if (!invites.contains(player)) {
+            return
+        }
+
+        invites.remove(player)
     }
 
-    if(moderators.contains(player)) {
-      return;
+    fun move(player: OfflinePlayer, channel: Channel?) {
+        this.leave(player)
+
+
+        if (channel == null) {
+            return
+        }
+
+        channel.join(player)
     }
 
-    members.remove(player);
-    moderators.add(player);
-  }
+    fun join(player: OfflinePlayer) {
+        if (members.contains(player)) {
+            return
+        }
 
-  public void demote(OfflinePlayer player) {
-    if(!moderators.contains(player)) {
-      return;
+        if (moderators.contains(player)) {
+            return
+        }
+
+        if (owner == player) {
+            return
+        }
+
+        if (invites.contains(player)) {
+            invites.remove(player)
+        }
+
+        if (getChannelO(player) != null) {
+            return
+        }
+
+        members.add(player)
+
+        this.message(
+            MessageBuilder().primary(player.name!!)
+                .success(" ist dem Nachrichtenkanal beigetreten.")
+        )
     }
 
-    moderators.remove(player);
-  }
+    fun leave(player: OfflinePlayer) {
+        if (owner == player) {
+            this.delete()
+            return
+        }
 
-  public void kick(OfflinePlayer player) {
-    if(!members.contains(player)) {
-      return;
+        moderators.remove(player)
+        members.remove(player)
+
+        this.message(
+            MessageBuilder().primary(player.name!!).error(" hat den Nachrichtenkanal verlassen.")
+        )
     }
 
-    if(owner.equals(player)) {
-      return;
+    fun delete(): Boolean {
+        this.message(
+            MessageBuilder().primary("Der Nachrichtenkanal ").info(
+                this.getName()
+            ).error(" wurde gelöscht.")
+        )
+
+        val uuid: java.util.UUID = this.getOwner().getUniqueId()
+
+        members.clear()
+        moderators.clear()
+
+        return this.unregister(uuid)
     }
 
-    this.leave(player);
-  }
-
-  public void acceptInvite(OfflinePlayer player) {
-    if(!invites.contains(player)) {
-      return;
+    private fun message(messageBuilder: MessageBuilder) {
+        onlinePlayers.forEach(java.util.function.Consumer<Player> { player: Player ->
+            SurfChat.Companion.send(
+                player,
+                messageBuilder
+            )
+        })
     }
 
-    Channel channel = Channel.getChannelO(player);
-
-    if(channel != null) {
-      channel.leave(player);
+    fun register() {
+        ChannelProvider.getInstance().channels.put(owner!!.uniqueId, this)
     }
 
-    this.join(player);
-  }
+    fun unregister(uuid: java.util.UUID?): Boolean {
+        ChannelProvider.getInstance().channels.remove(uuid)
 
-  public void revokeInvite(OfflinePlayer player) {
-    if(!invites.contains(player)) {
-      return;
+        return !ChannelProvider.getInstance().channels.containsKey(uuid)
     }
 
-    invites.remove(player);
-  }
+    companion object {
+        fun getChannel(name: String): Channel? {
+            return ChannelProvider.getInstance().channels.values.stream()
+                .filter { channel: Channel -> channel.getName() == name }.findFirst().orElse(null)
+        }
 
-  public void move(OfflinePlayer player, @Nullable Channel channel) {
-    this.leave(player);
+        fun getChannel(sender: CommandSender): Channel? {
+            return ChannelProvider.getInstance().channels.values.stream()
+                .filter { channel: Channel ->
+                    channel.isModerator(sender) || channel.isMember(sender) || channel.isOwner(
+                        sender
+                    )
+                }.findFirst().orElse(null)
+        }
 
-
-    if(channel == null) {
-      return;
+        fun getChannelO(player: OfflinePlayer): Channel? {
+            return ChannelProvider.getInstance().channels.values.stream()
+                .filter { channel: Channel ->
+                    channel.getModerators().contains(player) || channel.getMembers()
+                        .contains(player) || channel.getOwner() == player
+                }.findFirst().orElse(null)
+        }
     }
-
-    channel.join(player);
-  }
-
-  public void join(OfflinePlayer player) {
-    if(members.contains(player)) {
-      return;
-    }
-
-    if(moderators.contains(player)) {
-      return;
-    }
-
-    if(owner.equals(player)) {
-      return;
-    }
-
-    if(invites.contains(player)) {
-      invites.remove(player);
-    }
-
-    if(Channel.getChannelO(player) != null) {
-      return;
-    }
-
-    members.add(player);
-
-    this.message(new MessageBuilder().primary(player.getName()).success(" ist dem Nachrichtenkanal beigetreten."));
-  }
-
-  public void leave(OfflinePlayer player) {
-    if(owner.equals(player)) {
-      this.delete();
-      return;
-    }
-
-    moderators.remove(player);
-    members.remove(player);
-
-    this.message(new MessageBuilder().primary(player.getName()).error(" hat den Nachrichtenkanal verlassen."));
-  }
-
-  public boolean delete() {
-    this.message(new MessageBuilder().primary("Der Nachrichtenkanal ").info(this.getName()).error(" wurde gelöscht."));
-
-    final UUID uuid = this.getOwner().getUniqueId();
-
-    this.members.clear();
-    this.moderators.clear();
-
-    return this.unregister(uuid);
-  }
-
-  private void message(MessageBuilder messageBuilder) {
-    this.getOnlinePlayers().forEach(player -> SurfChat.send(player, messageBuilder));
-  }
-
-  public void register() {
-    ChannelProvider.getInstance().getChannels().put(owner.getUniqueId(), this);
-  }
-
-  public boolean unregister(UUID uuid) {
-    ChannelProvider.getInstance().getChannels().remove(uuid);
-
-    return !ChannelProvider.getInstance().getChannels().containsKey(uuid);
-  }
-
-  public static Channel getChannel(String name) {
-    return ChannelProvider.getInstance().getChannels().values().stream().filter(channel -> channel.getName().equals(name)).findFirst().orElse(null);
-  }
-
-  public static Channel getChannel(CommandSender sender) {
-    return ChannelProvider.getInstance().getChannels().values().stream().filter(channel ->  channel.isModerator(sender) || channel.isMember(sender) || channel.isOwner(sender)).findFirst().orElse(null);
-  }
-
-  public static Channel getChannelO(OfflinePlayer player) {
-    return ChannelProvider.getInstance().getChannels().values().stream().filter(channel ->  channel.getModerators().contains(player) || channel.getMembers().contains(player) || channel.getOwner().equals(player)).findFirst().orElse(null);
-  }
 }

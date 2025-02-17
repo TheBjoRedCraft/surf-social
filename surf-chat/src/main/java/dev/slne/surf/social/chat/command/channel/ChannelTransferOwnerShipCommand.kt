@@ -1,53 +1,78 @@
-package dev.slne.surf.social.chat.command.channel;
+package dev.slne.surf.social.chat.command.channel
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.StringArgument;
-import dev.slne.surf.social.chat.SurfChat;
-import dev.slne.surf.social.chat.command.argument.ChannelMembersArgument;
-import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.util.MessageBuilder;
-import org.bukkit.OfflinePlayer;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.StringArgument
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.social.chat.command.argument.ChannelMembersArgument
+import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.util.MessageBuilder
+import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
-public class ChannelTransferOwnerShipCommand extends CommandAPICommand {
-  public ChannelTransferOwnerShipCommand(String commandName) {
-    super(commandName);
+class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withArguments(ChannelMembersArgument("member"))
+        withOptionalArguments(StringArgument("confirm"))
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val channel: Channel = Channel.Companion.getChannel(player)
+            val target = args.getUnchecked<OfflinePlayer>("member")
+            val confirm = args.getOrDefaultUnchecked("confirm", "")
 
-    withArguments(new ChannelMembersArgument("member"));
-    withOptionalArguments(new StringArgument("confirm"));
-    executesPlayer((player, args) -> {
-      Channel channel = Channel.getChannel(player);
-      OfflinePlayer target = args.getUnchecked("member");
-      String confirm = args.getOrDefaultUnchecked("confirm", "");
+            if (channel == null) {
+                SurfChat.Companion.send(
+                    player,
+                    MessageBuilder().error("Du bist in keinem Nachrichtenkanal.")
+                )
+                return@executesPlayer
+            }
 
-      if(channel == null) {
-        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
-        return;
-      }
+            if (!channel.isOwner(player)) {
+                SurfChat.Companion.send(
+                    player,
+                    MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals.")
+                )
+                return@executesPlayer
+            }
 
-      if(!channel.isOwner(player)) {
-        SurfChat.send(player, new MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals."));
-        return;
-      }
+            if (!confirm.equals("confirm", ignoreCase = true) && !confirm.equals(
+                    "yes",
+                    ignoreCase = true
+                ) && !confirm.equals("true", ignoreCase = true) && !confirm.equals(
+                    "ja",
+                    ignoreCase = true
+                )
+            ) {
+                SurfChat.Companion.send(
+                    player, MessageBuilder().error("Bitte bestätige den Vorgang.").command(
+                        MessageBuilder().darkSpacer(" [").info("Bestätigen").darkSpacer("]"),
+                        MessageBuilder().info("Klicke hier, um den Vorgang zu bestätigen."),
+                        "/channel transferOwnership " + target!!.name + " confirm"
+                    )
+                )
+                return@executesPlayer
+            }
 
-      if(!confirm.equalsIgnoreCase("confirm") && !confirm.equalsIgnoreCase("yes") && !confirm.equalsIgnoreCase("true") && !confirm.equalsIgnoreCase("ja")) {
-        SurfChat.send(player, new MessageBuilder().error("Bitte bestätige den Vorgang.").command(
-            new MessageBuilder().darkSpacer(" [").info("Bestätigen").darkSpacer("]"),
-            new MessageBuilder().info("Klicke hier, um den Vorgang zu bestätigen."),
-            "/channel transferOwnership " + target.getName() + " confirm"
-        ));
-        return;
-      }
+            channel.unregister(channel.owner.uniqueId)
 
-      channel.unregister(channel.getOwner().getUniqueId());
+            channel.moderators.add(channel.owner)
+            channel.owner = target
+            channel.members.remove(target)
 
-      channel.getModerators().add(channel.getOwner());
-      channel.setOwner(target);
-      channel.getMembers().remove(target);
+            channel.register()
 
-      channel.register();
-
-      SurfChat.send(player, new MessageBuilder().primary("Du hast den Besitzer des Nachrichtenkanals an ").info(target.getName()).success(" übergeben."));
-      SurfChat.send(target, new MessageBuilder().primary("Du wurdest zum Besitzer des Nachrichtenkanals ").info(channel.getName()).success(" ernannt."));
-    });
-  }
+            SurfChat.Companion.send(
+                player,
+                MessageBuilder().primary("Du hast den Besitzer des Nachrichtenkanals an ").info(
+                    target!!.name!!
+                ).success(" übergeben.")
+            )
+            SurfChat.Companion.send(
+                target,
+                MessageBuilder().primary("Du wurdest zum Besitzer des Nachrichtenkanals ")
+                    .info(channel.name).success(" ernannt.")
+            )
+        })
+    }
 }

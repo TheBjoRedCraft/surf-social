@@ -1,7 +1,6 @@
-package dev.slne.surf.social.chat.object;
+package dev.slne.surf.social.chat.`object`
 
-import lombok.Builder;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.Component
 
-@Builder
-public record Message(String sender, String receiver, Component message) {}
+@JvmRecord
+data class Message(val sender: String, val receiver: String, val message: Component)

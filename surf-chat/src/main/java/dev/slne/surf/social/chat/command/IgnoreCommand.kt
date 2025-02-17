@@ -1,32 +1,37 @@
-package dev.slne.surf.social.chat.command;
+package dev.slne.surf.social.chat.command
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.OfflinePlayerArgument
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.social.chat.util.MessageBuilder
+import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
-import dev.slne.surf.social.chat.SurfChat;
-import dev.slne.surf.social.chat.object.ChatUser;
-import dev.slne.surf.social.chat.util.MessageBuilder;
-import org.bukkit.OfflinePlayer;
-
-public class IgnoreCommand extends CommandAPICommand {
-
-  public IgnoreCommand(String commandName) {
-    super(commandName);
-
-    withPermission("surf.chat.command.ignore");
-    withArguments(new OfflinePlayerArgument("player"));
-    executesPlayer((player, args)-> {
-      OfflinePlayer target = args.getUnchecked("player");
-      ChatUser user = ChatUser.getUser(player.getUniqueId());
-      ChatUser targetUser = ChatUser.getUser(target.getUniqueId());
-
-      if(user.isIgnoring(targetUser.getUuid())) {
-        user.getIgnoreList().remove(targetUser.getUuid());
-        SurfChat.send(player, new MessageBuilder().primary("Du hast ").info(target.getName()).success(" entstummt."));
-      } else {
-        user.getIgnoreList().add(targetUser.getUuid());
-        SurfChat.send(player, new MessageBuilder().primary("Du hast ").info(target.getName()).error(" stumm geschaltet."));
-      }
-    });
-  }
+class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withPermission("surf.chat.command.ignore")
+        withArguments(OfflinePlayerArgument("player"))
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val target = args.getUnchecked<OfflinePlayer>("player")
+            val user: ChatUser = ChatUser.Companion.getUser(player.uniqueId)
+            val targetUser: ChatUser = ChatUser.Companion.getUser(target!!.uniqueId)
+            if (user.isIgnoring(targetUser.getUuid())) {
+                user.getIgnoreList().remove(targetUser.getUuid())
+                SurfChat.Companion.send(
+                    player, MessageBuilder().primary("Du hast ").info(
+                        target.name!!
+                    ).success(" entstummt.")
+                )
+            } else {
+                user.getIgnoreList().add(targetUser.getUuid())
+                SurfChat.Companion.send(
+                    player, MessageBuilder().primary("Du hast ").info(
+                        target.name!!
+                    ).error(" stumm geschaltet.")
+                )
+            }
+        })
+    }
 }

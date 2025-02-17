@@ -1,35 +1,42 @@
-package dev.slne.surf.social.chat.command.channel;
+package dev.slne.surf.social.chat.command.channel
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.slne.surf.social.chat.command.argument.ChannelArgument;
-import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.util.MessageBuilder;
-import net.kyori.adventure.text.Component;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.command.argument.ChannelArgument
+import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.util.MessageBuilder
+import net.kyori.adventure.text.Component
+import org.bukkit.entity.Player
 
-public class ChannelInfoCommand extends CommandAPICommand {
-  public ChannelInfoCommand(String commandName) {
-    super(commandName);
+class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withOptionalArguments(ChannelArgument("channel"))
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val channel =
+                args.getOrDefaultUnchecked<Channel?>(
+                    "channel",
+                    Channel.Companion.getChannel(player)
+                )
+                    ?: return@executesPlayer
+            player.sendMessage(createInfoMessage(channel)!!)
+        })
+    }
 
-    withOptionalArguments(new ChannelArgument("channel"));
-    executesPlayer((player, args) -> {
-      Channel channel = args.getOrDefaultUnchecked("channel", Channel.getChannel(player));
-
-      if(channel == null) {
-        return;
-      }
-
-      player.sendMessage(createInfoMessage(channel));
-    });
-  }
-
-  private Component createInfoMessage(Channel channel) {
-    return new MessageBuilder()
-        .primary("Kanalinformation: ").info(channel.getName()).newLine()
-        .darkSpacer("   - ").variableKey("Beschreibung: ").variableValue(channel.getDescription()).newLine()
-        .darkSpacer("   - ").variableKey("Besitzer: ").variableValue(channel.getOwner().getName()).newLine()
-        .darkSpacer("   - ").variableKey("Status: ").variableValue(channel.isClosed() ? "Geschlossen" : "Offen").newLine()
-        .darkSpacer("   - ").variableKey("Mitglieder: ").variableValue(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).newLine()
-        .darkSpacer("   - ").variableKey("Einladungen: ").variableValue(String.valueOf(channel.getInvites().size())).newLine()
-        .build();
-  }
+    private fun createInfoMessage(channel: Channel): Component? {
+        return MessageBuilder()
+            .primary("Kanalinformation: ").info(channel.name).newLine()
+            .darkSpacer("   - ").variableKey("Beschreibung: ").variableValue(channel.description)
+            .newLine()
+            .darkSpacer("   - ").variableKey("Besitzer: ").variableValue(channel.owner.name)
+            .newLine()
+            .darkSpacer("   - ").variableKey("Status: ")
+            .variableValue(if (channel.isClosed) "Geschlossen" else "Offen").newLine()
+            .darkSpacer("   - ").variableKey("Mitglieder: ")
+            .variableValue((channel.members.size + channel.moderators.size + 1).toString())
+            .newLine()
+            .darkSpacer("   - ").variableKey("Einladungen: ")
+            .variableValue(channel.invites.size.toString()).newLine()
+            .build()
+    }
 }

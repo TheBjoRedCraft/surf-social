@@ -1,36 +1,50 @@
-package dev.slne.surf.social.chat.command.channel;
+package dev.slne.surf.social.chat.command.channel
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
-import dev.slne.surf.social.chat.SurfChat;
-import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.util.MessageBuilder;
-import org.bukkit.OfflinePlayer;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.OfflinePlayerArgument
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.util.MessageBuilder
+import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
-public class ChannelUnBanCommand extends CommandAPICommand {
+class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withArguments(OfflinePlayerArgument("player"))
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val target = args.getUnchecked<OfflinePlayer>("player")
+            val channel: Channel = Channel.Companion.getChannel(player)
 
-  public ChannelUnBanCommand(String commandName) {
-    super(commandName);
+            if (channel == null) {
+                SurfChat.Companion.send(
+                    player,
+                    MessageBuilder().error("Du bist in keinem Nachrichtenkanal.")
+                )
+                return@executesPlayer
+            }
 
-    withArguments(new OfflinePlayerArgument("player"));
-    executesPlayer((player, args) -> {
-      OfflinePlayer target = args.getUnchecked("player");
-      Channel channel = Channel.getChannel(player);
+            if (!channel.isModerator(player) && !channel.isOwner(player)) {
+                SurfChat.Companion.send(
+                    player,
+                    MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals.")
+                )
+                return@executesPlayer
+            }
 
-      if(channel == null) {
-        SurfChat.send(player, new MessageBuilder().error("Du bist in keinem Nachrichtenkanal."));
-        return;
-      }
+            channel.unban(target)
 
-      if(!channel.isModerator(player) && !channel.isOwner(player)) {
-        SurfChat.send(player, new MessageBuilder().error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals."));
-        return;
-      }
-
-      channel.unban(target);
-
-      SurfChat.send(player, new MessageBuilder().primary("Du hast ").info(target.getName()).primary(" im Nachrichtenkanal ").info(channel.getName()).error(" entbannt."));
-      SurfChat.send(target, new MessageBuilder().primary("Du wurdest im Nachrichtenkanal ").info(channel.getName()).error(" entbannt."));
-    });
-  }
+            SurfChat.Companion.send(
+                player, MessageBuilder().primary("Du hast ").info(
+                    target!!.name!!
+                ).primary(" im Nachrichtenkanal ").info(channel.name).error(" entbannt.")
+            )
+            SurfChat.Companion.send(
+                target,
+                MessageBuilder().primary("Du wurdest im Nachrichtenkanal ").info(channel.name)
+                    .error(" entbannt.")
+            )
+        })
+    }
 }

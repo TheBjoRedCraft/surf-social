@@ -1,44 +1,57 @@
-package dev.slne.surf.social.chat.command.channel;
+package dev.slne.surf.social.chat.command.channel
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.provider.ChannelProvider;
-import dev.slne.surf.social.chat.util.MessageBuilder;
-import dev.slne.surf.social.chat.util.PageableMessageBuilder;
-import net.kyori.adventure.text.Component;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.IntegerArgument
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.provider.ChannelProvider
+import dev.slne.surf.social.chat.util.MessageBuilder
+import dev.slne.surf.social.chat.util.PageableMessageBuilder
+import net.kyori.adventure.text.Component
+import org.bukkit.entity.Player
 
-public class ChannelListCommand extends CommandAPICommand {
-  public ChannelListCommand(String commandName) {
-    super(commandName);
+class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withOptionalArguments(IntegerArgument("page"))
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val message = PageableMessageBuilder()
+            val page = args.getOrDefaultUnchecked("page", 1)
 
-    withOptionalArguments(new IntegerArgument("page"));
-    executesPlayer((player, args ) -> {
-      PageableMessageBuilder message = new PageableMessageBuilder();
-      Integer page = args.getOrDefaultUnchecked("page", 1);
+            var index = 0
 
-      int index = 0;
+            message.setPageCommand("/channel list %page%")
 
-      message.setPageCommand("/channel list %page%");
+            for (channel in ChannelProvider.getInstance().channels.values) {
+                index++
 
-      for (Channel channel : ChannelProvider.getInstance().getChannels().values()) {
-        index ++;
+                message.addLine(
+                    MessageBuilder().variableValue("$index. ").primary(channel.name)
+                        .darkSpacer(" (")
+                        .info((channel.members.size + channel.moderators.size + 1).toString())
+                        .darkSpacer(")").build().hoverEvent(
+                            this.createInfoMessage(channel)
+                        )
+                )
+            }
+            message.send(player, page)
+        })
+    }
 
-        message.addLine(new MessageBuilder().variableValue(index + ". ").primary(channel.getName()).darkSpacer(" (").info(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).darkSpacer(")").build().hoverEvent(this.createInfoMessage(channel)));
-      }
-
-      message.send(player, page);
-    });
-  }
-
-  private Component createInfoMessage(Channel channel) {
-    return new MessageBuilder()
-        .primary("Kanalinformation: ").info(channel.getName()).newLine()
-        .darkSpacer("   - ").variableKey("Beschreibung: ").variableValue(channel.getDescription()).newLine()
-        .darkSpacer("   - ").variableKey("Besitzer: ").variableValue(channel.getOwner().getName()).newLine()
-        .darkSpacer("   - ").variableKey("Status: ").variableValue(channel.isClosed() ? "Geschlossen" : "Offen").newLine()
-        .darkSpacer("   - ").variableKey("Mitglieder: ").variableValue(String.valueOf(channel.getMembers().size() + channel.getModerators().size() + 1)).newLine()
-        .darkSpacer("   - ").variableKey("Einladungen: ").variableValue(String.valueOf(channel.getInvites().size())).newLine()
-        .build();
-  }
+    private fun createInfoMessage(channel: Channel): Component? {
+        return MessageBuilder()
+            .primary("Kanalinformation: ").info(channel.name).newLine()
+            .darkSpacer("   - ").variableKey("Beschreibung: ").variableValue(channel.description)
+            .newLine()
+            .darkSpacer("   - ").variableKey("Besitzer: ").variableValue(channel.owner.name)
+            .newLine()
+            .darkSpacer("   - ").variableKey("Status: ")
+            .variableValue(if (channel.isClosed) "Geschlossen" else "Offen").newLine()
+            .darkSpacer("   - ").variableKey("Mitglieder: ")
+            .variableValue((channel.members.size + channel.moderators.size + 1).toString())
+            .newLine()
+            .darkSpacer("   - ").variableKey("Einladungen: ")
+            .variableValue(channel.invites.size.toString()).newLine()
+            .build()
+    }
 }

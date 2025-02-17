@@ -1,24 +1,29 @@
-package dev.slne.surf.social.chat.command.argument;
+package dev.slne.surf.social.chat.command.argument
 
-import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.CustomArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
-import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.provider.ChannelProvider;
-import java.util.stream.Collectors;
+import dev.jorel.commandapi.SuggestionInfo
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
+import dev.jorel.commandapi.arguments.CustomArgument
+import dev.jorel.commandapi.arguments.CustomArgument.CustomArgumentInfoParser
+import dev.jorel.commandapi.arguments.StringArgument
+import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.provider.ChannelProvider
+import org.bukkit.command.CommandSender
 
-public class ChannelArgument extends CustomArgument<Channel, String> {
-  public ChannelArgument(String nodeName) {
-    super(new StringArgument(nodeName), info -> {
-      Channel channel = Channel.getChannel(info.input());
+class ChannelArgument(nodeName: String?) :
+    CustomArgument<Channel, String>(
+        StringArgument(nodeName),
+        CustomArgumentInfoParser<Channel, String> { info: CustomArgumentInfo<String> ->
+            val channel: Channel = Channel.getChannel(info.input()) ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Unknown channel: ").appendArgInput())
 
-      if (channel == null) {
-        throw CustomArgumentException.fromMessageBuilder(new MessageBuilder("Unknown channel: ").appendArgInput());
-      } else {
-        return channel;
-      }
-    });
-
-    this.replaceSuggestions(ArgumentSuggestions.strings(info -> ChannelProvider.getInstance().getChannels().values().stream().map(Channel::getName).toArray(String[]::new)));
-  }
+            return@CustomArgumentInfoParser channel
+        }) {
+    init {
+        this.replaceSuggestions(
+            ArgumentSuggestions.strings<CommandSender> { info: SuggestionInfo<CommandSender> ->
+                ChannelProvider.getInstance().channels.values.stream()
+                    .map<String> { obj: Channel -> obj.name }
+                    .toArray<String> { _Dummy_.__Array__() }
+            }
+        )
+    }
 }

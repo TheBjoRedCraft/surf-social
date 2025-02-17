@@ -1,11 +1,6 @@
-package dev.slne.surf.social.chat.object;
+package dev.slne.surf.social.chat.`object`
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class HistoryPair {
-  private final int messageID;
-  private final long sendTime;
+class HistoryPair {
+    private val messageID = 0
+    private val sendTime: Long = 0
 }

@@ -1,39 +1,34 @@
-package dev.slne.surf.social.chat.object;
+package dev.slne.surf.social.chat.`object`
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.CacheLoader
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
+import com.github.benmanes.caffeine.cache.RemovalCause
+import it.unimi.dsi.fastutil.objects.ObjectSet
 
-import dev.slne.surf.social.chat.service.DatabaseService;
 
-import it.unimi.dsi.fastutil.objects.ObjectSet;
+class ChatUser {
+    private val uuid: java.util.UUID? = null
+    private val toggledPM = false
+    private val ignoreList: ObjectSet<java.util.UUID>? = null
 
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+    fun isIgnoring(target: java.util.UUID): Boolean {
+        return ignoreList!!.contains(target)
+    }
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+    companion object {
+        private val cache: LoadingCache<java.util.UUID, ChatUser> = Caffeine
+            .newBuilder()
+            .removalListener<Any, Any> { `object`: Any?, user: Any?, cause: RemovalCause? ->
+                DatabaseService.getInstance().saveUser(user as ChatUser?)
+            }
+            .expireAfterWrite(30, java.util.concurrent.TimeUnit.MINUTES)
+            .build<java.util.UUID, ChatUser>(CacheLoader<java.util.UUID, ChatUser> { uuid: java.util.UUID? ->
+                DatabaseService.getInstance().loadUser(uuid)
+            })
 
-@Builder
-@Getter
-@Setter
-public class ChatUser {
-  @Getter
-  private static final LoadingCache<UUID, ChatUser> cache = Caffeine
-      .newBuilder()
-      .removalListener((object, user, cause) -> DatabaseService.getInstance().saveUser((ChatUser) user))
-      .expireAfterWrite(30, TimeUnit.MINUTES)
-      .build(DatabaseService.getInstance()::loadUser);
-
-  public static ChatUser getUser(UUID uuid) {
-    return cache.get(uuid);
-  }
-
-  private final UUID uuid;
-  private boolean toggledPM;
-  private ObjectSet<UUID> ignoreList;
-
-  public boolean isIgnoring(UUID target) {
-    return ignoreList.contains(target);
-  }
+        fun getUser(uuid: java.util.UUID): ChatUser? {
+            return cache[uuid]
+        }
+    }
 }

@@ -1,27 +1,32 @@
-package dev.slne.surf.social.chat.command.channel;
+package dev.slne.surf.social.chat.command.channel
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.slne.surf.social.chat.SurfChat;
-import dev.slne.surf.social.chat.command.argument.ChannelArgument;
-import dev.slne.surf.social.chat.object.Channel;
-import dev.slne.surf.social.chat.util.MessageBuilder;
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.executors.CommandArguments
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.social.chat.command.argument.ChannelArgument
+import dev.slne.surf.social.chat.`object`.Channel
+import dev.slne.surf.social.chat.util.MessageBuilder
+import org.bukkit.entity.Player
 
-public class ChannelForceDeleteCommand extends CommandAPICommand {
-
-  public ChannelForceDeleteCommand(String commandName) {
-    super(commandName);
-
-    withPermission("surf.chat.command.channel.forceDelete");
-    withArguments(new ChannelArgument("channel"));
-    executesPlayer((player, args) -> {
-      Channel channel = args.getUnchecked("channel");
-
-      if(!channel.delete()) {
-        SurfChat.send(player, new MessageBuilder().error("Der Nachrichtenkanal konnte nicht gelöscht werden."));
-        return;
-      }
-
-      SurfChat.send(player, new MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.getName()).error(" wurde gelöscht."));
-    });
-  }
+class ChannelForceDeleteCommand(commandName: String) : CommandAPICommand(commandName) {
+    init {
+        withPermission("surf.chat.command.channel.forceDelete")
+        withArguments(ChannelArgument("channel"))
+        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+            val channel = args.getUnchecked<Channel>("channel")
+            if (!channel!!.delete()) {
+                SurfChat.Companion.send(
+                    player,
+                    MessageBuilder().error("Der Nachrichtenkanal konnte nicht gelöscht werden.")
+                )
+                return@executesPlayer
+            }
+            SurfChat.Companion.send(
+                player,
+                MessageBuilder().primary("Der Nachrichtenkanal ").info(channel.name)
+                    .error(" wurde gelöscht.")
+            )
+        })
+    }
 }

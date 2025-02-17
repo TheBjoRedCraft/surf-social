@@ -1,83 +1,84 @@
-package dev.slne.surf.social.chat.service;
+package dev.slne.surf.social.chat.service
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import dev.slne.surf.social.chat.object.HistoryPair;
-import dev.slne.surf.social.chat.object.Message;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.UUID;
-import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.jspecify.annotations.Nullable;
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
+import dev.slne.surf.social.chat.`object`.HistoryPair
+import dev.slne.surf.social.chat.`object`.Message
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 
-public class ChatHistoryService {
-  @Getter
-  private static final ChatHistoryService instance = new ChatHistoryService();
-  private final Cache<UUID, Object2ObjectMap<HistoryPair, Message>> chatHistoryCache = Caffeine
-      .newBuilder()
-      .build();
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import java.util.*
 
-  public void clearInternalChatHistory(UUID player) {
-    chatHistoryCache.invalidate(player);
-  }
+class ChatHistoryService {
+    private val chatHistoryCache: Cache<UUID, Object2ObjectMap<HistoryPair, Message>?> =
+        Caffeine
+            .newBuilder()
+            .build<java.util.UUID, Object2ObjectMap<HistoryPair, Message>?>()
 
-  public void clearChat() {
-    this.chatHistoryCache.invalidateAll();
-
-    Bukkit.getOnlinePlayers().forEach(player -> {
-      int index = 0;
-      while (index < 100) {
-        player.sendMessage(Component.empty());
-        index++;
-      }
-    });
-  }
-
-  public void insertNewMessage(UUID player, Message message, int messageID) {
-    Object2ObjectMap<HistoryPair, Message> chatHistory = chatHistoryCache.getIfPresent(player);
-
-      if (chatHistory == null) {
-          chatHistory = new Object2ObjectOpenHashMap<>();
-          chatHistoryCache.put(player, chatHistory);
-      }
-
-      int timestamp = (int) (System.currentTimeMillis() / 1000);
-      chatHistory.put(new HistoryPair(messageID, timestamp), message);
-  }
-
-
-  public void removeMessage(UUID player, int messageID) {
-    Object2ObjectMap<HistoryPair, Message> chatHistory = chatHistoryCache.getIfPresent(player);
-
-    if (chatHistory != null) {
-      chatHistory.entrySet().removeIf(entry -> entry.getKey().getMessageID() == messageID);
+    fun clearInternalChatHistory(player: java.util.UUID) {
+        chatHistoryCache.invalidate(player)
     }
-  }
 
-  public void resend(UUID player) {
-      Object2ObjectMap<HistoryPair, Message> chatHistory = chatHistoryCache.getIfPresent(player);
+    fun clearChat() {
+        chatHistoryCache.invalidateAll()
 
-      Bukkit.getOnlinePlayers().forEach(online -> {
-          int index = 0;
-          while (index < 100) {
-              online.sendMessage(Component.empty());
-              index++;
-          }
-      });
+        Bukkit.getOnlinePlayers().forEach { player: Player ->
+            var index = 0
+            while (index < 100) {
+                player.sendMessage(Component.empty())
+                index++
+            }
+        }
+    }
 
-      if (chatHistory != null) {
-          chatHistory.object2ObjectEntrySet()
-              .stream()
-              .sorted(Comparator.comparingLong(entry -> entry.getKey().getSendTime()))
-              .forEach(entry -> {
-                  Bukkit.getOnlinePlayers().forEach(target -> target.sendMessage(entry.getValue().message()));
-              });
-      }
-  }
+    fun insertNewMessage(player: java.util.UUID, message: Message, messageID: Int) {
+        var chatHistory: Object2ObjectMap<HistoryPair, Message>? =
+            chatHistoryCache.getIfPresent(player)
+
+        if (chatHistory == null) {
+            chatHistory = Object2ObjectOpenHashMap<HistoryPair, Message>()
+            chatHistoryCache.put(player, chatHistory)
+        }
+
+        val timestamp: Int = (java.lang.System.currentTimeMillis() / 1000).toInt()
+        chatHistory!!.put(HistoryPair(messageID, timestamp.toLong()), message)
+    }
+
+
+    fun removeMessage(player: java.util.UUID, messageID: Int) {
+        val chatHistory: Object2ObjectMap<HistoryPair, Message>? =
+            chatHistoryCache.getIfPresent(player)
+
+        chatHistory?.entries?.removeIf { entry: Map.Entry<HistoryPair, Message?> -> entry.key.getMessageID() == messageID }
+    }
+
+    fun resend(player: java.util.UUID) {
+        val chatHistory: Object2ObjectMap<HistoryPair, Message>? =
+            chatHistoryCache.getIfPresent(player)
+
+        Bukkit.getOnlinePlayers().forEach { online: Player ->
+            var index = 0
+            while (index < 100) {
+                online.sendMessage(Component.empty())
+                index++
+            }
+        }
+
+        chatHistory?.object2ObjectEntrySet()?.stream()?.sorted(
+            java.util.Comparator.comparingLong<Object2ObjectMap.Entry<HistoryPair, Message>>(
+                java.util.function.ToLongFunction<Object2ObjectMap.Entry<HistoryPair, Message>> { entry: Object2ObjectMap.Entry<HistoryPair, Message?> -> entry.key.getSendTime() })
+        )
+            ?.forEach { entry: Object2ObjectMap.Entry<HistoryPair?, Message> ->
+                Bukkit.getOnlinePlayers()
+                    .forEach { target: Player -> target.sendMessage(entry.value.message) }
+            }
+    }
+
+    companion object {
+        @Getter
+        private val instance = ChatHistoryService()
+    }
 }

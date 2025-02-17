@@ -1,9 +1,9 @@
-package dev.slne.surf.social.chat.external;
+package dev.slne.surf.social.chat.external
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Player
 
-public class BasicPunishApi {
-  public static boolean isMuted(Player player) {
-    return false; //TODO: Punish API
-  }
+object BasicPunishApi {
+    fun isMuted(player: Player?): Boolean {
+        return false //TODO: Punish API
+    }
 }

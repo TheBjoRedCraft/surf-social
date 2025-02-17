@@ -4,7 +4,7 @@ plugins {
     id("java")
     id("com.gradleup.shadow")
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
-    id("io.freefair.lombok")
+    kotlin("jvm") version "2.1.10"
 }
 
 val versionFile = file("version.txt")
@@ -49,6 +49,7 @@ dependencies {
 
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 paper {
@@ -88,4 +89,8 @@ tasks.register("incrementVersion") {
         versionFile.writeText(newVersion)
         println("Incremented version to $newVersion")
     }
+}
+
+kotlin {
+    jvmToolchain(23)
 }
