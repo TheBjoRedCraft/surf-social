@@ -21,6 +21,11 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user: ChatUser = ChatUser.getUser(player.uniqueId)
                 val targetUser: ChatUser = ChatUser.getUser(target.uniqueId)
 
+                if(target == player) {
+                    SurfChat.send(player, MessageBuilder().error("Du kannst dich nicht selbst stummschalten."))
+                    return@launch
+                }
+
                 if (user.isIgnoring(targetUser.uuid)) {
                     user.ignoreList.remove(targetUser.uuid)
                     SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name!!).success(" entstummt."))
