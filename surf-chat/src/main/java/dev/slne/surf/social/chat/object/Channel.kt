@@ -9,16 +9,20 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.*
+import java.util.function.Consumer
 
-class Channel {
-    private val owner: OfflinePlayer? = null
-    private val members: ObjectSet<OfflinePlayer> = ObjectArraySet()
-    private val moderators: ObjectSet<OfflinePlayer> = ObjectArraySet()
-    private val bannedPlayers: ObjectSet<OfflinePlayer> = ObjectArraySet()
-    private val invites: ObjectSet<OfflinePlayer> = ObjectArraySet()
-    private val name: String = java.util.UUID.randomUUID().toString()
-    private val description = "Ein cooler Kanal!"
-    private val closed = true
+class Channel(
+    var owner: OfflinePlayer? = null,
+    val members: ObjectSet<OfflinePlayer> = ObjectArraySet(),
+    val moderators: ObjectSet<OfflinePlayer> = ObjectArraySet(),
+    val bannedPlayers: ObjectSet<OfflinePlayer> = ObjectArraySet(),
+    val invites: ObjectSet<OfflinePlayer> = ObjectArraySet(),
+    val name: String = UUID.randomUUID().toString(),
+    val description: String = "Ein cooler Kanal!",
+    var closed: Boolean = true
+) {
+
 
     fun isMember(player: OfflinePlayer): Boolean {
         return members.contains(player)
@@ -115,23 +119,19 @@ class Channel {
 
             players.addAll(
                 members.stream().filter { obj: OfflinePlayer -> obj.isOnline }
-                    .map<Player> { obj: OfflinePlayer -> obj.player }
-                    .collect<ObjectArraySet<Player>, Any>(
-                        java.util.stream.Collectors.toCollection<Player, ObjectArraySet<Player>>(
-                            java.util.function.Supplier<ObjectArraySet<Player>> { ObjectArraySet() })
-                    )
+                    .map { obj: OfflinePlayer -> obj.player }
+                    .toList()
             )
             players.addAll(
                 moderators.stream().filter { obj: OfflinePlayer -> obj.isOnline }
-                    .map<Player> { obj: OfflinePlayer -> obj.player }
-                    .collect<ObjectArraySet<Player>, Any>(
-                        java.util.stream.Collectors.toCollection<Player, ObjectArraySet<Player>>(
-                            java.util.function.Supplier<ObjectArraySet<Player>> { ObjectArraySet() })
-                    )
+                    .map { obj: OfflinePlayer -> obj.player }
+                    .toList()
             )
 
-            if (this.getOwner().isOnline()) {
-                players.add(this.getOwner().getPlayer())
+            val owner = this.owner ?: return players
+
+            if (owner.isOnline) {
+                players.add(owner.player)
             }
 
             return players
@@ -249,13 +249,10 @@ class Channel {
     }
 
     fun delete(): Boolean {
-        this.message(
-            MessageBuilder().primary("Der Nachrichtenkanal ").info(
-                this.getName()
-            ).error(" wurde gelöscht.")
-        )
+        this.message(MessageBuilder().primary("Der Nachrichtenkanal ").info(this.name).error(" wurde gelöscht."))
 
-        val uuid: java.util.UUID = this.getOwner().getUniqueId()
+        val owner = this.owner ?: return false
+        val uuid: UUID = owner.uniqueId
 
         members.clear()
         moderators.clear()
@@ -264,45 +261,37 @@ class Channel {
     }
 
     private fun message(messageBuilder: MessageBuilder) {
-        onlinePlayers.forEach(java.util.function.Consumer<Player> { player: Player ->
-            SurfChat.Companion.send(
-                player,
-                messageBuilder
-            )
-        })
+        onlinePlayers.forEach(Consumer { player: Player -> SurfChat.send(player, messageBuilder) })
     }
 
     fun register() {
-        ChannelProvider.getInstance().channels.put(owner!!.uniqueId, this)
+        val owner = this.owner ?: return
+        ChannelProvider.instance.channels[owner.uniqueId] = this
     }
 
-    fun unregister(uuid: java.util.UUID?): Boolean {
-        ChannelProvider.getInstance().channels.remove(uuid)
+    fun unregister(uuid: UUID): Boolean {
+        ChannelProvider.instance.channels.remove(uuid)
 
-        return !ChannelProvider.getInstance().channels.containsKey(uuid)
+        return !ChannelProvider.instance.channels.containsKey(uuid)
     }
 
     companion object {
         fun getChannel(name: String): Channel? {
-            return ChannelProvider.getInstance().channels.values.stream()
-                .filter { channel: Channel -> channel.getName() == name }.findFirst().orElse(null)
+            return ChannelProvider.instance.channels.values.stream().filter { channel: Channel -> channel.name == name }.findFirst().orElse(null)
         }
 
         fun getChannel(sender: CommandSender): Channel? {
-            return ChannelProvider.getInstance().channels.values.stream()
-                .filter { channel: Channel ->
-                    channel.isModerator(sender) || channel.isMember(sender) || channel.isOwner(
-                        sender
-                    )
-                }.findFirst().orElse(null)
+            return ChannelProvider.instance.channels.values.stream()
+                .filter { channel: Channel -> channel.isModerator(sender) || channel.isMember(sender) || channel.isOwner(sender) }
+                .findFirst()
+                .orElse(null)
         }
 
         fun getChannelO(player: OfflinePlayer): Channel? {
-            return ChannelProvider.getInstance().channels.values.stream()
-                .filter { channel: Channel ->
-                    channel.getModerators().contains(player) || channel.getMembers()
-                        .contains(player) || channel.getOwner() == player
-                }.findFirst().orElse(null)
+            return ChannelProvider.instance.channels.values.stream()
+                .filter { channel: Channel -> channel.moderators.contains(player) || channel.members.contains(player) || channel.owner == player }
+                .findFirst()
+                .orElse(null)
         }
     }
 }
