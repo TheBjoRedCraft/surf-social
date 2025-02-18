@@ -15,7 +15,7 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 
 import java.security.SecureRandom
-
+@Deprecated("Glaube besser wenn es mit Cloud gemacht wird ^^")
 object VelocityProxyService : PluginMessageListener {
     private val random: SecureRandom = SecureRandom()
 
