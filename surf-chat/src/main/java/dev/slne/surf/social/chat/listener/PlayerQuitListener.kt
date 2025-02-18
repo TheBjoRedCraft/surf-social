@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 class PlayerQuitListener : Listener {
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
-        ChatHistoryService.instance.clearInternalChatHistory(event.player.uniqueId)
-        ChannelProvider.instance.handleQuit(event.player)
+        ChatHistoryService.clearInternalChatHistory(event.player.uniqueId)
+        ChannelProvider.handleQuit(event.player)
     }
 }

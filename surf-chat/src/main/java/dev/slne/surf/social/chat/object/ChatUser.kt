@@ -26,9 +26,9 @@ class ChatUser(
     companion object {
         val cache: CoroutineLoadingCache<UUID, ChatUser> = Caffeine
             .newBuilder()
-            .removalListener<Any, Any> { _: Any?, user: Any?, _: RemovalCause? -> SurfChat.instance.launch { DatabaseService.instance.saveUser(user as ChatUser) } }
+            .removalListener<Any, Any> { _: Any?, user: Any?, _: RemovalCause? -> SurfChat.instance.launch { DatabaseService.saveUser(user as ChatUser) } }
             .expireAfterWrite(30, java.util.concurrent.TimeUnit.MINUTES)
-            .buildCoroutine() { uuid: UUID -> DatabaseService.instance.loadUser(uuid) }
+            .buildCoroutine() { uuid: UUID -> DatabaseService.loadUser(uuid) }
 
         suspend fun getUser(uuid: UUID): ChatUser {
             return this.cache.get(uuid)

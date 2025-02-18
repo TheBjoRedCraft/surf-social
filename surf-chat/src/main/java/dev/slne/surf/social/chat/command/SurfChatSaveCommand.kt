@@ -16,7 +16,7 @@ class SurfChatSaveCommand(commandName: String) : CommandAPICommand(commandName) 
         executesPlayer(PlayerCommandExecutor { player: Player, _: CommandArguments ->
             SurfChat.instance.launch {
                 ChatUser.cache.synchronous().asMap().values.forEach { user ->
-                    DatabaseService.instance.saveUser(user)
+                    DatabaseService.saveUser(user)
                 }
 
                 SurfChat.send(player, MessageBuilder().success("Alle Nutzer wurden gespeichert."))

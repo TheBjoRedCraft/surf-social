@@ -17,7 +17,7 @@ class ChannelArgument(nodeName: String) :
         }) {
     init {
         this.replaceSuggestions(ArgumentSuggestions.strings {
-                ChannelProvider.instance.channels.values.stream()
+                ChannelProvider.channels.values.stream()
                     .map { obj: Channel -> obj.name }
                     .toArray { arrayOfNulls<String>(it) }
             }

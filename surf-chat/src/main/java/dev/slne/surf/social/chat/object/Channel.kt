@@ -266,29 +266,29 @@ class Channel(
 
     fun register() {
         val owner = this.owner ?: return
-        ChannelProvider.instance.channels[owner.uniqueId] = this
+        ChannelProvider.channels[owner.uniqueId] = this
     }
 
     fun unregister(uuid: UUID): Boolean {
-        ChannelProvider.instance.channels.remove(uuid)
+        ChannelProvider.channels.remove(uuid)
 
-        return !ChannelProvider.instance.channels.containsKey(uuid)
+        return !ChannelProvider.channels.containsKey(uuid)
     }
 
     companion object {
         fun getChannel(name: String): Channel? {
-            return ChannelProvider.instance.channels.values.stream().filter { channel: Channel -> channel.name == name }.findFirst().orElse(null)
+            return ChannelProvider.channels.values.stream().filter { channel: Channel -> channel.name == name }.findFirst().orElse(null)
         }
 
         fun getChannel(sender: CommandSender): Channel? {
-            return ChannelProvider.instance.channels.values.stream()
+            return ChannelProvider.channels.values.stream()
                 .filter { channel: Channel -> channel.isModerator(sender) || channel.isMember(sender) || channel.isOwner(sender) }
                 .findFirst()
                 .orElse(null)
         }
 
         fun getChannelO(player: OfflinePlayer): Channel? {
-            return ChannelProvider.instance.channels.values.stream()
+            return ChannelProvider.channels.values.stream()
                 .filter { channel: Channel -> channel.moderators.contains(player) || channel.members.contains(player) || channel.owner == player }
                 .findFirst()
                 .orElse(null)

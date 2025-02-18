@@ -35,16 +35,16 @@ class SurfChat : SuspendingJavaPlugin() {
 
         this.saveDefaultConfig()
 
-        ChatFilterService.instance.loadBlockedWords()
-        DatabaseService.instance.connect()
+        ChatFilterService.loadBlockedWords()
+        DatabaseService.connect()
 
         Bukkit.getPluginManager().registerEvents(PlayerAsyncChatListener(), this)
         Bukkit.getPluginManager().registerEvents(PlayerQuitListener(), this)
     }
 
     override suspend fun onDisableAsync() {
-        DatabaseService.instance.saveAll()
-        DatabaseService.instance.disconnect()
+        DatabaseService.saveAll()
+        DatabaseService.disconnect()
     }
 
     companion object {
@@ -60,7 +60,7 @@ class SurfChat : SuspendingJavaPlugin() {
 
                 onlinePlayer.sendMessage(message)
 
-                ChatHistoryService.instance.insertNewMessage(player.uniqueId, Message("Unknown", player.name ?: player.uniqueId.toString(), message), messageID)
+                ChatHistoryService.insertNewMessage(player.uniqueId, Message("Unknown", player.name ?: player.uniqueId.toString(), message), messageID)
             }
         }
     }

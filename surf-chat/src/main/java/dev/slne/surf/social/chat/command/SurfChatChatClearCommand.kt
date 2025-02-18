@@ -10,7 +10,7 @@ class SurfChatChatClearCommand(commandName: String) : CommandAPICommand(commandN
     init {
         withPermission("surf.chat.command.clear")
         executesPlayer(PlayerCommandExecutor { _: Player, _: CommandArguments ->
-            ChatHistoryService.instance.clearChat()
+            ChatHistoryService.clearChat()
         })
     }
 }

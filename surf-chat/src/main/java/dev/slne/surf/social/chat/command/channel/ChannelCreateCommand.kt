@@ -25,7 +25,7 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
             val description = args.getOrDefaultUnchecked("description", "???")
             val channel = Channel(player, ObjectArraySet(), ObjectArraySet(), ObjectArraySet(), ObjectArraySet(), name, description, false)
 
-            if (ChannelProvider.instance.exists(name)) {
+            if (ChannelProvider.exists(name)) {
                 SurfChat.send(player, MessageBuilder().error("Der Nachrichtenkanal ").info(name).error(" existiert bereits."))
                 return@PlayerCommandExecutor
             }

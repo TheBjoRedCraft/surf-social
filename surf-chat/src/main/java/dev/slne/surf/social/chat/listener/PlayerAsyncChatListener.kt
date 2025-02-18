@@ -13,11 +13,8 @@ import dev.slne.surf.social.chat.util.PluginColor
 import io.papermc.paper.event.player.AsyncChatEvent
 import me.clip.placeholderapi.PlaceholderAPI
 
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.security.SecureRandom
@@ -36,25 +33,25 @@ class PlayerAsyncChatListener : Listener {
             return
         }
 
-        if (ChatFilterService.instance.containsLink(event.message())) {
+        if (ChatFilterService.containsLink(event.message())) {
             event.isCancelled = true
             SurfChat.send(player, MessageBuilder().error("Bitte sende keine Links!"))
             return
         }
 
-        if (ChatFilterService.instance.containsBlocked(event.message())) {
+        if (ChatFilterService.containsBlocked(event.message())) {
             event.isCancelled = true
             SurfChat.send(player, MessageBuilder().error("Bitte achte auf deine Wortwahl!"))
             return
         }
 
-        if (ChatFilterService.instance.isSpamming(event.player.uniqueId)) {
+        if (ChatFilterService.isSpamming(event.player.uniqueId)) {
             event.isCancelled = true
             SurfChat.send(player, MessageBuilder().error("Mal ganz ruhig hier, spam bitte nicht!"))
             return
         }
 
-        if (!ChatFilterService.instance.isValidInput(plainMessage)) {
+        if (!ChatFilterService.isValidInput(plainMessage)) {
             event.isCancelled = true
             SurfChat.send(player, MessageBuilder().error("Bitte verwende keine unerlaubten Zeichen!"))
             return

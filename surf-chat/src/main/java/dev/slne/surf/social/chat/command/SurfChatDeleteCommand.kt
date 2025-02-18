@@ -16,8 +16,8 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
             val messageID = args.getUnchecked<Int>("messageID") ?: return@PlayerCommandExecutor
 
             Bukkit.getOnlinePlayers().forEach { onlinePlayer: Player ->
-                ChatHistoryService.instance.removeMessage(onlinePlayer.uniqueId, messageID)
-                ChatHistoryService.instance.resend(onlinePlayer.uniqueId)
+                ChatHistoryService.removeMessage(onlinePlayer.uniqueId, messageID)
+                ChatHistoryService.resend(onlinePlayer.uniqueId)
             }
         })
     }

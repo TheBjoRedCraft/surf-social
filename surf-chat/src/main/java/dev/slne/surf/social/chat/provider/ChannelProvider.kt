@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 import java.util.*
 
 object ChannelProvider {
-    private val channels: Object2ObjectMap<UUID, Channel> = Object2ObjectOpenHashMap()
+    val channels: Object2ObjectMap<UUID, Channel> = Object2ObjectOpenHashMap()
 
     fun exists(name: String): Boolean {
         return channels.values.stream().filter { channel: Channel -> channel.name == name }

@@ -23,7 +23,7 @@ class ChannelInviteArgument(nodeName: String) :
         }) {
     init {
         this.replaceSuggestions(ArgumentSuggestions.strings { info: SuggestionInfo<CommandSender> ->
-              ChannelProvider.instance.channels.values.stream()
+              ChannelProvider.channels.values.stream()
                 .filter { channel: Channel -> channel.hasInvite(info.sender()) }
                 .map { obj: Channel -> obj.name }
                 .toArray { arrayOfNulls<String>(it) }
