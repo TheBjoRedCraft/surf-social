@@ -7,6 +7,7 @@ import dev.slne.surf.social.chat.`object`.Channel
 import dev.slne.surf.social.chat.`object`.ChatUser
 import dev.slne.surf.social.chat.service.ChatFilterService
 import dev.slne.surf.social.chat.util.Colors
+import dev.slne.surf.social.chat.util.Components
 import dev.slne.surf.social.chat.util.MessageBuilder
 import dev.slne.surf.social.chat.util.PluginColor
 import io.papermc.paper.event.player.AsyncChatEvent
@@ -82,7 +83,7 @@ class PlayerAsyncChatListener : Listener {
 
             if (!found) {
                 for (onlinePlayer in channel.onlinePlayers) {
-                    SurfChat.send(onlinePlayer, MessageBuilder().component(this.getDeleteComponent(onlinePlayer, messageID)).component(this.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").component(getChannelComponent(channel)).miniMessage("<white>$plainMessage"), messageID)
+                    SurfChat.send(onlinePlayer, MessageBuilder().component(Components.getDeleteComponent(onlinePlayer, messageID)).component(Components.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").component(Components.getChannelComponent(channel)).miniMessage("<white>$plainMessage"), messageID)
                 }
             }
             return
@@ -96,26 +97,8 @@ class PlayerAsyncChatListener : Listener {
                     continue
                 }
 
-                SurfChat.send(onlinePlayer, MessageBuilder().component(this@PlayerAsyncChatListener.getDeleteComponent(onlinePlayer, messageID)).component(this@PlayerAsyncChatListener.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>$plainMessage"), messageID)
+                SurfChat.send(onlinePlayer, MessageBuilder().component(Components.getDeleteComponent(onlinePlayer, messageID)).component(Components.getTeleportComponent(onlinePlayer, player.name)).miniMessage(PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix% %player_name%")).darkSpacer(" >> ").miniMessage("<white>$plainMessage"), messageID)
             }
         }
-    }
-
-    private fun getDeleteComponent(player: Player, id: Int): Component {
-        return if (player.hasPermission(this.deletePerms)) Component.text("[", Colors.DARK_SPACER)
-            .append(Component.text("DEL", Colors.VARIABLE_KEY)).append(Component.text("] ", Colors.DARK_SPACER))
-            .clickEvent(ClickEvent.runCommand("/surfchat delete $id"))
-            .hoverEvent(Component.text("Nachricht löschen", PluginColor.RED)) else Component.empty()
-    }
-
-    private fun getChannelComponent(channel: Channel): Component {
-        return MessageBuilder().darkSpacer("[").variableKey(channel.name).darkSpacer("] ").build()
-    }
-
-    private fun getTeleportComponent(player: Player, name: String): Component {
-        return if (player.hasPermission(this.teleportPerms)) Component.text("[", Colors.DARK_SPACER)
-            .append(Component.text("TP", Colors.VARIABLE_KEY)).append(Component.text("] ", Colors.DARK_SPACER))
-            .clickEvent(ClickEvent.runCommand("/tp $name"))
-            .hoverEvent(Component.text("Zum Spieler teleportieren", PluginColor.BLUE_MID)) else Component.empty()
     }
 }
