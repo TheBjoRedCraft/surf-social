@@ -229,8 +229,7 @@ class Channel(
         members.add(player)
 
         this.message(
-            MessageBuilder().primary(player.name!!)
-                .success(" ist dem Nachrichtenkanal beigetreten.")
+            MessageBuilder().primary(player.name ?: player.uniqueId.toString()).success(" ist dem Nachrichtenkanal beigetreten.")
         )
     }
 
@@ -244,7 +243,7 @@ class Channel(
         members.remove(player)
 
         this.message(
-            MessageBuilder().primary(player.name!!).error(" hat den Nachrichtenkanal verlassen.")
+            MessageBuilder().primary(player.name ?: player.uniqueId.toString()).error(" hat den Nachrichtenkanal verlassen.")
         )
     }
 

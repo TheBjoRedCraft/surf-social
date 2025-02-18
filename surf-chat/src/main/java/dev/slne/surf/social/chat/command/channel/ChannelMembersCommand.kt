@@ -32,12 +32,12 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
 
             for (moderator in channel.moderators) {
                 index++
-                message.addLine(MessageBuilder().variableValue("$index. ").primary(moderator.name!!).darkSpacer(" (Moderator)").build())
+                message.addLine(MessageBuilder().variableValue("$index. ").primary(moderator.name ?: moderator.uniqueId.toString()).darkSpacer(" (Moderator)").build())
             }
 
             for (member in channel.members) {
                 index++
-                message.addLine(MessageBuilder().variableValue("$index. ").primary(member.name!!).darkSpacer(" (Mitglied)").build())
+                message.addLine(MessageBuilder().variableValue("$index. ").primary(member.name ?: member.uniqueId.toString()).darkSpacer(" (Mitglied)").build())
             }
             message.send(player, page)
         })

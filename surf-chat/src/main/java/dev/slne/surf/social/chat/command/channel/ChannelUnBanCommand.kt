@@ -29,7 +29,7 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
 
             channel.unban(target)
 
-            SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name!!).primary(" im Nachrichtenkanal ").info(channel.name).error(" entbannt."))
+            SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name ?: target.uniqueId.toString()).primary(" im Nachrichtenkanal ").info(channel.name).error(" entbannt."))
             SurfChat.send(target, MessageBuilder().primary("Du wurdest im Nachrichtenkanal ").info(channel.name).error(" entbannt."))
         })
     }

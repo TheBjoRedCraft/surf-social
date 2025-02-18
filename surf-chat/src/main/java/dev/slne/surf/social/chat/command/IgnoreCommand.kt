@@ -28,10 +28,10 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if (user.isIgnoring(targetUser.uuid)) {
                     user.ignoreList.remove(targetUser.uuid)
-                    SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name!!).success(" entstummt."))
+                    SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name ?: target.uniqueId.toString()).success(" entstummt."))
                 } else {
                     user.ignoreList.add(targetUser.uuid)
-                    SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name!!).error(" stumm geschaltet."))
+                    SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name ?: target.uniqueId.toString()).error(" stumm geschaltet."))
                 }
             }
         })

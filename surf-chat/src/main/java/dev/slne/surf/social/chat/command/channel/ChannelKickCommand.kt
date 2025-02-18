@@ -29,7 +29,7 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
 
             channel.kick(target)
 
-            SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name!!).primary(" aus dem Nachrichtenkanal ").info(channel.name).error(" geworfen."))
+            SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name ?: target.uniqueId.toString()).primary(" aus dem Nachrichtenkanal ").info(channel.name).error(" geworfen."))
             SurfChat.send(target, MessageBuilder().primary("Du wurdest aus dem Nachrichtenkanal ").info(channel.name).error(" geworfen."))
         })
     }
