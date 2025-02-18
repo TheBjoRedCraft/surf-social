@@ -22,7 +22,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
-class ChatFilterService {
+object ChatFilterService {
     private val blockedWords: ObjectSet<String> = ObjectArraySet()
     private val allowedDomains: ObjectSet<String> = ObjectArraySet()
     private val blockedPatterns: ObjectSet<Pattern> = ObjectArraySet()
@@ -30,6 +30,10 @@ class ChatFilterService {
     private val logger: ComponentLogger = ComponentLogger.logger(this.javaClass)
     private val rateLimit: ConcurrentHashMap<UUID, Long> = ConcurrentHashMap<UUID, Long>()
     private val messageCount: ConcurrentHashMap<UUID, Int> = ConcurrentHashMap<UUID, Int>()
+
+    private val VALID_CHARACTERS_PATTERN: Pattern = Pattern.compile("^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~-äöü@ ]*$")
+    private val TIME_FRAME: Long = java.util.concurrent.TimeUnit.SECONDS.toMillis(10)
+    private const val MESSAGE_LIMIT = 5
 
     fun loadBlockedWords() {
         val file = File(SurfChat.instance.dataFolder, "blocked.txt")
@@ -155,12 +159,5 @@ class ChatFilterService {
             messageCount[uuid] = 1
             return false
         }
-    }
-
-    companion object {
-        val instance = ChatFilterService()
-        private val VALID_CHARACTERS_PATTERN: Pattern = Pattern.compile("^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~-äöü@ ]*$")
-        private val TIME_FRAME: Long = java.util.concurrent.TimeUnit.SECONDS.toMillis(10)
-        private const val MESSAGE_LIMIT = 5
     }
 }

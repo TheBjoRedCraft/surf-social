@@ -14,7 +14,7 @@ import org.bukkit.configuration.file.FileConfiguration
 import java.sql.SQLException
 import java.util.*
 
-class DatabaseService {
+object DatabaseService {
     private val config: FileConfiguration = SurfChat.instance.config
     private val logger: ComponentLogger = ComponentLogger.logger(DatabaseService::class.java)
 
@@ -130,8 +130,4 @@ class DatabaseService {
     }
 
     private fun createUser(uuid: UUID): ChatUser = ChatUser(uuid, false, ObjectOpenHashSet())
-
-    companion object {
-        val instance = DatabaseService()
-    }
 }

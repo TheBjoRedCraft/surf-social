@@ -12,7 +12,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-class ChatHistoryService {
+object ChatHistoryService {
     private val chatHistoryCache: Cache<UUID, Object2ObjectMap<HistoryPair, Message>?> = Caffeine
             .newBuilder()
             .build<UUID, Object2ObjectMap<HistoryPair, Message>?>()
@@ -71,9 +71,5 @@ class ChatHistoryService {
             .stream()
             .sorted(Comparator.comparingLong<Object2ObjectMap.Entry<HistoryPair, Message>> { entry: Object2ObjectMap.Entry<HistoryPair, Message> -> entry.key.sendTime })
             .forEach { entry: Object2ObjectMap.Entry<HistoryPair?, Message> -> Bukkit.getOnlinePlayers().forEach { target: Player -> target.sendMessage(entry.value.message) } }
-    }
-
-    companion object {
-        val instance = ChatHistoryService()
     }
 }

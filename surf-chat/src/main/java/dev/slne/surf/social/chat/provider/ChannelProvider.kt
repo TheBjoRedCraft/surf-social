@@ -7,8 +7,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.bukkit.entity.Player
 import java.util.*
 
-class ChannelProvider {
-    val channels: Object2ObjectMap<UUID, Channel> = Object2ObjectOpenHashMap()
+object ChannelProvider {
+    private val channels: Object2ObjectMap<UUID, Channel> = Object2ObjectOpenHashMap()
 
     fun exists(name: String): Boolean {
         return channels.values.stream().filter { channel: Channel -> channel.name == name }
@@ -22,9 +22,5 @@ class ChannelProvider {
         if (channel.owner == player) {
             channel.delete()
         }
-    }
-
-    companion object {
-        val instance = ChannelProvider()
     }
 }
