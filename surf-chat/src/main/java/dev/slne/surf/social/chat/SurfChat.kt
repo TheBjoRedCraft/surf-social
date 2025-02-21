@@ -2,10 +2,7 @@ package dev.slne.surf.social.chat
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import dev.jorel.commandapi.CommandAPI
-import dev.slne.surf.social.chat.command.IgnoreCommand
-import dev.slne.surf.social.chat.command.PrivateMessageCommand
-import dev.slne.surf.social.chat.command.SurfChatCommand
-import dev.slne.surf.social.chat.command.TogglePmCommand
+import dev.slne.surf.social.chat.command.*
 import dev.slne.surf.social.chat.command.channel.ChannelCommand
 import dev.slne.surf.social.chat.listener.PlayerAsyncChatListener
 import dev.slne.surf.social.chat.listener.PlayerQuitListener
@@ -32,6 +29,7 @@ class SurfChat : SuspendingJavaPlugin() {
         SurfChatCommand("surfchat").register()
         IgnoreCommand("ignore").register()
         TogglePmCommand("togglepm").register()
+        ReplyCommand("reply").register()
 
         this.saveDefaultConfig()
 
