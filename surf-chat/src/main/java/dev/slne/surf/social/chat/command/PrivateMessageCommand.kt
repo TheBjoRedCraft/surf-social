@@ -9,7 +9,9 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.slne.surf.social.chat.SurfChat
 import dev.slne.surf.social.chat.external.BasicPunishApi
 import dev.slne.surf.social.chat.`object`.ChatUser
+import dev.slne.surf.social.chat.service.ChatFilterService
 import dev.slne.surf.social.chat.util.MessageBuilder
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 
 class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -26,9 +28,28 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val targetUser: ChatUser = ChatUser.getUser(target.uniqueId)
                 val user: ChatUser = ChatUser.getUser(player.uniqueId)
 
+                if (ChatFilterService.containsLink(MiniMessage.miniMessage().deserialize(message))) {
+                    SurfChat.send(player, MessageBuilder().error("Bitte sende keine Links!"))
+                    return@launch
+                }
+
+                if (ChatFilterService.containsBlocked(MiniMessage.miniMessage().deserialize(message))) {
+                    SurfChat.send(player, MessageBuilder().error("Bitte achte auf deine Wortwahl!"))
+                    return@launch
+                }
+
+                if (ChatFilterService.isSpamming(player.uniqueId)) {
+                    SurfChat.send(player, MessageBuilder().error("Mal ganz ruhig hier, spam bitte nicht!"))
+                    return@launch
+                }
+
+                if (!ChatFilterService.isValidInput(message)) {
+                    SurfChat.send(player, MessageBuilder().error("Bitte verwende keine unerlaubten Zeichen!"))
+                    return@launch
+                }
 
                 if (BasicPunishApi.isMuted(player)) {
-                    SurfChat.send(player, MessageBuilder().error("Du bist gemuted und kannst nicht schreiben."))
+                    SurfChat.send(player, MessageBuilder().error("Du bist gemuted und kannst nicht chatten."))
                     return@launch
                 }
 
