@@ -21,8 +21,6 @@ import java.security.SecureRandom
 
 class PlayerAsyncChatListener : Listener {
     private val random: SecureRandom = SecureRandom()
-    private val deletePerms = "surf.chat.delete"
-    private val teleportPerms = "surf.chat.teleport"
 
     @EventHandler
     fun onChat(event: AsyncChatEvent) {

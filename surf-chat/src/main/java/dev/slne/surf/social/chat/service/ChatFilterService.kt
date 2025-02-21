@@ -15,6 +15,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.io.IOException
 
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -62,7 +63,7 @@ object ChatFilterService {
                         .toList()
                 )
             }
-        } catch (e: java.io.IOException) {
+        } catch (e: IOException) {
             logger.error("Failed to read blocked.txt file", e)
         }
 
