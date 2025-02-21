@@ -12,4 +12,8 @@ object ChatReplyService {
     fun get(player: UUID): UUID? {
         return cache.getIfPresent(player)
     }
+
+    fun clear(player: UUID) {
+        cache.invalidate(player)
+    }
 }
