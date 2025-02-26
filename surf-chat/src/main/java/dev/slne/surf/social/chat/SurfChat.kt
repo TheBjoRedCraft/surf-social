@@ -10,8 +10,8 @@ import dev.slne.surf.social.chat.`object`.Message
 import dev.slne.surf.social.chat.service.ChatFilterService
 import dev.slne.surf.social.chat.service.ChatHistoryService
 import dev.slne.surf.social.chat.service.DatabaseService
-import dev.slne.surf.social.chat.util.Colors
 import dev.slne.surf.social.chat.util.MessageBuilder
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
