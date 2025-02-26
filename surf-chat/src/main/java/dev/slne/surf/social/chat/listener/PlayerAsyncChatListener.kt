@@ -30,10 +30,6 @@ class PlayerAsyncChatListener : Listener {
         val player = event.player
         var plainMessage = PlainTextComponentSerializer.plainText().serialize(event.message())
 
-        if (event.isCancelled) {
-            return
-        }
-
         if (ChatFilterService.containsLink(event.message())) {
             event.isCancelled = true
             SurfChat.send(player, MessageBuilder().error("Bitte sende keine Links!"))
