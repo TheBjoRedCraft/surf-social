@@ -20,7 +20,7 @@ import java.security.SecureRandom
 import java.util.UUID
 
 class SurfChat : SuspendingJavaPlugin() {
-    override fun onEnable() {
+    override suspend fun onEnableAsync() {
         CommandAPI.unregister("msg")
         CommandAPI.unregister("tell")
         CommandAPI.unregister("w")
@@ -47,8 +47,6 @@ class SurfChat : SuspendingJavaPlugin() {
     }
 
     companion object {
-        private val random: SecureRandom = SecureRandom()
-
         val instance: SurfChat get() = getPlugin(SurfChat::class.java)
 
         fun send(player: OfflinePlayer, text: MessageBuilder, messageID: UUID = UUID.randomUUID()) {
