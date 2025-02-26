@@ -1,9 +1,4 @@
-import dev.slne.surf.surfapi.gradle.util.registerRequired
-
 plugins {
-    id("java")
-    id("com.gradleup.shadow")
-    kotlin("jvm")
     id("dev.slne.surf.surfapi.gradle.paper-plugin")
 }
 
