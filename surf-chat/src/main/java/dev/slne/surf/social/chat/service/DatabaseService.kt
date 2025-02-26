@@ -124,7 +124,7 @@ object DatabaseService {
     }
 
     suspend fun saveAll() {
-        ChatUser.cache.synchronous().asMap().values.forEach { user ->
+        ChatUser.cache.asMap().values.forEach { user ->
             this.saveUser(user)
         }
     }
