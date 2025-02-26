@@ -1,6 +1,6 @@
 package dev.slne.surf.social.chat.command
 
-import com.github.shynixn.mccoroutine.bukkit.launch
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.executors.CommandArguments

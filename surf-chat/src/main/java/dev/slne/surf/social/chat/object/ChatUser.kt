@@ -1,9 +1,8 @@
 package dev.slne.surf.social.chat.`object`
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.benmanes.caffeine.cache.LoadingCache
 import com.github.benmanes.caffeine.cache.RemovalCause
-import com.github.shynixn.mccoroutine.bukkit.launch
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.hsbrysk.caffeine.CoroutineLoadingCache
 import dev.hsbrysk.caffeine.buildCoroutine
 import dev.slne.surf.social.chat.SurfChat

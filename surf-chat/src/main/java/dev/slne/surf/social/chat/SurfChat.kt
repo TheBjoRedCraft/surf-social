@@ -1,6 +1,6 @@
 package dev.slne.surf.social.chat
 
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.jorel.commandapi.CommandAPI
 import dev.slne.surf.social.chat.command.*
 import dev.slne.surf.social.chat.command.channel.ChannelCommand
@@ -15,7 +15,7 @@ import dev.slne.surf.social.chat.util.MessageBuilder
 
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import org.bukkit.plugin.java.JavaPlugin
+
 import java.security.SecureRandom
 
 class SurfChat : SuspendingJavaPlugin() {
