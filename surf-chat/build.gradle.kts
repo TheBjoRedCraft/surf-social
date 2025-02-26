@@ -57,8 +57,6 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-kotlin:9.7.0")
 }
 
-// version "2.1.10"
-
 surfPaperPluginApi {
     mainClass("dev.slne.surf.social.chat.SurfChat")
     authors.add("SLNE Development")
