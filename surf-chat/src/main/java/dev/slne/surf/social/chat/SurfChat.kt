@@ -67,3 +67,5 @@ class SurfChat : SuspendingJavaPlugin() {
         }
     }
 }
+
+val plugin get() = SurfChat.instance

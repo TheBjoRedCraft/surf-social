@@ -8,10 +8,13 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.text
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
 object Components {
+
+    val cannotIgnoreSelf = text("Du kannst dich nicht selbst stummschalten.", Colors.ERROR)
 
     fun getDeleteComponent(player: Player?, id: UUID): Component {
         if (player == null || !player.hasPermission(SurfChatPermissions.deletePerms)) {
@@ -47,5 +50,11 @@ object Components {
             clickEvent(ClickEvent.runCommand("/teleport $name"))
             hoverEvent(text("Zum Spieler teleportieren", Colors.INFO))
         }
+    }
+
+    fun getIgnoreComponent(target: OfflinePlayer, ignored: Boolean) = buildText {
+        appendText("Du hast ", Colors.SUCCESS)
+        appendText(target.name ?: target.uniqueId.toString(), Colors.VARIABLE_VALUE)
+        appendText(if (!ignored) " entstummt." else " stumm geschaltet.", Colors.SUCCESS)
     }
 }
