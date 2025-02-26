@@ -17,6 +17,7 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 
 import java.security.SecureRandom
+import java.util.UUID
 
 class SurfChat : SuspendingJavaPlugin() {
     override fun onEnable() {
@@ -50,7 +51,7 @@ class SurfChat : SuspendingJavaPlugin() {
 
         val instance: SurfChat get() = getPlugin(SurfChat::class.java)
 
-        fun send(player: OfflinePlayer, text: MessageBuilder, messageID: Int = 0) {
+        fun send(player: OfflinePlayer, text: MessageBuilder, messageID: UUID = UUID.randomUUID()) {
             val message = Colors.PREFIX.append(text.build())
 
             if (player.isOnline) {

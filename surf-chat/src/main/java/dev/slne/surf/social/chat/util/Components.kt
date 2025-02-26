@@ -5,12 +5,13 @@ import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.entity.Player
+import java.util.UUID
 
 object Components {
     private val deletePerms = "surf.chat.delete"
     private val teleportPerms = "surf.chat.teleport"
 
-    fun getDeleteComponent(player: Player?, id: Int): Component {
+    fun getDeleteComponent(player: Player?, id: UUID): Component {
         if(player == null) {
             return Component.empty()
         }

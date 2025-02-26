@@ -1,7 +1,9 @@
 package dev.slne.surf.social.chat.`object`
 
+import java.util.UUID
+
 data class HistoryPair(
-    val messageID: Int,
+    val messageID: UUID,
     val sendTime: Long
 )
 

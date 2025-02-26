@@ -15,7 +15,7 @@ import java.util.*
 object ChatHistoryService {
     private val chatHistoryCache: Cache<UUID, Object2ObjectMap<HistoryPair, Message>?> = Caffeine
             .newBuilder()
-            .build<UUID, Object2ObjectMap<HistoryPair, Message>?>()
+            .build()
 
     fun clearInternalChatHistory(player: UUID) {
         chatHistoryCache.invalidate(player)
@@ -33,7 +33,7 @@ object ChatHistoryService {
         }
     }
 
-    fun insertNewMessage(player: UUID, message: Message, messageID: Int) {
+    fun insertNewMessage(player: UUID, message: Message, messageID: UUID) {
         var chatHistory: Object2ObjectMap<HistoryPair, Message>? = chatHistoryCache.getIfPresent(player)
 
         if (chatHistory == null) {
@@ -46,7 +46,7 @@ object ChatHistoryService {
     }
 
 
-    fun removeMessage(player: UUID, messageID: Int) {
+    fun removeMessage(player: UUID, messageID: UUID) {
         val chatHistory: Object2ObjectMap<HistoryPair, Message> = chatHistoryCache.getIfPresent(player) ?: return
 
         val key = chatHistory.keys.stream().filter { it.messageID == messageID }.findFirst().orElse(null)

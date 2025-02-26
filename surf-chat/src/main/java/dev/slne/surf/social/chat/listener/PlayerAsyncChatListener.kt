@@ -22,6 +22,7 @@ import org.bukkit.entity.Player
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.util.UUID
 
 class PlayerAsyncChatListener : Listener {
     @EventHandler
@@ -60,7 +61,7 @@ class PlayerAsyncChatListener : Listener {
         }
 
         val channel: Channel? = Channel.getChannel(player)
-        val messageID: Int = random.nextInt(1000000)
+        val messageID: UUID = UUID.randomUUID()
         var found = false
 
         if (channel != null) {
