@@ -54,6 +54,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("dev.hsbrysk:caffeine-coroutines:2.0.0")
+    implementation("dev.jorel:commandapi-bukkit-kotlin:9.7.0")
 }
 
 paper {
