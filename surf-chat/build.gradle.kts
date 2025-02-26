@@ -1,10 +1,10 @@
-import net.minecrell.pluginyml.paper.PaperPluginDescription
+import dev.slne.surf.surfapi.gradle.util.registerRequired
 
 plugins {
     id("java")
     id("com.gradleup.shadow")
-    id("net.minecrell.plugin-yml.paper") version "0.6.0"
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm")
+    id("dev.slne.surf.surfapi.gradle.paper-plugin")
 }
 
 val versionFile = file("version.txt")
@@ -57,27 +57,17 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-kotlin:9.7.0")
 }
 
-paper {
-    name = "SurfChat"
-    main = "dev.slne.surf.social.chat.SurfChat"
-    apiVersion = "1.21.4"
-    authors = listOf("TheBjoRedCraft", "SLNE Development")
-    prefix = "SurfChat"
-    version = "${project.version}"
-    foliaSupported = true
+// version "2.1.10"
+
+surfPaperPluginApi {
+    mainClass("dev.slne.surf.social.chat.SurfChat")
+    authors.add("SLNE Development")
 
     serverDependencies {
-        register("CommandAPI") {
-            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
-            required = true
-        }
-
-        register("PlaceholderAPI") {
-            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
-            required = false
-        }
+        registerRequired("CommandAPI")
     }
 }
+
 
 tasks {
     shadowJar {
