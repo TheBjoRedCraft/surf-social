@@ -6,6 +6,9 @@ import dev.slne.surf.social.chat.`object`.Channel
 import dev.slne.surf.social.chat.service.ChatFilterService
 import dev.slne.surf.social.chat.util.Components
 import dev.slne.surf.social.chat.util.MessageBuilder
+import dev.slne.surf.surfapi.bukkit.api.SurfBukkitApi
+import dev.slne.surf.surfapi.core.api.SurfCoreApi
+import dev.slne.surf.surfapi.core.api.util.random
 
 import io.papermc.paper.event.player.AsyncChatEvent
 
@@ -20,11 +23,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-import java.security.SecureRandom
-
 class PlayerAsyncChatListener : Listener {
-    private val random: SecureRandom = SecureRandom()
-
     @EventHandler
     fun onChat(event: AsyncChatEvent) {
         val player = event.player
