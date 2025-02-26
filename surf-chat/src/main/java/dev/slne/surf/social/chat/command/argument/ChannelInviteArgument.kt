@@ -7,9 +7,7 @@ import dev.slne.surf.social.chat.`object`.Channel
 import dev.slne.surf.social.chat.provider.ChannelProvider
 
 class ChannelInviteArgument(nodeName: String) :
-    CustomArgument<Channel, String>(
-        StringArgument(nodeName),
-        { info ->
+    CustomArgument<Channel, String>(StringArgument(nodeName), { info ->
             val channel = Channel.getChannel(info.input())
                 ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Unknown channel: ").appendArgInput())
 
@@ -18,8 +16,9 @@ class ChannelInviteArgument(nodeName: String) :
             }
             channel
         }) {
+
     init {
-        this.replaceSuggestions(ArgumentSuggestions.stringCollection { info ->
+        replaceSuggestions(ArgumentSuggestions.stringCollection { info ->
             ChannelProvider.channels.values
                 .filter { it.hasInvite(info.sender()) }
                 .map { it.name }
