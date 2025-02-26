@@ -5,6 +5,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.jorel.commandapi.kotlindsl.greedyStringArgument
+import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.social.chat.SurfChat
 import dev.slne.surf.social.chat.external.BasicPunishApi
 import dev.slne.surf.social.chat.`object`.ChatUser
@@ -19,8 +21,8 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.reply")
         withAliases("r")
-        withArguments(GreedyStringArgument("message"))
-        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+        greedyStringArgument("message")
+        playerExecutor{ player, args ->
             SurfChat.instance.launch {
                 val message = args.getUnchecked<String>("message") ?: return@launch
                 val uuid = ChatReplyService.get(player.uniqueId)
@@ -86,6 +88,6 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 SurfChat.send(player, MessageBuilder().suggest(MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(target.name + ": ").white(message), MessageBuilder().primary("Clicke, um anzuworten."), "/msg " + target.name + " "))
             }
-        })
+        }
     }
 }

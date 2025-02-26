@@ -1,5 +1,6 @@
 package dev.slne.surf.social.chat.command.argument
 
+import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.SuggestionInfo
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument

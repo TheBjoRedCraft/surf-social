@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.social.chat.SurfChat
 import dev.slne.surf.social.chat.`object`.ChatUser
 import dev.slne.surf.social.chat.util.MessageBuilder
@@ -12,7 +13,8 @@ import org.bukkit.entity.Player
 class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.toggle")
-        executesPlayer(PlayerCommandExecutor { player: Player, _: CommandArguments ->
+
+        playerExecutor{ player, _ ->
             SurfChat.instance.launch {
                 val user: ChatUser = ChatUser.getUser(player.uniqueId)
 
@@ -24,6 +26,6 @@ class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
                     SurfChat.send(player, MessageBuilder().primary("Du hast privat Nachrichten ").error("deaktiviert."))
                 }
             }
-        })
+        }
     }
 }

@@ -4,6 +4,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.IntegerArgument
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.jorel.commandapi.kotlindsl.integerArgument
+import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.social.chat.`object`.Channel
 import dev.slne.surf.social.chat.provider.ChannelProvider
 import dev.slne.surf.social.chat.util.MessageBuilder
@@ -14,8 +16,8 @@ import org.bukkit.entity.Player
 
 class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withOptionalArguments(IntegerArgument("page"))
-        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+        integerArgument("page", 1, Int.MAX_VALUE, true)
+        playerExecutor { player, args ->
             val message = PageableMessageBuilder()
             val page = args.getOrDefaultUnchecked("page", 1)
 
@@ -36,7 +38,7 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                 )
             }
             message.send(player, page)
-        })
+        }
     }
 
     private fun createInfoMessage(channel: Channel): Component {

@@ -5,6 +5,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.jorel.commandapi.kotlindsl.offlinePlayerArgument
+import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.social.chat.SurfChat
 import dev.slne.surf.social.chat.`object`.ChatUser
 import dev.slne.surf.social.chat.util.MessageBuilder
@@ -15,7 +17,8 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.ignore")
         withArguments(OfflinePlayerArgument("player"))
-        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+        offlinePlayerArgument("player")
+        playerExecutor {player, args ->
             SurfChat.instance.launch {
                 val target = args.getUnchecked<OfflinePlayer>("player") ?: return@launch
                 val user: ChatUser = ChatUser.getUser(player.uniqueId)
@@ -34,6 +37,6 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
                     SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name ?: target.uniqueId.toString()).error(" stumm geschaltet."))
                 }
             }
-        })
+        }
     }
 }

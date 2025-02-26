@@ -1,29 +1,30 @@
 package dev.slne.surf.social.chat.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.kotlindsl.subcommand
 
 class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.channel")
-        withSubcommand(ChannelAcceptInviteCommand("accept"))
-        withSubcommand(ChannelCreateCommand("create"))
-        withSubcommand(ChannelDeleteCommand("delete"))
-        withSubcommand(ChannelInviteCommand("invite"))
-        withSubcommand(ChannelInviteRevokeCommand("revoke"))
-        withSubcommand(ChannelInfoCommand("info"))
-        withSubcommand(ChannelMembersCommand("members"))
-        withSubcommand(ChannelListCommand("list"))
-        withSubcommand(ChannelJoinCommand("join"))
-        withSubcommand(ChannelLeaveCommand("leave"))
-        withSubcommand(ChannelStateToggleCommand("toggleState"))
-        withSubcommand(ChannelBanCommand("ban"))
-        withSubcommand(ChannelUnBanCommand("unban"))
-        withSubcommand(ChannelDemoteCommand("demote"))
-        withSubcommand(ChannelPromoteCommand("promote"))
-        withSubcommand(ChannelKickCommand("kick"))
-        withSubcommand(ChannelMoveCommand("move"))
-        withSubcommand(ChannelForceDeleteCommand("forceDelete"))
-        withSubcommand(ChannelForceJoinCommand("forceJoin"))
-        withSubcommand(ChannelTransferOwnerShipCommand("transferOwnership"))
+        subcommand(ChannelAcceptInviteCommand("accept"))
+        subcommand(ChannelCreateCommand("create"))
+        subcommand(ChannelDeleteCommand("delete"))
+        subcommand(ChannelInviteCommand("invite"))
+        subcommand(ChannelInviteRevokeCommand("revoke"))
+        subcommand(ChannelInfoCommand("info"))
+        subcommand(ChannelMembersCommand("members"))
+        subcommand(ChannelListCommand("list"))
+        subcommand(ChannelJoinCommand("join"))
+        subcommand(ChannelLeaveCommand("leave"))
+        subcommand(ChannelStateToggleCommand("toggleState"))
+        subcommand(ChannelBanCommand("ban"))
+        subcommand(ChannelUnBanCommand("unban"))
+        subcommand(ChannelDemoteCommand("demote"))
+        subcommand(ChannelPromoteCommand("promote"))
+        subcommand(ChannelKickCommand("kick"))
+        subcommand(ChannelMoveCommand("move"))
+        subcommand(ChannelForceDeleteCommand("forceDelete"))
+        subcommand(ChannelForceJoinCommand("forceJoin"))
+        subcommand(ChannelTransferOwnerShipCommand("transferOwnership"))
     }
 }

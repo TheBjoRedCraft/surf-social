@@ -6,6 +6,9 @@ import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import dev.jorel.commandapi.kotlindsl.greedyStringArgument
+import dev.jorel.commandapi.kotlindsl.playerArgument
+import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.social.chat.SurfChat
 import dev.slne.surf.social.chat.external.BasicPunishApi
 import dev.slne.surf.social.chat.`object`.ChatUser
@@ -16,11 +19,12 @@ import org.bukkit.entity.Player
 
 class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withArguments(PlayerArgument("player"))
-        withArguments(GreedyStringArgument("message"))
+        playerArgument("player")
+        greedyStringArgument("message")
+
         withAliases("tell", "w", "pm", "dm")
         withPermission("surf.chat.command.private-message")
-        executesPlayer(PlayerCommandExecutor { player: Player, args: CommandArguments ->
+        playerExecutor {player, args ->
             SurfChat.instance.launch {
                 val target = args.getUnchecked<Player>("player") ?: return@launch
                 val message = args.getUnchecked<String>("message") ?: return@launch
@@ -74,6 +78,6 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
 
                 SurfChat.send(player, MessageBuilder().suggest(MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(target.name + ": ").white(message), MessageBuilder().primary("Clicke, um anzuworten."), "/msg " + target.name + " "))
             }
-        })
+        }
     }
 }
