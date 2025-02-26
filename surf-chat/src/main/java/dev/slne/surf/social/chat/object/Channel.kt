@@ -3,6 +3,7 @@ package dev.slne.surf.social.chat.`object`
 import dev.slne.surf.social.chat.SurfChat
 import dev.slne.surf.social.chat.provider.ChannelProvider
 import dev.slne.surf.social.chat.util.MessageBuilder
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
@@ -14,10 +15,10 @@ import java.util.function.Consumer
 
 class Channel(
     var owner: OfflinePlayer? = null,
-    val members: ObjectSet<OfflinePlayer> = ObjectArraySet(),
-    val moderators: ObjectSet<OfflinePlayer> = ObjectArraySet(),
-    val bannedPlayers: ObjectSet<OfflinePlayer> = ObjectArraySet(),
-    val invites: ObjectSet<OfflinePlayer> = ObjectArraySet(),
+    val members: ObjectSet<OfflinePlayer> = mutableObjectSetOf(),
+    val moderators: ObjectSet<OfflinePlayer> = mutableObjectSetOf(),
+    val bannedPlayers: ObjectSet<OfflinePlayer> = mutableObjectSetOf(),
+    val invites: ObjectSet<OfflinePlayer> = mutableObjectSetOf(),
     val name: String = UUID.randomUUID().toString(),
     val description: String = "Ein cooler Kanal!",
     var closed: Boolean = true
